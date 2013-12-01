@@ -14,4 +14,4 @@ goog.addDependency("../cljs/core/async/impl/ioc_helpers.js", ['cljs.core.async.i
 goog.addDependency("../cljs/core/async/impl/channels.js", ['cljs.core.async.impl.channels'], ['cljs.core.async.impl.buffers', 'cljs.core', 'cljs.core.async.impl.dispatch', 'cljs.core.async.impl.protocols']);
 goog.addDependency("../cljs/core/async/impl/timers.js", ['cljs.core.async.impl.timers'], ['cljs.core', 'cljs.core.async.impl.channels', 'cljs.core.async.impl.dispatch', 'cljs.core.async.impl.protocols']);
 goog.addDependency("../cljs/core/async.js", ['cljs.core.async'], ['cljs.core.async.impl.ioc_helpers', 'cljs.core.async.impl.buffers', 'cljs.core', 'cljs.core.async.impl.channels', 'cljs.core.async.impl.dispatch', 'cljs.core.async.impl.protocols', 'cljs.core.async.impl.timers']);
-goog.addDependency("../pizza/core.js", ['pizza.core'], ['pizza.pizza', 'cljs.core', 'pizza.svg', 'goog.dom', 'clojure.browser.repl', 'pizza.spaghetti', 'cljs.core.async', 'goog.events']);
+goog.addDependency("../pizza/core.js", ['pizza.core'], ['pizza.pizza', 'cljs.core', 'pizza.svg', 'goog.dom', 'goog.dom.classlist', 'clojure.browser.repl', 'pizza.spaghetti', 'cljs.core.async', 'goog.events']);

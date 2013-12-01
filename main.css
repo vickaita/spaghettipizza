@@ -44,3 +44,7 @@ button:focus {
   margin: 0 auto;
   display: block;
 }
+
+#toolbar .active {
+  color: white;
+}
