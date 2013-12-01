@@ -24,18 +24,29 @@
     (.setAttribute "stroke" "#F5F5AA")
     (.setAttribute "stroke-width" 6)))
 
-(defn- avg
-  [a b]
-  (/ (+ a b ) 2))
+(defn- median-point
+  "Given two points returns the point which lies halfway between them."
+  [[x1 y1] [x2 y2]]
+  [(/ (+ x1 x2) 2) (/ (+ y1 y2) 2)])
 
-(defn- blend
-  [[x1 y1 :as p1] [x2 y2 :as p2]]
-  (let [[mx my :as median] [(avg x1 x2) (avg y1 y2)]
-        cp1x (+ mx 5)
-        cp1y (+ my 5)
-        cp2x (- mx 5)
-        cp2y (- my 5)]
-    (str "C " cp1x " " cp1y " " cp2x " " cp2y " " x2 " " y2)))
+(defn- rotate-point
+  [[px py] [ox oy] theta]
+  (let [c (Math/cos theta)
+        s (Math/sin theta)]
+    [(+ ox (- (* c (- px ox)) (* s (- py oy))))
+     (+ oy (* s (- px ox)) (* c (- py oy)))]))
+
+(defn- M
+  [[x y]]
+  (str "M" x " " y))
+
+(defn- C
+  [[x1 y1] [x2 y2] [x y]]
+  (str "C" x1 " " y1 " " x2 " " y2 " " x " " y))
+
+(defn- S
+  [[x2 y2] [x y]]
+  (str "S" x2 " " y2 " " x " " y))
 
 (defn create-irregular-circle
   [origin radius fill stroke stroke-width]
@@ -44,21 +55,21 @@
         variance (* 0.008 radius)
         radii (map #(- % (rand (* 2 variance))) (repeat (+ radius variance)))
         points (map (fn [dist angle]
-                      [(+ x (* dist (Math/sin angle)))
-                       (+ y (* dist (Math/cos angle)))])
+                      [(+ x (* dist (Math/cos angle)))
+                       (+ y (* dist (Math/sin angle)))])
                     radii
                     (take-while #(< % (* 2 Math/PI))
-                                (iterate #(+ % 0.2 (rand 0.3)) 0)))
-        curves (reduce (fn [acc [p1 p2]]
-                         (conj acc (blend p1 p2)))
-                       (let [[[x y] & _] points]
-                         (do
-                           (.log js/console x y)
-                           [(str "M" x " " y)]))
+                                (iterate #(+ % 0.2 (rand 0.2)) 0)))
+        curves (reduce (fn [acc [[x1 y1 :as p1] [x2 y2 :as p2]]]
+                         (conj acc (S (rotate-point (median-point p1 p2) p2 (* -0.01 Math/PI)) p2)))
+                       (let [[[x1 y1 :as p1] [x2 y2 :as p2] & _] points]
+                         [(M p1)
+                          (C (rotate-point (median-point p1 p2) p1 (* 0.01 Math/PI))
+                             (rotate-point (median-point p1 p2) p2 (* -0.01 Math/PI))
+                             p2)])
                        (partition 2 1 points))]
     (doto (create-svg-element "path")
       (.setAttribute "fill" fill)
       (.setAttribute "stroke" stroke)
       (.setAttribute "stroke-width" stroke-width)
-      ;(.setAttribute "points" (join " " (map (fn [[x y]] (str x "," y)) points)))   
       (.setAttribute "d" (str (join " " curves) " Z")))))
