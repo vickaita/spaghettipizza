@@ -14,6 +14,8 @@
     (evt/listen element event-type #(put! out %))
     out))
 
+(defn e->pt [e] [(.-offsetX e) (.-offsetY e)])
+
 (defn enable-spaghetti-drawing
   [svg-elem]
   (let [down (event-channel "mousedown" svg-elem)
@@ -21,15 +23,11 @@
         up (event-channel "mouseup" svg-elem)
         current-noodle (atom nil)]
     (go (while true
-          (alt! down (let [noodle (spg/create-noodle)]
+          (alt! down ([e] (let [noodle (spg/create-topping :ziti (e->pt e))]
                        (reset! current-noodle noodle)
-                       (dom/append svg-elem (spg/to-svg noodle)))
-                move ([e] (when-let [noodle @current-noodle]
-                            (if (< (spg/length noodle) spg/max-length)
-                              (spg/add-point! noodle (.-offsetX e) (.-offsetY e))
-                              (reset! current-noodle nil))))
-                up (do #_(spg/smooth @current-noodle)
-                       (reset! current-noodle nil)))))))
+                       (dom/append svg-elem (:element noodle))))
+                move ([e] (swap! current-noodle spg/add-point! (e->pt e)))
+                up (reset! current-noodle nil))))))
 
 (defn main
   []
@@ -40,4 +38,4 @@
     (enable-spaghetti-drawing svg-elem)))
 
 (evt/listen js/document "DOMContentLoaded" main)
-(repl/connect "http://ui:9000/repl")
+;(repl/connect "http://ui:9000/repl")
