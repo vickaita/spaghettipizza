@@ -3,6 +3,10 @@
 
 ;;; Utils
 
+(defn- rand-range
+  [min max]
+  (+ min (* max (rand))))
+
 (defn- distance
   [p1 p2]
   (Math/sqrt (reduce + (map #(* % %) (map - p1 p2)))))
@@ -107,18 +111,19 @@
   a slightly smaller circle for the fill. By using two circles on different
   layers we can give the illusion that it is one irregular shape instead of a
   bunch of circles."
-  [this point radius]
-  (doto (:border this)
-    (.appendChild (svg/create-circle point radius "#dde" "#dde" 0)))
-  (doto (:inner this)
-    (.appendChild (svg/create-circle point (- radius 2) "#eed" "#eed" 0)))
-  this)
+  [this point]
+  (let [radius (rand-range 3 (:max-radius this))]
+    (doto (:border this)
+      (.appendChild (svg/create-circle point radius "#dde" "#dde" 0)))
+    (doto (:inner this)
+      (.appendChild (svg/create-circle point (- radius 2) "#eed" "#eed" 0)))
+    this))
 
 (defrecord Ricotta [element border inner last-point max-radius]
   Topping
   (add-point! [this point]
     (if (> (distance last-point point) (/ max-radius 5))
-      (do (add-blob this point (* max-radius (rand)))
+      (do (add-blob this point)
           (if (> max-radius min-ricotta-radius)
             (Ricotta. element border inner point (* 0.9 max-radius))
             nil))
@@ -132,6 +137,5 @@
     (doto group
       (.appendChild border)
       (.appendChild inner))
-    (add-blob
-      (Ricotta. group border inner point (* 0.9 max-ricotta-radius))
-      point (* max-ricotta-radius (rand)))))
+    (-> (Ricotta. group border inner point (* 0.9 max-ricotta-radius))
+      (add-blob point))))
