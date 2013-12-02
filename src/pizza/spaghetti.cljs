@@ -99,28 +99,39 @@
 
 ;;; Ricotta
 
-(def ^:private max-ricotta-radius 50)
-(def ^:private min-ricotta-radius 5)
+(def ^:private max-ricotta-radius 40)
+(def ^:private min-ricotta-radius 10)
 
-(defn- create-ricotta-blob
-  [origin radius]
-  (svg/create-circle origin radius "#fefefd" "#eeeeee" 3))
+(defn- add-blob
+  "Adds a circle of ricotta to the element. Creates a circle for the border and
+  a slightly smaller circle for the fill. By using two circles on different
+  layers we can give the illusion that it is one irregular shape instead of a
+  bunch of circles."
+  [this point radius]
+  (doto (:border this)
+    (.appendChild (svg/create-circle point radius "#dde" "#dde" 0)))
+  (doto (:inner this)
+    (.appendChild (svg/create-circle point (- radius 2) "#eed" "#eed" 0)))
+  this)
 
-(defrecord Ricotta [element last-point max-radius]
+(defrecord Ricotta [element border inner last-point max-radius]
   Topping
   (add-point! [this point]
-    (if (> (distance last-point point) (/ max-radius 2))
-      (let [circle (create-ricotta-blob point (* max-radius (rand)))
-            new-max-radius (* 0.9 max-radius)]
-        (.appendChild element circle)
-        (if (> new-max-radius min-ricotta-radius)
-          (Ricotta. element point (* 0.9 max-radius))
-          nil))
+    (if (> (distance last-point point) (/ max-radius 5))
+      (do (add-blob this point (* max-radius (rand)))
+          (if (> max-radius min-ricotta-radius)
+            (Ricotta. element border inner point (* 0.9 max-radius))
+            nil))
       this)))
 
 (defmethod create-topping :ricotta
   [_ point]
   (let [group (svg/create-svg-element "g")
-        circle (create-ricotta-blob point (* max-ricotta-radius (rand)))]
-    (.appendChild group circle)
-    (Ricotta. group point (* 0.9 max-ricotta-radius))))
+        border (svg/create-svg-element "g")
+        inner (svg/create-svg-element "g")]
+    (doto group
+      (.appendChild border)
+      (.appendChild inner))
+    (add-blob
+      (Ricotta. group border inner point (* 0.9 max-ricotta-radius))
+      point (* max-ricotta-radius (rand)))))
