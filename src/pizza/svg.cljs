@@ -8,14 +8,14 @@
   (.createElementNS js/document svg-ns tag-name))
 
 (defn- create-circle
-  [origin radius fill stroke]
+  [origin radius fill stroke stroke-width]
   (doto (create-svg-element "circle")
     (.setAttribute "cx" (first origin))
     (.setAttribute "cy" (second origin))
     (.setAttribute "r" radius)
     (.setAttribute "fill" fill)
     (.setAttribute "stroke" stroke)
-    (.setAttribute "stroke-width" 3)))
+    (.setAttribute "stroke-width" stroke-width)))
 
 (defn- create-path
   []

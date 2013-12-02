@@ -46,11 +46,14 @@ button:focus {
 }
 
 #toolbar {
+  font-size: 0;
 }
 
 #toolbar .tool {
+  font-size: 1rem;
   padding: 0.5rem;
   background: white;
+  display: inline-block;
 }
 
 #toolbar .tool.active {
