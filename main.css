@@ -45,6 +45,15 @@ button:focus {
   display: block;
 }
 
-#toolbar .active {
+#toolbar {
+}
+
+#toolbar .tool {
+  padding: 0.5rem;
+  background: white;
+}
+
+#toolbar .tool.active {
   color: white;
+  background: black;
 }

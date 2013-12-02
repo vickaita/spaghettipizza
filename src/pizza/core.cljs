@@ -38,11 +38,14 @@
     (go (while true
           (let [elem (.-target (<! clicks))
                 tool (keyword (.getAttribute elem "data-tool"))]
-            (when tool (do (reset! current-tool tool)
-                           (let [elems (dom/getChildren toolbar)]
-                             (dotimes [i (alength elems)]
-                               (cls/remove (aget elems i) "active")))
-                           (cls/add elem "active"))))))))
+            (when tool
+              (do (reset! current-tool tool)
+                  (let [elems (dom/getChildren toolbar)]
+                    (dotimes [i (alength elems)]
+                      (let [el (aget elems i)]
+                        (if (= elem el)
+                          (cls/add elem "active")
+                          (cls/remove el "active"))))))))))))
 
 (defn main
   []
