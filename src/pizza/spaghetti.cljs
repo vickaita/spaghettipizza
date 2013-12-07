@@ -99,7 +99,7 @@
       (.setAttribute "stroke" "#F5F5AA")
       (.setAttribute "stroke-linecap" "round")
       (.setAttribute "stroke-width" 4))  
-    (Ziti. group border inner [point] 0)))
+    (Ziti. group border inner [point])))
 
 ;;; Ricotta
 
