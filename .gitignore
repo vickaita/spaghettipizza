@@ -1,5 +1,6 @@
 .lein-repl-history
 .nrepl-port
 out
+resources/public/js/
 repl/
 target/

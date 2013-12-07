@@ -1,0 +1,62 @@
+body {
+  font-family: 'Ribeye', cursive;
+  font-size: 0.8rem;
+  background: url('/img/wood-textured-background-desktop.jpg');
+  margin: 0;
+  padding: 0;
+}
+
+#masthead {
+  background: rgba(162, 240, 165, 0.75);
+  color: #FFF;
+  padding: 0.5rem;
+  border-top-color: rgb(17, 172, 11);
+  border-width-top: 5px;
+  border-top-width: 5px;
+}
+
+h1 {
+  margin: 0;
+  font-size: 2.4rem;
+  line-height: 1.4;
+  text-shadow: 1px 1px #F86969;
+  text-align: center;
+}
+
+button {
+  padding: 0.5rem;
+  border-radius: 0.5rem;
+  background-color: rgb(162, 240, 165);
+  border: 2px solid rgb(17, 172, 11);
+  margin: 0 auto;
+  display: block;
+}
+
+button:focus {
+  outline: none;
+}
+
+#counter-top {
+  /*background: url('./img/peel.jpg');*/
+}
+
+#main-svg {
+  margin: 0 auto;
+  display: block;
+}
+
+#toolbar {
+  font-size: 0;
+}
+
+#toolbar .tool {
+  font-size: 1rem;
+  padding: 0.5rem;
+  background: white;
+  display: inline-block;
+}
+
+#toolbar .tool.active {
+  color: white;
+  background: black;
+}
