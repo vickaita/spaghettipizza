@@ -7,7 +7,7 @@
             [clojure.browser.repl :as repl]
             [pizza.svg :as svg]
             [pizza.pizza :as pzz]
-            [pizza.spaghetti :as spg]))
+            [pizza.spaghetti :as spag]))
 
 (defn event-channel
   [event-type element]
@@ -26,26 +26,32 @@
         move (map< e->pt (event-channel "mousemove" svg-elem))
         up (event-channel "mouseup" js/document)]
     (go (while true
-          (alt! down ([e] (let [n (spg/create-topping @current-tool e)]
+          (alt! down ([e] (let [n (spag/create-topping @current-tool e)]
                             (reset! current-noodle n)
                             (dom/append svg-elem (:element n))))
-                move ([e] (swap! current-noodle spg/add-point! e))
+                move ([e] (swap! current-noodle spag/add-point! e))
                 up (reset! current-noodle nil))))))
+
+(defn- activate!
+  "Iterate through all the elements in node-list removing class-name except for
+  node which will have class-name added."
+  ([node-list node] (activate! node-list node "active"))
+  ([node-list node class-name]
+  (dotimes [i (alength node-list)]
+    (let [n (aget node-list i)]
+      (if (= node n)
+        (cls/add node class-name)
+        (cls/remove n class-name))))))
 
 (defn enable-tool-selection
   [toolbar]
-  (let [clicks (event-channel "click" toolbar)]
+  (let [clicks (map< #(.-target %) (event-channel "click" toolbar))]
     (go (while true
-          (let [elem (.-target (<! clicks))
+          (let [elem (<! clicks)
                 tool (keyword (.getAttribute elem "data-tool"))]
             (when tool
               (reset! current-tool tool)
-              (let [elems (dom/getChildren toolbar)]
-                (dotimes [i (alength elems)]
-                  (let [el (aget elems i)]
-                    (if (= elem el)
-                      (cls/add elem "active")
-                      (cls/remove el "active")))))))))))
+              (activate! (dom/getChildren toolbar) elem)))))))
 
 (defn main
   []
