@@ -79,13 +79,13 @@
 (defn main
   []
   (let [svg-elem (dom/getElement "main-svg")
-        send-message (connect-to-server)]
+        #_send-message #_(connect-to-server)]
     (evt/listen (dom/getElement "clean") "click"
                 (fn [e]
                   (doto svg-elem dom/removeChildren pzz/draw-pizza)
-                  (send-message "reset")))
+                  #_(send-message "reset")))
     (pzz/draw-pizza svg-elem)
-    (enable-registration (dom/getElement "register"))
+    #_(enable-registration (dom/getElement "register"))
     (enable-spaghetti-drawing svg-elem)
     (enable-tool-selection (dom/getElement "toolbar"))))
 

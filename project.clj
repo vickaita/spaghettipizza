@@ -9,13 +9,14 @@
                  [ring "1.2.1"]
                  [http-kit "2.1.13"]
                  [compojure "1.1.6"]
-                 [hiccup "1.0.4"]]
+                 [hiccup "1.0.4"]
+                 [amazonica "0.1.32"]]
 
   :main pizza.handler
 
   :plugins [[lein-cljsbuild "1.0.0-alpha2"]
             [lein-typed "0.3.1"]
-            [lein-kibit "0.0.8"]
+            #_[lein-aws "0.1.4-SNAPSHOT"]
             #_[com.cemerick/austin "0.1.3"]]
 
   :source-paths ["src/clj" "src/cljs"]
@@ -29,4 +30,6 @@
                 :optimizations :none
                 :source-map true}}]}
 
-  :core.typed  {:check [pizza.types]})
+  :core.typed  {:check [pizza.types]}
+  
+  :aliases {"push" ["run" "-m" "pizza.tasks/push"]})

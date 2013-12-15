@@ -37,7 +37,7 @@ button:focus {
 }
 
 #counter-top {
-  /*background: url('./img/peel.jpg');*/
+  //background: url('./img/peel.jpg');
 }
 
 #main-svg {
@@ -47,16 +47,14 @@ button:focus {
 
 #toolbar {
   font-size: 0;
-}
-
-#toolbar .tool {
-  font-size: 1rem;
-  padding: 0.5rem;
-  background: white;
-  display: inline-block;
-}
-
-#toolbar .tool.active {
-  color: white;
-  background: black;
+  .tool {
+	font-size: 1rem;
+	padding: 0.5rem;
+	background: white;
+	display: inline-block;
+	&.active {
+	  color: white;
+	  background: black;
+	}
+  }
 }

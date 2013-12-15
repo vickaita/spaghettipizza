@@ -15,7 +15,7 @@
   (send! channel {:status 200 :headers json-header :body message}))
 
 (defroutes all-routes
-  (GET "/" [] pages/home)
+  (GET "/" [req] (pages/home))
 
   (POST "/kitchens"
         [kitchen]
