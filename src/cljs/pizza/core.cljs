@@ -21,7 +21,13 @@
     (evt/listen element event-type #(put! out %))
     out))
 
-(defn e->pt [e] [(.-offsetX e) (.-offsetY e)])
+(defn e->pt
+  "Convert an event into a point."
+  [e]
+  (condp = (.-type e)
+    "touchstart" (let [t (-> e .-event_ .-targetTouches (aget 0))]
+                   [(.-clientX t) (.-clientY t)])
+    [(.-offsetX e) (.-offsetY e)]))
 
 (def current-noodle (atom nil))
 (def current-tool (atom :spaghetti))
@@ -29,12 +35,14 @@
 (defn enable-spaghetti-drawing
   [svg-elem]
   (let [down (map< e->pt (event-channel "mousedown" svg-elem))
+        touchstart (map< e->pt (event-channel "touchstart" svg-elem))
         move (map< e->pt (event-channel "mousemove" svg-elem))
         up (event-channel "mouseup" js/document)]
     (go (while true
           (alt! down ([e] (let [n (spag/create-topping @current-tool e)]
                             (reset! current-noodle n)
                             (dom/append svg-elem (:element n))))
+                touchstart ([e] (.log js/console e))
                 move ([e] (swap! current-noodle spag/add-point! e))
                 up (reset! current-noodle nil))))))
 
