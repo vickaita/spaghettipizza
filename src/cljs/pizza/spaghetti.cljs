@@ -93,12 +93,12 @@
       (.setAttribute "fill" "transparent")
       (.setAttribute "stroke" "#9E9E22")
       (.setAttribute "stroke-linecap" "round")
-      (.setAttribute "stroke-width" 6))  
+      (.setAttribute "stroke-width" 11))  
     (doto inner
       (.setAttribute "fill" "transparent")
       (.setAttribute "stroke" "#F5F5AA")
       (.setAttribute "stroke-linecap" "round")
-      (.setAttribute "stroke-width" 4))  
+      (.setAttribute "stroke-width" 9))  
     (Ziti. group border inner [point])))
 
 ;;; Ricotta
