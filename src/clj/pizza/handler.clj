@@ -46,7 +46,7 @@
     true))
 
 (defn -main [& args]
-  (println "Starting server...")
+  (println "Starting server ...")
   (let [handler (if (in-dev? args)
                   (reload/wrap-reload (site #'all-routes)) ;; only reload when dev
                   (site all-routes))]

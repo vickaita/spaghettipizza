@@ -45,8 +45,8 @@
   (add-point! [this point]
     (if (< length 250)
       (let [new-points (conj points point)]
-        (.setAttribute inner "points" (points->str new-points)) 
-        (.setAttribute border "points" (points->str new-points)) 
+        (.setAttribute inner "points" (points->str new-points))
+        (.setAttribute border "points" (points->str new-points))
         (Spaghetti. element border inner new-points
                     (+ length (distance point (peek points)))))
       this)))
@@ -58,57 +58,70 @@
         inner (svg/create-svg-element "polyline")]
     (doto group
       (.appendChild border)
-      (.appendChild inner)) 
+      (.appendChild inner))
     (doto border
       (.setAttribute "fill" "transparent")
       (.setAttribute "stroke" "#9E9E22")
       (.setAttribute "stroke-linecap" "round")
-      (.setAttribute "stroke-width" 6))  
+      (.setAttribute "stroke-width" 6))
     (doto inner
       (.setAttribute "fill" "transparent")
       (.setAttribute "stroke" "#F5F5AA")
       (.setAttribute "stroke-linecap" "round")
-      (.setAttribute "stroke-width" 4))  
+      (.setAttribute "stroke-width" 4))
     (Spaghetti. group border inner [point] 0)))
 
 ;;; Ziti
 
 (defn- clamp-line
-  [p1 p2]
-  (let [max-len 100]
+  [[x y :as p1] p2]
+  (let [max-len 60]
     (if (< (distance p1 p2) max-len)
     [p1 p2]
     (let [a (angle p1 p2)]
-      [p1 [(+ (first p1) (* max-len (Math/cos a)))
-           (+ (second p1) (* max-len (Math/sin a)))]]))))
+      [p1 [(+ x (* max-len (Math/cos a)))
+           (+ y (* max-len (Math/sin a)))]]))))
 
-(defrecord Ziti [element border inner points]
+(defrecord Ziti [element border inner hole points]
   Topping
   (add-point! [this point]
-    (let [new-points (clamp-line (first points) point)]
+    (let [[[cx1 cy1] [cx2 cy2] :as new-points] (clamp-line (first points) point)]
       (.setAttribute inner "points" (points->str new-points))
       (.setAttribute border "points" (points->str new-points))
-      (Ziti. element border inner new-points))))
+      #_(doto hole
+        (.setAttribute "cx" (if (> cy1 cy2) cx1 cx2))
+        (.setAttribute "cy" (if (> cy1 cy2) cy1 cy2)))
+      (doto hole
+        (.setAttribute "cx" cx2)
+        (.setAttribute "cy" cy2))
+      (Ziti. element border inner hole new-points))))
 
 (defmethod create-topping :ziti
   [_ point]
   (let [group (svg/create-svg-element "g")
         border (svg/create-svg-element "polyline")
-        inner (svg/create-svg-element "polyline")]
+        inner (svg/create-svg-element "polyline")
+        hole (svg/create-svg-element "circle")]
     (doto group
       (.appendChild border)
-      (.appendChild inner)) 
+      (.appendChild inner)
+      (.appendChild hole))
     (doto border
       (.setAttribute "fill" "transparent")
       (.setAttribute "stroke" "#9E9E22")
       (.setAttribute "stroke-linecap" "round")
-      (.setAttribute "stroke-width" 11))  
+      (.setAttribute "stroke-width" 17))
     (doto inner
       (.setAttribute "fill" "transparent")
       (.setAttribute "stroke" "#F5F5AA")
       (.setAttribute "stroke-linecap" "round")
-      (.setAttribute "stroke-width" 9))  
-    (Ziti. group border inner [point])))
+      (.setAttribute "stroke-width" 15))
+    (doto hole
+      (.setAttribute "fill" "#9E9E22")
+      (.setAttribute "r" 6)
+      (.setAttribute "cx" (first point))
+      (.setAttribute "cy" (second point)))
+    (Ziti. group border inner hole [point])))
 
 ;;; Ricotta
 
