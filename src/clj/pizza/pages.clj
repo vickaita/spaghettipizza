@@ -10,6 +10,7 @@
    (html5
      [:head
       [:title "Spaghetti Pizza"]
+      [:meta {:name "viewport" :content "width=device-width, user-scalable=no"}]
       (include-css "//fonts.googleapis.com/css?family=Ribeye"
                    "css/main.css")
       [:script ;; Google Analytics
