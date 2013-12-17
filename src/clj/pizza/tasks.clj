@@ -9,18 +9,18 @@
 (defn push
   "Push the files up to S3."
   []
-  (let [bucket-name "spaghetti-pizza"
+  (let [bucket-name "spaghettipizza.us"
         creds (edn/read-string (slurp "aws-creds.clj"))
         home-bytes (.getBytes (pages/home))
         acl {:grant-permission ["AllUsers" "Read"]}]
     (aws/with-credential [(:access-key creds) (:secret-key creds) "us-east-1"]
-      (println "Testing for the existence of the " bucket-name "bucket.")
+      (println "Testing for the existence of the" bucket-name "bucket.")
       (when-not (s3/does-bucket-exist bucket-name)
         (println "Bucket not found. Creating a bucket called " bucket-name)
         (s3/create-bucket bucket-name))
       (println "OK.")
-      (println "Generating the index page...")
-      (println "Uploading index.html...")
+      (println "Generating the index page ...")
+      (println "Uploading index.html ...")
       (with-open [home (io/input-stream home-bytes)]
         (s3/put-object
           :bucket-name bucket-name
@@ -37,7 +37,7 @@
           :key (str "css/" (.getName css))
           :file css
           :access-control-list acl)
-        (println "Building ClojureScript...")
+        (println "Building ClojureScript ...")
         (cljsc/build "src/cljs/pizza/core.cljs"
                      {:optimizations :advanced
                       :output-dir "resources/public/js"
@@ -48,7 +48,7 @@
           :key (str "js/" (.getName js))
           :file js
           :access-control-list acl)
-        (println "Uploading images...")
+        (println "Uploading images ...")
         (doseq [img (-> "resources/public/img" io/file file-seq rest)]
           (s3/put-object
             :bucket-name bucket-name

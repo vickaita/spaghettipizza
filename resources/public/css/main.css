@@ -1,13 +1,13 @@
 body {
   font-family: 'Ribeye', cursive;
   font-size: 0.8rem;
-  background: url('../img/marble-countertop.jpg');
+  background: url('../img/pattern-ruf8.png');
   margin: 0;
   padding: 0;
 }
 
 #masthead {
-  background: rgba(162, 240, 165, 0.75);
+  background: rgba(120, 138, 26, 0.75);
   color: #FFF;
   padding: 0.5rem;
   border-top-color: rgb(17, 172, 11);

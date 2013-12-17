@@ -24,9 +24,10 @@
 (defn e->pt
   "Convert an event into a point."
   [e]
-  (condp = (.-type e)
-    "touchstart" (let [t (-> e .-event_ .-targetTouches (aget 0))]
-                   [(.-clientX t) (.-clientY t)])
+  (case (.-type e)
+    ("touchstart" "touchmove") (let [t (-> e .getBrowserEvent .-touches (aget 0))]
+                                 [(.-clientX t) (.-clientY t)])
+    "touchend" nil
     [(.-offsetX e) (.-offsetY e)]))
 
 (def current-noodle (atom nil))
@@ -36,15 +37,22 @@
   [svg-elem]
   (let [down (map< e->pt (event-channel "mousedown" svg-elem))
         touchstart (map< e->pt (event-channel "touchstart" svg-elem))
+        touchend (event-channel "touchend" svg-elem)
+        touchmove (map< e->pt (event-channel "touchmove" svg-elem))
         move (map< e->pt (event-channel "mousemove" svg-elem))
         up (event-channel "mouseup" js/document)]
     (go (while true
-          (alt! down ([e] (let [n (spag/create-topping @current-tool e)]
-                            (reset! current-noodle n)
-                            (dom/append svg-elem (:element n))))
-                touchstart ([e] (.log js/console e))
-                move ([e] (swap! current-noodle spag/add-point! e))
-                up (reset! current-noodle nil))))))
+          (alt! [down touchstart]
+                ([pt] (let [n (spag/create-topping @current-tool pt)]
+                        (reset! current-noodle n)
+                        (dom/append svg-elem (:element n))))
+
+                [move touchmove] 
+                ([pt] (swap! current-noodle spag/add-point! pt))
+
+                [up touchend]
+                (reset! current-noodle nil)
+                )))))
 
 (defn- activate!
   "Iterate through all the elements in node-list removing class-name except for
