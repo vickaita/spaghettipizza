@@ -15,6 +15,10 @@
   [ps]
   (reduce + (map distance ps (drop 1 ps))))
 
+(defn- angle
+  [p1 p2]
+  (apply Math/atan2 (reverse (map - p2 p1))))
+
 (defn- points->str
   [pts]
   (apply str (interleave (flatten pts) (repeat " "))))
@@ -71,7 +75,12 @@
 
 (defn- clamp-line
   [p1 p2]
-  [p1 p2])
+  (let [max-len 100]
+    (if (< (distance p1 p2) max-len)
+    [p1 p2]
+    (let [a (angle p1 p2)]
+      [p1 [(+ (first p1) (* max-len (Math/cos a)))
+           (+ (second p1) (* max-len (Math/sin a)))]]))))
 
 (defrecord Ziti [element border inner points]
   Topping
