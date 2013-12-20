@@ -13,7 +13,7 @@
             [pizza.ajax :as ajax]
             [pizza.svg :as svg]
             [pizza.pizza :as pzz]
-            [pizza.spaghetti :as spag]))
+            [pizza.spaghetti :refer [create-topping add-point!]]))
 
 (defn event-channel
   [event-type element]
@@ -43,12 +43,12 @@
         up (event-channel "mouseup" js/document)]
     (go (while true
           (alt! [down touchstart]
-                ([pt] (let [n (spag/create-topping @current-tool pt)]
+                ([pt] (let [n (create-topping @current-tool pt)]
                         (reset! current-noodle n)
                         (dom/append svg-elem (:element n))))
 
-                [move touchmove] 
-                ([pt] (swap! current-noodle spag/add-point! pt))
+                [move touchmove]
+                ([pt] (swap! current-noodle add-point! pt))
 
                 [up touchend]
                 (reset! current-noodle nil)
@@ -73,6 +73,7 @@
                 tool (keyword (.getAttribute elem "data-tool"))]
             (when tool
               (reset! current-tool tool)
+              (js/ga "send" "event" "tool" "select" (name tool))
               (activate! (dom/getChildren toolbar) elem)))))))
 
 (defn enable-registration
