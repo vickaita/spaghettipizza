@@ -21,23 +21,27 @@
     (evt/listen element event-type #(put! out %))
     out))
 
-(defn e->pt
+(defn normalize-point
   "Convert an event into a point."
-  [e]
+  [elem e]
   (.preventDefault e)
-  (case (.-type e)
-    ("touchstart" "touchmove") (let [t (-> e .getBrowserEvent .-touches (aget 0))]
-                                 [(.-pageX t) (.-pageY t)])
-    "touchend" nil
-    (let [b (.getBrowserEvent e)]
-      [(.-pageX b) (.-pageY b)])))
+  (let [left (.-offsetLeft elem)
+        top (.-offsetTop elem)]
+    (case (.-type e)
+      ("touchstart" "touchmove") (let [t (-> e .getBrowserEvent .-touches (aget 0))]
+                                   [(- (.-pageX t) left) (- (.-pageY t) top)])
+      "touchend" nil
+      (let [b (.getBrowserEvent e)]
+        [(- (.-pageX b) left) (- (.-pageY b) top)]))))
+
 
 (def current-noodle (atom nil))
 (def current-tool (atom :spaghetti))
 
 (defn enable-spaghetti-drawing
   [svg-elem]
-  (let [down (map< e->pt (event-channel "mousedown" svg-elem))
+  (let [e->pt (partial normalize-point svg-elem)
+        down (map< e->pt (event-channel "mousedown" svg-elem))
         touchstart (map< e->pt (event-channel "touchstart" svg-elem))
         touchend (event-channel "touchend" svg-elem)
         touchmove (map< e->pt (event-channel "touchmove" svg-elem))
@@ -50,10 +54,7 @@
                         (dom/append svg-elem (:element n))))
 
                 [move touchmove]
-                ([pt] (swap! current-noodle add-point!
-                             (let [[x y] pt]
-                               [(- x (.-offsetLeft svg-elem))
-                                (- y (.-offsetTop svg-elem))])))
+                ([pt] (swap! current-noodle add-point! pt))
 
                 [up touchend]
                 (reset! current-noodle nil)
@@ -112,4 +113,4 @@
     (enable-tool-selection (dom/getElement "toolbar"))))
 
 (evt/listen js/document "DOMContentLoaded" main)
-(repl/connect "http://ui:9000/repl")
+#_(repl/connect "http://ui:9000/repl")
