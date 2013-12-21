@@ -14,16 +14,20 @@
   [channel message]
   (send! channel {:status 200 :headers json-header :body message}))
 
+;; In production these pages are all pregenerated and uploaded to S3, so pass
+;; true to the page functions since the routes are only used in development
+;; mode.
 (defroutes all-routes
-  (GET "/" [req] (pages/home req true))
+  (GET "/" [] (pages/home true))
+  (GET "/pizza" [] (pages/show true))
 
-  (POST "/kitchens"
+  #_(POST "/kitchens"
         [kitchen]
         (do (swap! state update-in [:kitchens] conj kitchen)
             {:cookies {"kitchen" kitchen}
              :body (str {:kitchen kitchen})}))
 
-  (GET "/ws" [req] (fn [req]
+  #_(GET "/ws" [req] (fn [req]
                      (s/with-channel req channel
                        (println "channel opened")
                        (send! channel
@@ -37,7 +41,7 @@
                                        :reset (push! channel "you reset")
                                        :foo (push! channel "bar")))))))
   (route/files "/" {:root "resources/public"})
-  (route/not-found pages/error-404))
+  (route/not-found #(pages/error-404)))
 
 (defn in-dev? [args]
   ;; TODO: doesn't work, so for now always return true
