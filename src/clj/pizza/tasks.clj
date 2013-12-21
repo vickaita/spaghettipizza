@@ -6,12 +6,12 @@
             [cljs.closure :as cljsc]
             [pizza.pages :as pages]))
 
-(defn push
+(defn push-ui
   "Push the files up to S3."
   []
   (let [bucket-name "spaghettipizza.us"
         creds (edn/read-string (slurp "aws-creds.clj"))
-        home-bytes (.getBytes (pages/home))
+        home-bytes (.getBytes (pages/home false))
         acl {:grant-permission ["AllUsers" "Read"]}]
     (aws/with-credential [(:access-key creds) (:secret-key creds) "us-east-1"]
       (println "Testing for the existence of the" bucket-name "bucket.")
@@ -56,20 +56,6 @@
             :file (io/file img)
             :access-control-list acl))))))
 
-
-     
-(comment
-  
-  (let [creds (edn/read-string (slurp "aws-creds.clj"))
-        bucket-name "spaghetti-pizza"
-        css (io/file "resources/public/css/main.css")
-        fname (str "css/" (.getName css))]
-    (aws/with-credential [(:access-key creds) (:secret-key creds) "us-east-1"] 
-      #_(s3/put-object :bucket-name bucket-name
-                       :key fname
-                       :file css)
-      (s3/set-object-acl bucket-name 
-                         fname
-                         {:grant-permission ["AllUsers" "Read"]})))
-
-)
+(defn push-api
+  []
+  ())
