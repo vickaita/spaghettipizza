@@ -161,3 +161,21 @@
       (.appendChild inner))
     (-> (Ricotta. group border inner point (* 0.9 max-ricotta-radius))
       (add-blob point))))
+
+;;; Linguini
+
+(defrecord Linguini [element spaghetti]
+  Topping
+  (add-point! [this point]
+    (add-point! spaghetti point)))
+
+(defmethod create-topping :linguini
+  [_ point]
+  (let [spaghetti (create-topping :spaghetti point)]
+    (doto (:border spaghetti)
+      (.setAttribute "stroke-linecap" "square")
+      (.setAttribute "stroke-width" 12))
+    (doto (:inner spaghetti)
+      (.setAttribute "stroke-linecap" "square")
+      (.setAttribute "stroke-width" 10))
+    (Linguini. (:element spaghetti) spaghetti)))
