@@ -24,11 +24,13 @@
 (defn e->pt
   "Convert an event into a point."
   [e]
+  (.preventDefault e)
   (case (.-type e)
     ("touchstart" "touchmove") (let [t (-> e .getBrowserEvent .-touches (aget 0))]
-                                 [(.-clientX t) (.-clientY t)])
+                                 [(.-pageX t) (.-pageY t)])
     "touchend" nil
-    [(.-offsetX e) (.-offsetY e)]))
+    (let [b (.getBrowserEvent e)]
+      [(.-pageX b) (.-pageY b)])))
 
 (def current-noodle (atom nil))
 (def current-tool (atom :spaghetti))
@@ -48,7 +50,10 @@
                         (dom/append svg-elem (:element n))))
 
                 [move touchmove]
-                ([pt] (swap! current-noodle add-point! pt))
+                ([pt] (swap! current-noodle add-point!
+                             (let [[x y] pt]
+                               [(- x (.-offsetLeft svg-elem))
+                                (- y (.-offsetTop svg-elem))])))
 
                 [up touchend]
                 (reset! current-noodle nil)
@@ -107,4 +112,4 @@
     (enable-tool-selection (dom/getElement "toolbar"))))
 
 (evt/listen js/document "DOMContentLoaded" main)
-#_(repl/connect "http://ui:9000/repl")
+(repl/connect "http://ui:9000/repl")
