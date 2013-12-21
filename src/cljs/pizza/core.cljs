@@ -99,6 +99,15 @@
           (.log js/console (<! ws))))
     #(put! ws %)))
 
+(defn enable-photo-button
+  [button svg-elem]
+  (evt/listen button "click"
+              (fn [e]
+                (.preventDefault e)
+                (let [png-chan (svg/svg->png-chan svg-elem)]
+                  (go (.log js/console (<! png-chan)))
+                  ))))
+
 (defn main
   []
   (let [svg-elem (dom/getElement "main-svg")
@@ -110,7 +119,8 @@
     (pzz/draw-pizza svg-elem)
     #_(enable-registration (dom/getElement "register"))
     (enable-spaghetti-drawing svg-elem)
-    (enable-tool-selection (dom/getElement "toolbar"))))
+    (enable-tool-selection (dom/getElement "toolbar"))
+    (enable-photo-button (dom/getElement "photo") svg-elem)))
 
 (evt/listen js/document "DOMContentLoaded" main)
 #_(repl/connect "http://ui:9000/repl")

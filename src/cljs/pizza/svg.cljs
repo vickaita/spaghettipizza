@@ -1,5 +1,6 @@
 (ns pizza.svg
-  (:require [clojure.string :refer [join]]))
+  (:require [clojure.string :refer [join]]
+            [cljs.core.async :refer [put! chan]]))
 
 (def svg-ns "http://www.w3.org/2000/svg")
 
@@ -73,3 +74,21 @@
       (.setAttribute "stroke" stroke)
       (.setAttribute "stroke-width" stroke-width)
       (.setAttribute "d" (str (join " " curves) " Z")))))
+
+(defn svg->png-chan
+  [svg-elem]
+  (let [canvas (.createElement js/document "canvas")
+        context (.getContext canvas "2d")
+        data (.serializeToString (js/XMLSerializer.) svg-elem)
+        img (js/Image.)
+        svg-blob (js/Blob. (array data) (js-obj "type" "image/svg+xml;charset=utf-8"))
+        url (.createObjectURL js/URL svg-blob)
+        out (chan)]
+    (.setAttribute canvas "width" (.getAttribute svg-elem "width"))
+    (.setAttribute canvas "height" (.getAttribute svg-elem "height"))
+    (set! (.-onload img) (fn []
+                           (.drawImage context img 0 0)
+                           (.revokeObjectURL js/URL url)
+                           (put! out (.toDataURL canvas "image/png"))))
+    (set! (.-src img) url)
+    out))

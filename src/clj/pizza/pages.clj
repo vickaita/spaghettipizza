@@ -25,6 +25,7 @@
     [:body
      [:header#masthead
       [:h1 "Spaghetti Pizza"]
+      [:button#photo "Take a picture (it will last longer)."]
       #_(form/form-to {:id "register"} [:post "/kitchens"]
                       [:div.row (form/text-field "kitchen")]
                       [:div.row (form/submit-button "Register")])]
