@@ -1,20 +1,93 @@
+/* line 17, ../../../../../../.rvm/gems/ruby-1.9.3-p429/gems/compass-0.12.2/frameworks/compass/stylesheets/compass/reset/_utilities.scss */
+html, body, div, span, applet, object, iframe,
+h1, h2, h3, h4, h5, h6, p, blockquote, pre,
+a, abbr, acronym, address, big, cite, code,
+del, dfn, em, img, ins, kbd, q, s, samp,
+small, strike, strong, sub, sup, tt, var,
+b, u, i, center,
+dl, dt, dd, ol, ul, li,
+fieldset, form, label, legend,
+table, caption, tbody, tfoot, thead, tr, th, td,
+article, aside, canvas, details, embed,
+figure, figcaption, footer, header, hgroup,
+menu, nav, output, ruby, section, summary,
+time, mark, audio, video {
+  margin: 0;
+  padding: 0;
+  border: 0;
+  font: inherit;
+  font-size: 100%;
+  vertical-align: baseline;
+}
+
+/* line 22, ../../../../../../.rvm/gems/ruby-1.9.3-p429/gems/compass-0.12.2/frameworks/compass/stylesheets/compass/reset/_utilities.scss */
+html {
+  line-height: 1;
+}
+
+/* line 24, ../../../../../../.rvm/gems/ruby-1.9.3-p429/gems/compass-0.12.2/frameworks/compass/stylesheets/compass/reset/_utilities.scss */
+ol, ul {
+  list-style: none;
+}
+
+/* line 26, ../../../../../../.rvm/gems/ruby-1.9.3-p429/gems/compass-0.12.2/frameworks/compass/stylesheets/compass/reset/_utilities.scss */
+table {
+  border-collapse: collapse;
+  border-spacing: 0;
+}
+
+/* line 28, ../../../../../../.rvm/gems/ruby-1.9.3-p429/gems/compass-0.12.2/frameworks/compass/stylesheets/compass/reset/_utilities.scss */
+caption, th, td {
+  text-align: left;
+  font-weight: normal;
+  vertical-align: middle;
+}
+
+/* line 30, ../../../../../../.rvm/gems/ruby-1.9.3-p429/gems/compass-0.12.2/frameworks/compass/stylesheets/compass/reset/_utilities.scss */
+q, blockquote {
+  quotes: none;
+}
+/* line 103, ../../../../../../.rvm/gems/ruby-1.9.3-p429/gems/compass-0.12.2/frameworks/compass/stylesheets/compass/reset/_utilities.scss */
+q:before, q:after, blockquote:before, blockquote:after {
+  content: "";
+  content: none;
+}
+
+/* line 32, ../../../../../../.rvm/gems/ruby-1.9.3-p429/gems/compass-0.12.2/frameworks/compass/stylesheets/compass/reset/_utilities.scss */
+a img {
+  border: none;
+}
+
+/* line 116, ../../../../../../.rvm/gems/ruby-1.9.3-p429/gems/compass-0.12.2/frameworks/compass/stylesheets/compass/reset/_utilities.scss */
+article, aside, details, figcaption, figure, footer, header, hgroup, menu, nav, section, summary {
+  display: block;
+}
+
+/* line 6, ../../../src/scss/main.scss */
+.hidden {
+  display: none;
+}
+
+/* line 8, ../../../src/scss/main.scss */
 body {
   font-family: 'Ribeye', cursive;
   font-size: 0.8rem;
-  background: url('../img/pattern-ruf8.png');
+  background: url("../img/pattern-ruf8.png");
   margin: 0;
   padding: 0;
 }
 
+/* line 16, ../../../src/scss/main.scss */
 #masthead {
   background: rgba(120, 138, 26, 0.75);
   color: #FFF;
   padding: 0.5rem;
-  border-top-color: rgb(17, 172, 11);
+  border-top-color: #11ac0b;
   border-width-top: 5px;
   border-top-width: 5px;
 }
 
+/* line 25, ../../../src/scss/main.scss */
 h1 {
   margin: 0;
   font-size: 2.4rem;
@@ -23,40 +96,69 @@ h1 {
   text-align: center;
 }
 
+/* line 33, ../../../src/scss/main.scss */
 button {
   padding: 0.5rem;
   border-radius: 0.5rem;
-  background-color: rgb(162, 240, 165);
-  border: 2px solid rgb(17, 172, 11);
+  background-color: #a2f0a5;
+  border: 2px solid #11ac0b;
   margin: 0 auto;
   display: block;
 }
 
+/* line 42, ../../../src/scss/main.scss */
 button:focus {
   outline: none;
 }
 
-#counter-top {
-  /*background: url('./img/peel.jpg');*/
-}
-
+/* line 50, ../../../src/scss/main.scss */
 #main-svg {
   margin: 0 auto;
   display: block;
 }
 
+/* line 55, ../../../src/scss/main.scss */
 #toolbar {
   font-size: 0;
 }
-
+/* line 57, ../../../src/scss/main.scss */
 #toolbar .tool {
   font-size: 1rem;
   padding: 0.5rem;
   background: white;
   display: inline-block;
 }
-
+/* line 62, ../../../src/scss/main.scss */
 #toolbar .tool.active {
   color: white;
   background: black;
+}
+
+/* line 69, ../../../src/scss/main.scss */
+.modal-overlay {
+  background: rgba(0, 0, 0, 0.5);
+  height: 100%;
+  left: 0;
+  position: fixed;
+  top: 0;
+  width: 100%;
+}
+
+/* line 78, ../../../src/scss/main.scss */
+.modal-wrap {
+  margin-top: -250px;
+  position: absolute;
+  top: 50%;
+  width: 100%;
+}
+
+/* line 85, ../../../src/scss/main.scss */
+.modal-content {
+  background: #FFF;
+  border-radius: 0.5rem;
+  border: 1px solid #11ac0b;
+  height: 500px;
+  margin: 0 auto;
+  padding: 1.5rem;
+  width: 500px;
 }

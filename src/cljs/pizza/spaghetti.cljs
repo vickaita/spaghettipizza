@@ -53,9 +53,9 @@
 
 (defmethod create-topping :spaghetti
   [_ point]
-  (let [group (svg/create-svg-element "g")
-        border (svg/create-svg-element "polyline")
-        inner (svg/create-svg-element "polyline")]
+  (let [group (svg/create-element "g")
+        border (svg/create-element "polyline")
+        inner (svg/create-element "polyline")]
     (doto group
       (.appendChild border)
       (.appendChild inner))
@@ -98,10 +98,10 @@
 
 (defmethod create-topping :ziti
   [_ point]
-  (let [group (svg/create-svg-element "g")
-        border (svg/create-svg-element "polyline")
-        inner (svg/create-svg-element "polyline")
-        hole (svg/create-svg-element "circle")]
+  (let [group (svg/create-element "g")
+        border (svg/create-element "polyline")
+        inner (svg/create-element "polyline")
+        hole (svg/create-element "circle")]
     (doto group
       (.appendChild border)
       (.appendChild inner)
@@ -153,9 +153,9 @@
 
 (defmethod create-topping :ricotta
   [_ point]
-  (let [group (svg/create-svg-element "g")
-        border (svg/create-svg-element "g")
-        inner (svg/create-svg-element "g")]
+  (let [group (svg/create-element "g")
+        border (svg/create-element "g")
+        inner (svg/create-element "g")]
     (doto group
       (.appendChild border)
       (.appendChild inner))

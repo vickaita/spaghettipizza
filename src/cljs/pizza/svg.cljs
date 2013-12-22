@@ -1,16 +1,17 @@
 (ns pizza.svg
   (:require [clojure.string :refer [join]]
-            [cljs.core.async :refer [put! chan]]))
+            [cljs.core.async :refer [put! chan]]
+            [goog.dom :as dom]))
 
 (def svg-ns "http://www.w3.org/2000/svg")
 
-(defn create-svg-element
+(defn create-element
   [tag-name]
   (.createElementNS js/document svg-ns tag-name))
 
 (defn- create-circle
   [origin radius fill stroke stroke-width]
-  (doto (create-svg-element "circle")
+  (doto (create-element "circle")
     (.setAttribute "cx" (first origin))
     (.setAttribute "cy" (second origin))
     (.setAttribute "r" radius)
@@ -20,7 +21,7 @@
 
 (defn- create-path
   []
-  (doto (create-svg-element "polyline")
+  (doto (create-element "polyline")
     (.setAttribute "fill" "transparent")
     (.setAttribute "stroke" "#F5F5AA")
     (.setAttribute "stroke-width" 6)))
@@ -52,7 +53,7 @@
 (defn create-irregular-circle
   [origin radius fill stroke stroke-width]
   (let [[x y] origin
-        circ (create-svg-element "path")
+        circ (create-element "path")
         variance (* 0.008 radius)
         radii (map #(- % (rand (* 2 variance))) (repeat (+ radius variance)))
         points (map (fn [dist angle]
@@ -69,7 +70,7 @@
                              (rotate-point (median-point p1 p2) p2 (* -0.01 Math/PI))
                              p2)])
                        (partition 2 1 points))]
-    (doto (create-svg-element "path")
+    (doto (create-element "path")
       (.setAttribute "fill" fill)
       (.setAttribute "stroke" stroke)
       (.setAttribute "stroke-width" stroke-width)
@@ -77,7 +78,7 @@
 
 (defn svg->png-chan
   [svg-elem]
-  (let [canvas (.createElement js/document "canvas")
+  (let [canvas (dom/createElement "canvas")
         context (.getContext canvas "2d")
         data (.serializeToString (js/XMLSerializer.) svg-elem)
         img (js/Image.)
@@ -89,6 +90,6 @@
     (set! (.-onload img) (fn []
                            (.drawImage context img 0 0)
                            (.revokeObjectURL js/URL url)
-                           (put! out (.toDataURL canvas "image/png"))))
+                           (put! out (.toDataURL canvas "image/bitmap"))))
     (set! (.-src img) url)
     out))

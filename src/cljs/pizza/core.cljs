@@ -1,5 +1,6 @@
 (ns pizza.core
-  (:require-macros [cljs.core.async.macros :refer [go alt!]])
+  (:require-macros [cljs.core.async.macros :refer [go alt!]]
+                   [dommy.macros :refer [node]])
   (:require [goog.dom :as dom]
             [goog.dom.classlist :as cls]
             [goog.dom.forms :as forms]
@@ -8,6 +9,7 @@
             [goog.net.WebSocket]
             [cljs.core.async :refer [put! chan <! map<]]
             [clojure.browser.repl :as repl]
+            [dommy.core]
             [vickaita.channels :refer [event websocket]]
             [vickaita.console :refer [log]]
             [pizza.ajax :as ajax]
@@ -101,12 +103,27 @@
 
 (defn enable-photo-button
   [button svg-elem]
-  (evt/listen button "click"
-              (fn [e]
-                (.preventDefault e)
-                (let [png-chan (svg/svg->png-chan svg-elem)]
-                  (go (.log js/console (<! png-chan)))
-                  ))))
+  (let [body (.-body js/document)
+        ;; TODO: consider using one of the goog.ui classes such as Dialog or
+        ;; ModalPopup here instead of this homegrown solution.
+        modal (node [:div.modal-overlay.hidden
+                     [:div.modal-wrap
+                      [:div.modal-content
+                       [:p "Share this with your friends!"]
+                       [:div.pizza-container]]]])
+        pizza-container (dom/getElementByClass "pizza-container" modal)]
+    (dom/append body modal)
+    (evt/listen modal "click" (fn [e]
+                                (when (= (.-currentTarget e) (.-target e))
+                                  (cls/add modal "hidden"))))
+    (evt/listen button "click"
+                (fn [e]
+                  (.preventDefault e)
+                  (let [png-chan (svg/svg->png-chan svg-elem)]
+                    (go (let [url (<! png-chan)]
+                          (dom/removeChildren pizza-container)
+                          (dom/append pizza-container (node [:img {:src url}]))
+                          (cls/remove modal "hidden"))))))))
 
 (defn main
   []

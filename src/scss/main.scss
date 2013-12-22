@@ -1,3 +1,10 @@
+@import "compass/reset";
+
+$green: rgb(17, 172, 11);
+
+// Utilities
+.hidden { display: none; }
+
 body {
   font-family: 'Ribeye', cursive;
   font-size: 0.8rem;
@@ -27,7 +34,7 @@ button {
   padding: 0.5rem;
   border-radius: 0.5rem;
   background-color: rgb(162, 240, 165);
-  border: 2px solid rgb(17, 172, 11);
+  border: 2px solid $green;
   margin: 0 auto;
   display: block;
 }
@@ -48,13 +55,39 @@ button:focus {
 #toolbar {
   font-size: 0;
   .tool {
-	font-size: 1rem;
-	padding: 0.5rem;
-	background: white;
-	display: inline-block;
-	&.active {
-	  color: white;
-	  background: black;
-	}
+    font-size: 1rem;
+    padding: 0.5rem;
+    background: white;
+    display: inline-block;
+    &.active {
+      color: white;
+      background: black;
+    }
   }
+}
+
+.modal-overlay {
+  background: rgba(0, 0, 0, 0.5);
+  height: 100%;
+  left: 0;
+  position: fixed;
+  top: 0;
+  width: 100%;
+}
+
+.modal-wrap {
+  margin-top: -250px;
+  position: absolute;
+  top: 50%;
+  width: 100%;
+}
+
+.modal-content {
+  background: #FFF;
+  border-radius: 0.5rem;
+  border: 1px solid $green;
+  height: 500px;
+  margin: 0 auto;
+  padding: 1.5rem;
+  width: 500px;
 }

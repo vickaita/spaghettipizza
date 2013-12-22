@@ -10,7 +10,10 @@
                  [http-kit "2.1.13"]
                  [compojure "1.1.6"]
                  [hiccup "1.0.4"]
-                 [amazonica "0.1.32"]]
+                 [amazonica "0.1.32"]
+                 [digest "1.4.3"]
+                 [com.keminglabs/c2 "0.2.2"]
+                 [prismatic/dommy "0.1.1"]]
 
   :main pizza.handler
 
@@ -21,7 +24,7 @@
 
   :source-paths ["src/clj" "src/cljs"]
 
-  :cljsbuild { 
+  :cljsbuild {
     :builds [{:id "pizza"
               :source-paths ["src/cljs"]
               :compiler {
@@ -31,5 +34,6 @@
                 :source-map true}}]}
 
   :core.typed  {:check [pizza.types]}
-  
-  :aliases {"push" ["run" "-m" "pizza.tasks/push"]})
+
+  :aliases {"push-ui" ["run" "-m" "pizza.tasks/push-ui"]
+            "push-api" ["run" "-m" "pizza.tasks/push-api"]})
