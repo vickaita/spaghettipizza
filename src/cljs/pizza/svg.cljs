@@ -1,7 +1,8 @@
 (ns pizza.svg
   (:require [clojure.string :refer [join]]
             [cljs.core.async :refer [put! chan]]
-            [goog.dom :as dom]))
+            [goog.dom :as dom]
+            [goog.events :as events]))
 
 (def svg-ns "http://www.w3.org/2000/svg")
 
@@ -78,18 +79,22 @@
 
 (defn svg->png-chan
   [svg-elem]
-  (let [canvas (dom/createElement "canvas")
+  (let [w (.getAttribute svg-elem "width")
+        h (.getAttribute svg-elem "height")
+        img (doto (js/Image.)
+              (.setAttribute "width" w)
+              (.setAttribute "height" h))
+        canvas (doto (dom/createElement "canvas")
+                 (.setAttribute "width" w)
+                 (.setAttribute "height" h))
         context (.getContext canvas "2d")
         data (.serializeToString (js/XMLSerializer.) svg-elem)
-        img (js/Image.)
-        svg-blob (js/Blob. (array data) (js-obj "type" "image/svg+xml;charset=utf-8"))
+        svg-blob (js/Blob. (array data) (js-obj "type" "image/svg+xml;base64"))
         url (.createObjectURL js/URL svg-blob)
         out (chan)]
-    (.setAttribute canvas "width" (.getAttribute svg-elem "width"))
-    (.setAttribute canvas "height" (.getAttribute svg-elem "height"))
-    (set! (.-onload img) (fn []
-                           (.drawImage context img 0 0)
-                           (.revokeObjectURL js/URL url)
-                           (put! out (.toDataURL canvas "image/bitmap"))))
+    (events/listen img "load" (fn [e]
+                                (.drawImage context img 0 0)
+                                (.revokeObjectURL js/URL url)
+                                (put! out (.toDataURL canvas "image/bitmap"))))
     (set! (.-src img) url)
     out))

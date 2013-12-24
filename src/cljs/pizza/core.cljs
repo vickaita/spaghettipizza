@@ -27,8 +27,12 @@
   "Convert an event into a point."
   [elem e]
   (.preventDefault e)
-  (let [left (.-offsetLeft elem)
-        top (.-offsetTop elem)]
+  ;; TODO: finding an offset parent is a little more complicated than this:
+  ;; what if the parent element is svg?
+  (let [offset-parent (if-not (= "svg" (.toLowerCase (.-tagName elem)))
+                        elem (.-parentElement elem))
+        left (.-offsetLeft offset-parent)
+        top (.-offsetTop offset-parent)]
     (case (.-type e)
       ("touchstart" "touchmove") (let [t (-> e .getBrowserEvent .-touches (aget 0))]
                                    [(- (.-pageX t) left) (- (.-pageY t) top)])
@@ -41,6 +45,8 @@
 (def current-tool (atom :spaghetti))
 
 (defn enable-spaghetti-drawing
+  "The most important function in all of spaghetti pizza!
+  Manages the drawing events that are monitored."
   [svg-elem]
   (let [e->pt (partial normalize-point svg-elem)
         down (map< e->pt (event-channel "mousedown" svg-elem))
@@ -56,7 +62,8 @@
                         (dom/append svg-elem (:element n))))
 
                 [move touchmove]
-                ([pt] (swap! current-noodle add-point! pt))
+                ([pt]
+                 (swap! current-noodle add-point! pt))
 
                 [up touchend]
                 (reset! current-noodle nil)
@@ -137,7 +144,7 @@
     #_(enable-registration (dom/getElement "register"))
     (enable-spaghetti-drawing svg-elem)
     (enable-tool-selection (dom/getElement "toolbar"))
-    (enable-photo-button (dom/getElement "photo") svg-elem)))
+    #_(enable-photo-button (dom/getElement "photo") svg-elem)))
 
 (evt/listen js/document "DOMContentLoaded" main)
 #_(repl/connect "http://ui:9000/repl")
