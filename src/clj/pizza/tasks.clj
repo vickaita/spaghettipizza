@@ -10,7 +10,7 @@
   "Push the files up to S3."
   []
   (let [bucket-name "spaghettipizza.us"
-        creds (edn/read-string (slurp "aws-creds.clj"))
+        creds (edn/read-string (slurp "resources/credentials/aws.clj"))
         home-bytes (.getBytes (pages/home false))
         acl {:grant-permission ["AllUsers" "Read"]}]
     (aws/with-credential [(:access-key creds) (:secret-key creds) "us-east-1"]
