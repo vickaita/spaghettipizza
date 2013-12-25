@@ -115,32 +115,33 @@ button:focus {
 #counter-top {
   margin: 0 auto;
   padding: 0;
+  width: 500px;
 }
 
-/* line 51, ../../../src/scss/main.scss */
+/* line 52, ../../../src/scss/main.scss */
 #main-svg {
   margin: 0;
   display: block;
 }
 
-/* line 56, ../../../src/scss/main.scss */
+/* line 57, ../../../src/scss/main.scss */
 #toolbar {
   font-size: 0;
 }
-/* line 58, ../../../src/scss/main.scss */
+/* line 59, ../../../src/scss/main.scss */
 #toolbar .tool {
   font-size: 1rem;
   padding: 0.5rem;
   background: white;
   display: inline-block;
 }
-/* line 63, ../../../src/scss/main.scss */
+/* line 64, ../../../src/scss/main.scss */
 #toolbar .tool.active {
   color: white;
   background: black;
 }
 
-/* line 70, ../../../src/scss/main.scss */
+/* line 71, ../../../src/scss/main.scss */
 .modal-overlay {
   background: rgba(0, 0, 0, 0.5);
   height: 100%;
@@ -150,7 +151,7 @@ button:focus {
   width: 100%;
 }
 
-/* line 79, ../../../src/scss/main.scss */
+/* line 80, ../../../src/scss/main.scss */
 .modal-wrap {
   margin-top: -250px;
   position: absolute;
@@ -158,7 +159,7 @@ button:focus {
   width: 100%;
 }
 
-/* line 86, ../../../src/scss/main.scss */
+/* line 87, ../../../src/scss/main.scss */
 .modal-content {
   background: #FFF;
   border-radius: 0.5rem;

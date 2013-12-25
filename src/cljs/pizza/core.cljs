@@ -20,16 +20,17 @@
 (defn event-channel
   [event-type element]
   (let [out (chan)]
-    (evt/listen element event-type #(put! out %))
+    (evt/listen element event-type (fn [e] (put! out e)))
     out))
 
 (defn normalize-point
   "Convert an event into a point."
-  [elem e]
-  (.preventDefault e)
+  [e]
+  ;(.preventDefault e)
   ;; TODO: finding an offset parent is a little more complicated than this:
   ;; what if the parent element is svg?
-  (let [offset-parent (if-not (= "svg" (.toLowerCase (.-tagName elem)))
+  (let [elem (.-currentTarget e)
+        offset-parent (if-not (= "svg" (.toLowerCase (.-tagName elem)))
                         elem (.-parentElement elem))
         left (.-offsetLeft offset-parent)
         top (.-offsetTop offset-parent)]
@@ -40,34 +41,71 @@
       (let [b (.getBrowserEvent e)]
         [(- (.-pageX b) left) (- (.-pageY b) top)]))))
 
-
 (def current-noodle (atom nil))
 (def current-tool (atom :spaghetti))
 
+;(defn loggy [message obj]
+;  (dom/setTextContent (dom/getElement "log") (str message pt)))
+
+;(defn enable-spaghetti-drawing
+;  "The most important function in all of spaghetti pizza!
+;  Manages the drawing events that are monitored."
+;  [svg-elem]
+;  (let [e->pt (partial normalize-point svg-elem)
+;        touchstart (map< e->pt (event-channel "touchstart" svg-elem))
+;        touchend (map< e->pt (event-channel "touchend" svg-elem))
+;        touchmove (map< e->pt (event-channel "touchmove" svg-elem))
+;        touchcancel (map< e->pt (event-channel "touchcancel" svg-elem))
+;        down (map< e->pt (event-channel "mousedown" svg-elem))
+;        move (map< e->pt (event-channel "mousemove" svg-elem))
+;        up (map< e->pt (event-channel "mouseup" js/document))]
+;    (go (while true
+;          (alt! [down touchstart]
+;                ([pt] (let [n (create-topping @current-tool pt)]
+;                        (loggy "start" pt)
+;                        (reset! current-noodle n)
+;                        (dom/append svg-elem (:element n))))
+;
+;                [move touchmove]
+;                ([pt]
+;                 (loggy "move" pt)
+;                 (swap! current-noodle add-point! pt))
+;
+;                [up touchend]
+;                ([pt] (do (loggy "end" pt)
+;                          (reset! current-noodle nil)))
+;
+;                [touchcancel]
+;                ([pt] (loggy "cancel" pt))
+;                )))))
+
+(defn- start-noodle
+  [e]
+  (.preventDefault e)
+  (let [pt (normalize-point e)
+        n (create-topping @current-tool pt)]
+    (reset! current-noodle n)
+    (dom/append (.-currentTarget e) (:element n))))
+
+(defn- move-noodle
+  [e]
+  (.preventDefault e)
+  (let [pt (normalize-point e)]
+    (swap! current-noodle add-point! pt)))
+
+(defn- end-noodle
+  [e]
+  (.preventDefault e)
+  (reset! current-noodle nil))
+
 (defn enable-spaghetti-drawing
-  "The most important function in all of spaghetti pizza!
-  Manages the drawing events that are monitored."
   [svg-elem]
-  (let [e->pt (partial normalize-point svg-elem)
-        down (map< e->pt (event-channel "mousedown" svg-elem))
-        touchstart (map< e->pt (event-channel "touchstart" svg-elem))
-        touchend (event-channel "touchend" svg-elem)
-        touchmove (map< e->pt (event-channel "touchmove" svg-elem))
-        move (map< e->pt (event-channel "mousemove" svg-elem))
-        up (event-channel "mouseup" js/document)]
-    (go (while true
-          (alt! [down touchstart]
-                ([pt] (let [n (create-topping @current-tool pt)]
-                        (reset! current-noodle n)
-                        (dom/append svg-elem (:element n))))
-
-                [move touchmove]
-                ([pt]
-                 (swap! current-noodle add-point! pt))
-
-                [up touchend]
-                (reset! current-noodle nil)
-                )))))
+  (evt/listen svg-elem "mousedown" start-noodle)
+  (evt/listen svg-elem "touchstart" start-noodle)
+  (evt/listen svg-elem "mousemove" move-noodle)
+  (evt/listen svg-elem "touchmove" move-noodle)
+  (evt/listen js/document "mouseup" end-noodle)
+  (evt/listen svg-elem "touchup" end-noodle))
 
 (defn- activate!
   "Iterate through all the elements in node-list removing class-name except for
