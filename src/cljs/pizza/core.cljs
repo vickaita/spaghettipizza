@@ -5,7 +5,7 @@
             [goog.dom.classlist :as cls]
             [goog.dom.forms :as forms]
             [goog.events :as evt]
-            [goog.net.XhrIo]
+            [goog.net.XhrIo :as xhr]
             [goog.net.WebSocket]
             [cljs.core.async :refer [put! chan <! map<]]
             [clojure.browser.repl :as repl]
@@ -158,31 +158,35 @@
                        [:div.pizza-container]]]])
         pizza-container (dom/getElementByClass "pizza-container" modal)]
     (dom/append body modal)
-    (evt/listen modal "click" (fn [e]
-                                (when (= (.-currentTarget e) (.-target e))
-                                  (cls/add modal "hidden"))))
+    (evt/listen modal "click" (fn [e] (cls/add modal "hidden")))
+    (evt/listen (dom/getElementByClass "modal-content" modal) "click"
+                (fn [e] (.stopPropagation e)))
     (evt/listen button "click"
                 (fn [e]
                   (.preventDefault e)
-                  (let [png-chan (svg/svg->png-chan svg-elem)]
-                    (go (let [url (<! png-chan)]
+                  (let [img-chan (svg/svg->img-chan svg-elem)]
+                    (go (let [uri (<! img-chan)]
+                          ;"http://api.spaghettipizza.us/pizza/" 
+                          (xhr/send "/pizza/"
+                                    (fn [resp] (.log js/console resp))
+                                    "POST"
+                                    uri)
                           (dom/removeChildren pizza-container)
-                          (dom/append pizza-container (node [:img {:src url}]))
+                          (dom/append pizza-container (node [:img {:src uri}]))
                           (cls/remove modal "hidden"))))))))
 
-(defn main
+(defn -main
   []
   (let [svg-elem (dom/getElement "main-svg")
         #_send-message #_(connect-to-server)]
     (evt/listen (dom/getElement "clean") "click"
-                (fn [e]
-                  (doto svg-elem dom/removeChildren pzz/draw-pizza)
-                  #_(send-message "reset")))
+                #(doto svg-elem
+                   dom/removeChildren
+                   pzz/draw-pizza))
     (pzz/draw-pizza svg-elem)
-    #_(enable-registration (dom/getElement "register"))
     (enable-spaghetti-drawing svg-elem)
     (enable-tool-selection (dom/getElement "toolbar"))
-    #_(enable-photo-button (dom/getElement "photo") svg-elem)))
+    (enable-photo-button (dom/getElement "photo") svg-elem)))
 
-(evt/listen js/document "DOMContentLoaded" main)
+(evt/listen js/document "DOMContentLoaded" -main)
 #_(repl/connect "http://ui:9000/repl")

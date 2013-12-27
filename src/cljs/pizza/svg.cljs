@@ -77,7 +77,7 @@
       (.setAttribute "stroke-width" stroke-width)
       (.setAttribute "d" (str (join " " curves) " Z")))))
 
-(defn svg->png-chan
+(defn svg->img-chan
   [svg-elem]
   (let [w (.getAttribute svg-elem "width")
         h (.getAttribute svg-elem "height")
@@ -93,8 +93,8 @@
         url (.createObjectURL js/URL svg-blob)
         out (chan)]
     (events/listen img "load" (fn [e]
-                                (.drawImage context img 0 0)
+                                (.drawImage context img 0 0 w h)
                                 (.revokeObjectURL js/URL url)
-                                (put! out (.toDataURL canvas "image/bitmap"))))
+                                (put! out (.toDataURL canvas "image/png"))))
     (set! (.-src img) url)
     out))
