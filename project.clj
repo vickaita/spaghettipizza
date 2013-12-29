@@ -7,6 +7,7 @@
                  [org.clojure/core.async "0.1.242.0-44b1e3-alpha"]
                  [org.clojure/core.typed "0.2.19"]
                  [org.clojure/tools.logging "0.2.6"]
+                 [commons-codec/commons-codec "1.4"]
                  [ring "1.2.1"]
                  [http-kit "2.1.13"]
                  [compojure "1.1.6"]

@@ -165,12 +165,13 @@
                 (fn [e]
                   (.preventDefault e)
                   (let [img-chan (svg/svg->img-chan svg-elem)]
-                    (go (let [uri (<! img-chan)]
+                    (go (let [[uri blob] (<! img-chan)]
                           ;"http://api.spaghettipizza.us/pizza/" 
                           (xhr/send "/pizza/"
                                     (fn [resp] (.log js/console resp))
                                     "POST"
-                                    uri)
+                                    (doto (js/FormData.)
+                                      (.append "data" blob)))
                           (dom/removeChildren pizza-container)
                           (dom/append pizza-container (node [:img {:src uri}]))
                           (cls/remove modal "hidden"))))))))
