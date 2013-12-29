@@ -1,6 +1,10 @@
 @import "compass/reset";
 
 $green: rgb(17, 172, 11);
+$toolbar-bg: rgb(64, 64, 64);
+$tool-bg: rgb(96, 96, 96);
+
+$tool-width: 10rem;
 
 // Utilities
 .hidden { display: none; }
@@ -11,6 +15,15 @@ body {
   background: url('../img/pattern-ruf8.png');
   margin: 0;
   padding: 0;
+}
+
+#page {
+  margin-left: $tool-width;
+  //height: 100%;
+  //position: absolute;
+  .hide-tools {
+    margin-left: 0;
+  }
 }
 
 #masthead {
@@ -43,7 +56,39 @@ button:focus {
   outline: none;
 }
 
-#counter-top {
+#toolbar {
+  %tool {
+    padding: 1.5rem;
+    display: block;
+  }
+  height: 100%;
+  background: $toolbar-bg;
+  font-size: 1rem;
+  margin: 0;
+  padding: 0;
+  position: absolute;
+  width: $tool-width;
+  .tools {
+    .group {
+      @extend %tool;
+      background: darken($toolbar-bg, 10);
+      color: white;
+    }
+    .tool {
+      background: $tool-bg;
+      @extend %tool;
+      &:hover {
+        background: darken($tool-bg, 5);
+      }
+      &:active, &.active {
+        color: white;
+        background: darken($tool-bg, 10);
+      }
+    }
+  }
+}
+
+#easel {
   margin: 0 auto;
   padding: 0;
   width: 500px;
@@ -54,19 +99,6 @@ button:focus {
   display: block;
 }
 
-#toolbar {
-  font-size: 0;
-  .tool {
-    font-size: 1rem;
-    padding: 0.5rem;
-    background: white;
-    display: inline-block;
-    &.active {
-      color: white;
-      background: black;
-    }
-  }
-}
 
 .modal-overlay {
   background: rgba(0, 0, 0, 0.5);

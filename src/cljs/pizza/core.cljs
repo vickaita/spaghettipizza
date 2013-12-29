@@ -23,6 +23,15 @@
     (evt/listen element event-type (fn [e] (put! out e)))
     out))
 
+(defn adjust-easel-size
+  [easel]
+  (let [size (.getBoundingClientRect (dom/getElement "page"))
+        side (min (.-width size) (.-height size))]
+    (doto easel
+      (.setAttribute "width" side)
+      (.setAttribute "height" side)
+      (.setAttribute "viewport" (str "0 0 " side " " side)))))
+
 (defn normalize-point
   "Convert an event into a point."
   [e]
@@ -127,24 +136,7 @@
             (when tool
               (reset! current-tool tool)
               (js/ga "send" "event" "tool" "select" (name tool))
-              (activate! (dom/getChildren toolbar) elem)))))))
-
-(defn enable-registration
-  [form]
-  (evt/listen form "submit"
-              (fn [e]
-                (.preventDefault e)
-                (let [req (ajax/request-form form)]
-                  (forms/setDisabled form true)
-                  (go (let [res (<! req)]
-                        (.log js/console res)))))))
-
-(defn connect-to-server
-  []
-  (let [ws (websocket "ws://ui:8080/ws")]
-    (go (while true
-          (.log js/console (<! ws))))
-    #(put! ws %)))
+              (activate! (dom/getElementsByClass "tool" toolbar) elem)))))))
 
 (defn enable-photo-button
   [button svg-elem]
@@ -180,11 +172,14 @@
   []
   (let [svg-elem (dom/getElement "main-svg")
         #_send-message #_(connect-to-server)]
+
+    #_(adjust-easel-size svg-elem)
     (evt/listen (dom/getElement "clean") "click"
                 #(doto svg-elem
                    dom/removeChildren
                    pzz/draw-pizza))
     (pzz/draw-pizza svg-elem)
+
     (enable-spaghetti-drawing svg-elem)
     (enable-tool-selection (dom/getElement "toolbar"))
     (enable-photo-button (dom/getElement "photo") svg-elem)))

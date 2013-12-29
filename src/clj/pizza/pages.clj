@@ -6,7 +6,9 @@
 (defn head
   [title]
   [:head
+   [:meta {:charset "utf-8"}]
    [:title title]
+   [:meta {:http-equiv "X-UA-Compatible" :content "IE=edge,chrome=1"}]
    [:meta {:name "viewport" :content "width=device-width, user-scalable=no"}]
    (include-css "//fonts.googleapis.com/css?family=Ribeye"
                 "css/main.css")
@@ -18,38 +20,50 @@
     ga('create','UA-46522614-1','spaghettipizza.us');
     ga('send','pageview');"]])
 
+(defn toolbar
+  []
+  [:div#toolbar
+   [:div.actions
+    [:a#clean.action "Reset"]
+    [:a#photo.action "Photo"]]
+   [:h2 "Toppings!"]
+   [:dl.tools
+    [:dt.group "Pasta"]
+    [:dd [:a.tool.active {:data-tool "spaghetti"} "Spaghetti"]]
+    [:dd [:a.tool {:data-tool "ziti"} "Ziti"]]
+    [:dd [:a.tool {:data-tool "linguini"} "Linguini"]]
+    [:dt.group "Cheese"]
+    [:dd [:a.tool {:data-tool "ricotta"} "Ricotta"]]]])
+
+(defn easel
+  "Create a drawing surface."
+  ([] (easel 500 500))
+  ([width height]
+   [:div#easel
+    [:svg#main-svg {:width width
+                    :height height
+                    :viewPort (str "0 0 " width " " height)
+                    :version "1.1"
+                    :xmlns "http://www.w3.org/2000/svg"}]]))
+
 (defn home
   [dev?]
-  (html5
+  (html5 {:lang "en-us"}
     (head "Spaghetti Pizza: The Adventure Begins!")
     [:body
-     [:header#masthead
-      [:h1 "Spaghetti Pizza"]
-      [:button#photo "Why don't you take a picture, it'll last longer."]
-      #_(form/form-to {:id "register"} [:post "/kitchens"]
-                      [:div.row (form/text-field "kitchen")]
-                      [:div.row (form/submit-button "Register")])]
-     [:ul#users]
-     [:div#toolbar
-      [:button#clean.tool "Reset"]
-      [:a.tool.active {:data-tool "spaghetti"} "Spaghetti"]
-      [:a.tool {:data-tool "ziti"} "Ziti"]
-      [:a.tool {:data-tool "ricotta"} "Ricotta"]
-      [:a.tool {:data-tool "linguini"} "Linguini"]] 
-     [:div#counter-top
-      [:svg#main-svg {:width 500
-                      :height 500
-                      :viewPort "0 0 500 500"
-                      :version "1.1"
-                      :xmlns "http://www.w3.org/2000/svg"}]]
+     (toolbar)
+     [:div#page
+      [:header#masthead
+       [:h1 "Spaghetti Pizza"]]
+      (easel)]
      (when dev? (include-js "js/goog/base.js"))
      (include-js "js/pizza.js")
      (when dev? [:script {:type "text/javascript"}
-                "goog.require(\"pizza.core\");"])]))
+                 "goog.require(\"pizza.core\");"])]))
 
 (defn show
   [dev?]
-  (html5
+  (html5 {:lang "en-us"}
     (head "Behold! A wonderous pizza created with spaghetti!")
     [:body
      [:div#page

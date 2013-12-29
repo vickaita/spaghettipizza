@@ -63,12 +63,12 @@ article, aside, details, figcaption, figure, footer, header, hgroup, menu, nav, 
   display: block;
 }
 
-/* line 6, ../../../src/scss/main.scss */
+/* line 10, ../../../src/scss/main.scss */
 .hidden {
   display: none;
 }
 
-/* line 8, ../../../src/scss/main.scss */
+/* line 12, ../../../src/scss/main.scss */
 body {
   font-family: 'Ribeye', cursive;
   font-size: 0.8rem;
@@ -77,7 +77,16 @@ body {
   padding: 0;
 }
 
-/* line 16, ../../../src/scss/main.scss */
+/* line 20, ../../../src/scss/main.scss */
+#page {
+  margin-left: 10rem;
+}
+/* line 24, ../../../src/scss/main.scss */
+#page .hide-tools {
+  margin-left: 0;
+}
+
+/* line 29, ../../../src/scss/main.scss */
 #masthead {
   background: rgba(120, 138, 26, 0.75);
   color: #FFF;
@@ -87,7 +96,7 @@ body {
   border-top-width: 5px;
 }
 
-/* line 25, ../../../src/scss/main.scss */
+/* line 38, ../../../src/scss/main.scss */
 h1 {
   margin: 0;
   font-size: 2.4rem;
@@ -96,7 +105,7 @@ h1 {
   text-align: center;
 }
 
-/* line 33, ../../../src/scss/main.scss */
+/* line 46, ../../../src/scss/main.scss */
 button {
   padding: 0.5rem;
   border-radius: 0.5rem;
@@ -106,42 +115,59 @@ button {
   display: block;
 }
 
-/* line 42, ../../../src/scss/main.scss */
+/* line 55, ../../../src/scss/main.scss */
 button:focus {
   outline: none;
 }
 
-/* line 46, ../../../src/scss/main.scss */
-#counter-top {
+/* line 59, ../../../src/scss/main.scss */
+#toolbar {
+  height: 100%;
+  background: #404040;
+  font-size: 1rem;
+  margin: 0;
+  padding: 0;
+  position: absolute;
+  width: 10rem;
+}
+/* line 60, ../../../src/scss/main.scss */
+#toolbar .tools .group, #toolbar .tools .tool {
+  padding: 1.5rem;
+  display: block;
+}
+/* line 72, ../../../src/scss/main.scss */
+#toolbar .tools .group {
+  background: #272727;
+  color: white;
+}
+/* line 77, ../../../src/scss/main.scss */
+#toolbar .tools .tool {
+  background: #606060;
+}
+/* line 80, ../../../src/scss/main.scss */
+#toolbar .tools .tool:hover {
+  background: #535353;
+}
+/* line 83, ../../../src/scss/main.scss */
+#toolbar .tools .tool:active, #toolbar .tools .tool.active {
+  color: white;
+  background: #474747;
+}
+
+/* line 91, ../../../src/scss/main.scss */
+#easel {
   margin: 0 auto;
   padding: 0;
   width: 500px;
 }
 
-/* line 52, ../../../src/scss/main.scss */
+/* line 97, ../../../src/scss/main.scss */
 #main-svg {
   margin: 0;
   display: block;
 }
 
-/* line 57, ../../../src/scss/main.scss */
-#toolbar {
-  font-size: 0;
-}
-/* line 59, ../../../src/scss/main.scss */
-#toolbar .tool {
-  font-size: 1rem;
-  padding: 0.5rem;
-  background: white;
-  display: inline-block;
-}
-/* line 64, ../../../src/scss/main.scss */
-#toolbar .tool.active {
-  color: white;
-  background: black;
-}
-
-/* line 71, ../../../src/scss/main.scss */
+/* line 103, ../../../src/scss/main.scss */
 .modal-overlay {
   background: rgba(0, 0, 0, 0.5);
   height: 100%;
@@ -151,7 +177,7 @@ button:focus {
   width: 100%;
 }
 
-/* line 80, ../../../src/scss/main.scss */
+/* line 112, ../../../src/scss/main.scss */
 .modal-wrap {
   margin-top: -250px;
   position: absolute;
@@ -159,7 +185,7 @@ button:focus {
   width: 100%;
 }
 
-/* line 87, ../../../src/scss/main.scss */
+/* line 119, ../../../src/scss/main.scss */
 .modal-content {
   background: #FFF;
   border-radius: 0.5rem;
