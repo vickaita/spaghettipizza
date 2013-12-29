@@ -35,14 +35,10 @@
 (defn normalize-point
   "Convert an event into a point."
   [e]
-  ;(.preventDefault e)
-  ;; TODO: finding an offset parent is a little more complicated than this:
-  ;; what if the parent element is svg?
   (let [elem (.-currentTarget e)
-        offset-parent (if-not (= "svg" (.toLowerCase (.-tagName elem)))
-                        elem (.-parentElement elem))
-        left (.-offsetLeft offset-parent)
-        top (.-offsetTop offset-parent)]
+        offset (.getBoundingClientRect elem)
+        left (.-left offset)
+        top (.-top offset)]
     (case (.-type e)
       ("touchstart" "touchmove") (let [t (-> e .getBrowserEvent .-touches (aget 0))]
                                    [(- (.-pageX t) left) (- (.-pageY t) top)])
@@ -52,41 +48,6 @@
 
 (def current-noodle (atom nil))
 (def current-tool (atom :spaghetti))
-
-;(defn loggy [message obj]
-;  (dom/setTextContent (dom/getElement "log") (str message pt)))
-
-;(defn enable-spaghetti-drawing
-;  "The most important function in all of spaghetti pizza!
-;  Manages the drawing events that are monitored."
-;  [svg-elem]
-;  (let [e->pt (partial normalize-point svg-elem)
-;        touchstart (map< e->pt (event-channel "touchstart" svg-elem))
-;        touchend (map< e->pt (event-channel "touchend" svg-elem))
-;        touchmove (map< e->pt (event-channel "touchmove" svg-elem))
-;        touchcancel (map< e->pt (event-channel "touchcancel" svg-elem))
-;        down (map< e->pt (event-channel "mousedown" svg-elem))
-;        move (map< e->pt (event-channel "mousemove" svg-elem))
-;        up (map< e->pt (event-channel "mouseup" js/document))]
-;    (go (while true
-;          (alt! [down touchstart]
-;                ([pt] (let [n (create-topping @current-tool pt)]
-;                        (loggy "start" pt)
-;                        (reset! current-noodle n)
-;                        (dom/append svg-elem (:element n))))
-;
-;                [move touchmove]
-;                ([pt]
-;                 (loggy "move" pt)
-;                 (swap! current-noodle add-point! pt))
-;
-;                [up touchend]
-;                ([pt] (do (loggy "end" pt)
-;                          (reset! current-noodle nil)))
-;
-;                [touchcancel]
-;                ([pt] (loggy "cancel" pt))
-;                )))))
 
 (defn- start-noodle
   [e]

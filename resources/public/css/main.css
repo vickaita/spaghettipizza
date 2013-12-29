@@ -70,23 +70,27 @@ article, aside, details, figcaption, figure, footer, header, hgroup, menu, nav, 
 
 /* line 12, ../../../src/scss/main.scss */
 body {
+  background: #404040;
   font-family: 'Ribeye', cursive;
   font-size: 0.8rem;
-  background: url("../img/pattern-ruf8.png");
   margin: 0;
   padding: 0;
 }
 
 /* line 20, ../../../src/scss/main.scss */
 #page {
+  background: url("../img/pattern-ruf8.png");
   margin-left: 10rem;
+  position: absolute;
+  width: 100%;
+  height: 100%;
 }
-/* line 24, ../../../src/scss/main.scss */
+/* line 26, ../../../src/scss/main.scss */
 #page .hide-tools {
   margin-left: 0;
 }
 
-/* line 29, ../../../src/scss/main.scss */
+/* line 31, ../../../src/scss/main.scss */
 #masthead {
   background: rgba(120, 138, 26, 0.75);
   color: #FFF;
@@ -96,7 +100,7 @@ body {
   border-top-width: 5px;
 }
 
-/* line 38, ../../../src/scss/main.scss */
+/* line 40, ../../../src/scss/main.scss */
 h1 {
   margin: 0;
   font-size: 2.4rem;
@@ -105,7 +109,7 @@ h1 {
   text-align: center;
 }
 
-/* line 46, ../../../src/scss/main.scss */
+/* line 48, ../../../src/scss/main.scss */
 button {
   padding: 0.5rem;
   border-radius: 0.5rem;
@@ -115,12 +119,12 @@ button {
   display: block;
 }
 
-/* line 55, ../../../src/scss/main.scss */
+/* line 57, ../../../src/scss/main.scss */
 button:focus {
   outline: none;
 }
 
-/* line 59, ../../../src/scss/main.scss */
+/* line 61, ../../../src/scss/main.scss */
 #toolbar {
   height: 100%;
   background: #404040;
@@ -130,44 +134,51 @@ button:focus {
   position: absolute;
   width: 10rem;
 }
-/* line 60, ../../../src/scss/main.scss */
-#toolbar .tools .group, #toolbar .tools .tool {
-  padding: 1.5rem;
+/* line 62, ../../../src/scss/main.scss */
+#toolbar .action, #toolbar .tools .group, #toolbar .tool {
+  padding: 1.2rem;
   display: block;
 }
-/* line 72, ../../../src/scss/main.scss */
+/* line 65, ../../../src/scss/main.scss */
+#toolbar .action:hover, #toolbar .tools .group:hover, #toolbar .tool:hover {
+  background: #535353;
+}
+/* line 68, ../../../src/scss/main.scss */
+#toolbar .active.action, #toolbar .tools .active.group, #toolbar .active.tool {
+  color: white;
+  background: #474747;
+}
+/* line 81, ../../../src/scss/main.scss */
+#toolbar h2 {
+  font-size: 1.4rem;
+  color: white;
+  padding: 1rem;
+  text-align: center;
+}
+/* line 91, ../../../src/scss/main.scss */
 #toolbar .tools .group {
   background: #272727;
   color: white;
 }
-/* line 77, ../../../src/scss/main.scss */
-#toolbar .tools .tool {
+/* line 97, ../../../src/scss/main.scss */
+#toolbar .tool {
   background: #606060;
 }
-/* line 80, ../../../src/scss/main.scss */
-#toolbar .tools .tool:hover {
-  background: #535353;
-}
-/* line 83, ../../../src/scss/main.scss */
-#toolbar .tools .tool:active, #toolbar .tools .tool.active {
-  color: white;
-  background: #474747;
-}
 
-/* line 91, ../../../src/scss/main.scss */
+/* line 103, ../../../src/scss/main.scss */
 #easel {
   margin: 0 auto;
   padding: 0;
   width: 500px;
 }
 
-/* line 97, ../../../src/scss/main.scss */
+/* line 109, ../../../src/scss/main.scss */
 #main-svg {
   margin: 0;
   display: block;
 }
 
-/* line 103, ../../../src/scss/main.scss */
+/* line 115, ../../../src/scss/main.scss */
 .modal-overlay {
   background: rgba(0, 0, 0, 0.5);
   height: 100%;
@@ -177,7 +188,7 @@ button:focus {
   width: 100%;
 }
 
-/* line 112, ../../../src/scss/main.scss */
+/* line 124, ../../../src/scss/main.scss */
 .modal-wrap {
   margin-top: -250px;
   position: absolute;
@@ -185,7 +196,7 @@ button:focus {
   width: 100%;
 }
 
-/* line 119, ../../../src/scss/main.scss */
+/* line 131, ../../../src/scss/main.scss */
 .modal-content {
   background: #FFF;
   border-radius: 0.5rem;
