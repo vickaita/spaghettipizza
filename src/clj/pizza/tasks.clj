@@ -3,6 +3,7 @@
             [amazonica.core :as aws]
             [clojure.edn :as edn]
             [clojure.java.io :as io]
+            [clojure.java.shell :refer [sh]]
             [cljs.closure :as cljsc]
             [pizza.pages :as pages]))
 
@@ -13,7 +14,9 @@
         creds (edn/read-string (slurp "resources/credentials/aws.clj"))
         home-bytes (.getBytes (pages/home false))
         acl {:grant-permission ["AllUsers" "Read"]}]
-    (aws/with-credential [(:access-key creds) (:secret-key creds) "us-east-1"]
+    (aws/with-credential [(:aws-access-key creds)
+                          (:aws-secret-key creds)
+                          "us-east-1"]
       (println "Testing for the existence of the" bucket-name "bucket.")
       (when-not (s3/does-bucket-exist bucket-name)
         (println "Bucket not found. Creating a bucket called " bucket-name)

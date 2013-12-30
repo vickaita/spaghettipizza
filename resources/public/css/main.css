@@ -81,6 +81,7 @@ body {
 #page {
   background: url("../img/pattern-ruf8.png");
   border-radius: 0.5rem;
+  box-shadow: 0 0 1rem rgba(0, 0, 0, 0.25);
   overflow: hidden;
   -webkit-transform: translateX(10rem);
   -moz-transform: translateX(10rem);
@@ -95,7 +96,7 @@ body {
   -o-transition: -o-transform 100ms linear;
   transition: transform 100ms linear;
 }
-/* line 30, ../../../src/scss/main.scss */
+/* line 31, ../../../src/scss/main.scss */
 .hide-toolbar #page {
   -webkit-transform: translateX(0);
   -moz-transform: translateX(0);
@@ -104,7 +105,7 @@ body {
   transform: translateX(0);
 }
 
-/* line 35, ../../../src/scss/main.scss */
+/* line 36, ../../../src/scss/main.scss */
 #masthead {
   background: rgba(120, 138, 26, 0.75);
   color: #FFF;
@@ -114,7 +115,7 @@ body {
   border-top-width: 5px;
   position: relative;
 }
-/* line 43, ../../../src/scss/main.scss */
+/* line 44, ../../../src/scss/main.scss */
 #masthead h1 {
   margin: 0;
   font-size: 2rem;
@@ -123,7 +124,7 @@ body {
   text-align: center;
 }
 
-/* line 52, ../../../src/scss/main.scss */
+/* line 53, ../../../src/scss/main.scss */
 #menu-control {
   background: url("../img/icons/menu.svg") no-repeat;
   display: block;
@@ -135,7 +136,7 @@ body {
   width: 5rem;
 }
 
-/* line 63, ../../../src/scss/main.scss */
+/* line 64, ../../../src/scss/main.scss */
 button {
   padding: 0.5rem;
   border-radius: 0.5rem;
@@ -145,7 +146,7 @@ button {
   display: block;
 }
 
-/* line 72, ../../../src/scss/main.scss */
+/* line 73, ../../../src/scss/main.scss */
 button:focus {
   outline: none;
 }
@@ -180,34 +181,30 @@ button:focus {
   width: 10rem;
 }
 /* line 27, ../../../src/scss/_toolbar.scss */
-.hide-toolbar .toolbar {
-  width: 0;
-}
-/* line 30, ../../../src/scss/_toolbar.scss */
 .toolbar h2 {
   font-size: 1.4rem;
   color: white;
   padding: 1rem;
   text-align: center;
 }
-/* line 40, ../../../src/scss/_toolbar.scss */
+/* line 37, ../../../src/scss/_toolbar.scss */
 .toolbar .group {
   padding: 0.5rem;
   font-size: 1.5em;
   background: #171723;
   color: white;
 }
-/* line 46, ../../../src/scss/_toolbar.scss */
+/* line 43, ../../../src/scss/_toolbar.scss */
 .toolbar dd {
   border-bottom: 0.1rem solid #54547f;
 }
 
-/* line 55, ../../../src/scss/_toolbar.scss */
+/* line 52, ../../../src/scss/_toolbar.scss */
 #clean, #photo {
   position: relative;
   padding: 0.5rem 0.5rem 0.5rem 2.25rem;
 }
-/* line 58, ../../../src/scss/_toolbar.scss */
+/* line 55, ../../../src/scss/_toolbar.scss */
 #clean:before, #photo:before {
   content: "";
   width: 100%;
@@ -217,30 +214,30 @@ button:focus {
   left: 0;
 }
 
-/* line 70, ../../../src/scss/_toolbar.scss */
+/* line 67, ../../../src/scss/_toolbar.scss */
 #clean:before {
   background: url("../img/icons/refresh.svg") no-repeat;
 }
 
-/* line 70, ../../../src/scss/_toolbar.scss */
+/* line 67, ../../../src/scss/_toolbar.scss */
 #photo:before {
   background: url("../img/icons/share.svg") no-repeat;
 }
 
-/* line 78, ../../../src/scss/main.scss */
+/* line 79, ../../../src/scss/main.scss */
 #easel {
   margin: 0 auto;
   padding: 0;
   width: 500px;
 }
 
-/* line 84, ../../../src/scss/main.scss */
+/* line 85, ../../../src/scss/main.scss */
 #main-svg {
   margin: 0;
   display: block;
 }
 
-/* line 90, ../../../src/scss/main.scss */
+/* line 91, ../../../src/scss/main.scss */
 .modal-overlay {
   background: rgba(0, 0, 0, 0.5);
   height: 100%;
@@ -250,7 +247,7 @@ button:focus {
   width: 100%;
 }
 
-/* line 99, ../../../src/scss/main.scss */
+/* line 100, ../../../src/scss/main.scss */
 .modal-wrap {
   margin-top: -250px;
   position: absolute;
@@ -258,7 +255,7 @@ button:focus {
   width: 100%;
 }
 
-/* line 106, ../../../src/scss/main.scss */
+/* line 107, ../../../src/scss/main.scss */
 .modal-content {
   background: #FFF;
   border-radius: 0.5rem;

@@ -1,2 +1,2 @@
-{:access-key "ACCESS_KEY"
- :secret-key "SECRET_KEY"}
+{:aws-access-key "ACCESS_KEY"
+ :aws-secret-key "SECRET_KEY"}
