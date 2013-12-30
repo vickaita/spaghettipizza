@@ -141,6 +141,9 @@
                    pzz/draw-pizza))
     (pzz/draw-pizza svg-elem)
 
+    (evt/listen (dom/getElement "menu-control") "click"
+                #(cls/toggle (.-body js/document) "hide-toolbar"))
+
     (enable-spaghetti-drawing svg-elem)
     (enable-tool-selection (dom/getElement "toolbar"))
     (enable-photo-button (dom/getElement "photo") svg-elem)))

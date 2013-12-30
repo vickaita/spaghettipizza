@@ -54,6 +54,7 @@
      (toolbar)
      [:div#page
       [:header#masthead
+       [:a#menu-control]
        [:h1 "Spaghetti Pizza"]]
       (easel)]
      (when dev? (include-js "js/goog/base.js"))
