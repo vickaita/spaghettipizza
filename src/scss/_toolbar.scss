@@ -1,0 +1,78 @@
+%tool {
+  padding: 0.5rem;
+  margin: 0.25rem;
+  display: block;
+}
+
+%tool-interactive {
+  &:hover {
+	background: darken($tool-bg, 5);
+  }
+  &.active {
+	color: white;
+	background: darken($tool-bg, 10);
+  }
+}
+
+.toolbar {
+  background: $tool-bg;
+  color: #fff;
+  font-size: 0.8rem;
+  height: 100%;
+  margin: 0;
+  overflow: auto;
+  padding: 0;
+  position: absolute;
+  width: $tool-width;
+  h2 {
+	font-size: 1.4rem;
+	color: white;
+	padding: 1rem;
+	text-align: center;
+  }
+  .action {
+	@extend %tool;
+	@extend %tool-interactive;
+  }
+  .group {
+	padding: 0.5rem;
+	font-size: 1.5em;
+	background: darken($tool-bg, 20);
+	color: white;
+  }
+  dd {
+	border-bottom: 0.1rem solid lighten($tool-bg, 10);
+  }
+  .tool {
+	@extend %tool;
+	@extend %tool-interactive;
+  }
+}
+
+%tool-icon {
+  position: relative;
+  padding: 0.5rem 0.5rem 0.5rem 2.25rem;
+  &:before {
+	content: "";
+	width: 100%;
+	height: 100%;
+	position: absolute;
+	top: 0;
+	left: 0;
+  }
+}
+
+@mixin tool-icon($icon-url) {
+  @extend %tool-icon;
+  &:before {
+	background: url($icon-url) no-repeat;
+  }
+}
+
+#clean {
+  @include tool-icon('../img/icons/refresh.svg');
+}
+
+#photo {
+  @include tool-icon('../img/icons/share.svg');
+}

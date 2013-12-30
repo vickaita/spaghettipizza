@@ -22,10 +22,10 @@
 
 (defn toolbar
   []
-  [:div#toolbar
+  [:div#toolbar.toolbar
    [:div.actions
     [:a#clean.action "Reset"]
-    [:a#photo.action "Photo"]]
+    [:a#photo.action "Share"]]
    [:h2 "Toppings!"]
    [:dl.tools
     [:dt.group "Pasta"]

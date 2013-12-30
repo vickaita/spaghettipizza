@@ -63,21 +63,21 @@ article, aside, details, figcaption, figure, footer, header, hgroup, menu, nav, 
   display: block;
 }
 
-/* line 10, ../../../src/scss/main.scss */
+/* line 9, ../../../src/scss/main.scss */
 .hidden {
   display: none;
 }
 
-/* line 12, ../../../src/scss/main.scss */
+/* line 11, ../../../src/scss/main.scss */
 body {
-  background: #404040;
+  background: #404060;
   font-family: 'Ribeye', cursive;
   font-size: 0.8rem;
   margin: 0;
   padding: 0;
 }
 
-/* line 20, ../../../src/scss/main.scss */
+/* line 19, ../../../src/scss/main.scss */
 #page {
   background: url("../img/pattern-ruf8.png");
   margin-left: 10rem;
@@ -85,12 +85,12 @@ body {
   width: 100%;
   height: 100%;
 }
-/* line 26, ../../../src/scss/main.scss */
+/* line 25, ../../../src/scss/main.scss */
 #page .hide-tools {
   margin-left: 0;
 }
 
-/* line 31, ../../../src/scss/main.scss */
+/* line 30, ../../../src/scss/main.scss */
 #masthead {
   background: rgba(120, 138, 26, 0.75);
   color: #FFF;
@@ -100,7 +100,7 @@ body {
   border-top-width: 5px;
 }
 
-/* line 40, ../../../src/scss/main.scss */
+/* line 39, ../../../src/scss/main.scss */
 h1 {
   margin: 0;
   font-size: 2.4rem;
@@ -109,7 +109,7 @@ h1 {
   text-align: center;
 }
 
-/* line 48, ../../../src/scss/main.scss */
+/* line 47, ../../../src/scss/main.scss */
 button {
   padding: 0.5rem;
   border-radius: 0.5rem;
@@ -119,66 +119,98 @@ button {
   display: block;
 }
 
-/* line 57, ../../../src/scss/main.scss */
+/* line 56, ../../../src/scss/main.scss */
 button:focus {
   outline: none;
 }
 
-/* line 61, ../../../src/scss/main.scss */
-#toolbar {
+/* line 1, ../../../src/scss/_toolbar.scss */
+.toolbar .action, .toolbar .tool {
+  padding: 0.5rem;
+  margin: 0.25rem;
+  display: block;
+}
+
+/* line 8, ../../../src/scss/_toolbar.scss */
+.toolbar .action:hover, .toolbar .tool:hover {
+  background: #363651;
+}
+/* line 11, ../../../src/scss/_toolbar.scss */
+.toolbar .active.action, .toolbar .active.tool {
+  color: white;
+  background: #2c2c41;
+}
+
+/* line 17, ../../../src/scss/_toolbar.scss */
+.toolbar {
+  background: #404060;
+  color: #fff;
+  font-size: 0.8rem;
   height: 100%;
-  background: #404040;
-  font-size: 1rem;
   margin: 0;
+  overflow: auto;
   padding: 0;
   position: absolute;
   width: 10rem;
 }
-/* line 62, ../../../src/scss/main.scss */
-#toolbar .action, #toolbar .tools .group, #toolbar .tool {
-  padding: 1.2rem;
-  display: block;
-}
-/* line 65, ../../../src/scss/main.scss */
-#toolbar .action:hover, #toolbar .tools .group:hover, #toolbar .tool:hover {
-  background: #535353;
-}
-/* line 68, ../../../src/scss/main.scss */
-#toolbar .active.action, #toolbar .tools .active.group, #toolbar .active.tool {
-  color: white;
-  background: #474747;
-}
-/* line 81, ../../../src/scss/main.scss */
-#toolbar h2 {
+/* line 27, ../../../src/scss/_toolbar.scss */
+.toolbar h2 {
   font-size: 1.4rem;
   color: white;
   padding: 1rem;
   text-align: center;
 }
-/* line 91, ../../../src/scss/main.scss */
-#toolbar .tools .group {
-  background: #272727;
+/* line 37, ../../../src/scss/_toolbar.scss */
+.toolbar .group {
+  padding: 0.5rem;
+  font-size: 1.5em;
+  background: #171723;
   color: white;
 }
-/* line 97, ../../../src/scss/main.scss */
-#toolbar .tool {
-  background: #606060;
+/* line 43, ../../../src/scss/_toolbar.scss */
+.toolbar dd {
+  border-bottom: 0.1rem solid #54547f;
 }
 
-/* line 103, ../../../src/scss/main.scss */
+/* line 52, ../../../src/scss/_toolbar.scss */
+#clean, #photo {
+  position: relative;
+  padding: 0.5rem 0.5rem 0.5rem 2.25rem;
+}
+/* line 55, ../../../src/scss/_toolbar.scss */
+#clean:before, #photo:before {
+  content: "";
+  width: 100%;
+  height: 100%;
+  position: absolute;
+  top: 0;
+  left: 0;
+}
+
+/* line 67, ../../../src/scss/_toolbar.scss */
+#clean:before {
+  background: url("../img/icons/refresh.svg") no-repeat;
+}
+
+/* line 67, ../../../src/scss/_toolbar.scss */
+#photo:before {
+  background: url("../img/icons/share.svg") no-repeat;
+}
+
+/* line 62, ../../../src/scss/main.scss */
 #easel {
   margin: 0 auto;
   padding: 0;
   width: 500px;
 }
 
-/* line 109, ../../../src/scss/main.scss */
+/* line 68, ../../../src/scss/main.scss */
 #main-svg {
   margin: 0;
   display: block;
 }
 
-/* line 115, ../../../src/scss/main.scss */
+/* line 74, ../../../src/scss/main.scss */
 .modal-overlay {
   background: rgba(0, 0, 0, 0.5);
   height: 100%;
@@ -188,7 +220,7 @@ button:focus {
   width: 100%;
 }
 
-/* line 124, ../../../src/scss/main.scss */
+/* line 83, ../../../src/scss/main.scss */
 .modal-wrap {
   margin-top: -250px;
   position: absolute;
@@ -196,7 +228,7 @@ button:focus {
   width: 100%;
 }
 
-/* line 131, ../../../src/scss/main.scss */
+/* line 90, ../../../src/scss/main.scss */
 .modal-content {
   background: #FFF;
   border-radius: 0.5rem;

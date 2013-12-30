@@ -1,8 +1,7 @@
 @import "compass/reset";
 
 $green: rgb(17, 172, 11);
-$toolbar-bg: rgb(64, 64, 64);
-$tool-bg: rgb(96, 96, 96);
+$tool-bg: rgb(64, 64, 96);
 
 $tool-width: 10rem;
 
@@ -10,7 +9,7 @@ $tool-width: 10rem;
 .hidden { display: none; }
 
 body {
-  background: $toolbar-bg;
+  background: $tool-bg;
   font-family: 'Ribeye', cursive;
   font-size: 0.8rem;
   margin: 0;
@@ -58,47 +57,7 @@ button:focus {
   outline: none;
 }
 
-#toolbar {
-  %tool {
-    padding: 1.2rem;
-    display: block;
-    &:hover {
-      background: darken($tool-bg, 5);
-    }
-    &.active {
-      color: white;
-      background: darken($tool-bg, 10);
-    }
-  }
-  height: 100%;
-  background: $toolbar-bg;
-  font-size: 1rem;
-  margin: 0;
-  padding: 0;
-  position: absolute;
-  width: $tool-width;
-
-  h2 {
-    font-size: 1.4rem;
-    color: white;
-    padding: 1rem;
-    text-align: center;
-  }
-  .action {
-    @extend %tool;
-  }
-  .tools {
-    .group {
-      @extend %tool;
-      background: darken($toolbar-bg, 10);
-      color: white;
-    }
-  }
-  .tool {
-    background: $tool-bg;
-    @extend %tool;
-  }
-}
+@import 'toolbar';
 
 #easel {
   margin: 0 auto;
