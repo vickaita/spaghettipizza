@@ -76,7 +76,7 @@
                   :metadata {:content-length (.length file)
                              :content-type "image/png"})
                 (str {:file-name file-name})))))) 
-  (route/not-found #(pages/error-404)))
+  (route/not-found (pages/error-404)))
 
 (defn -main
   [& args]
