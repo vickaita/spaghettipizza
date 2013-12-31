@@ -78,6 +78,16 @@ body {
 }
 
 /* line 21, ../../../src/scss/main.scss */
+#site {
+  height: 100%;
+  margin: 0;
+  overflow: hidden;
+  padding: 0;
+  position: absolute;
+  width: 100%;
+}
+
+/* line 30, ../../../src/scss/main.scss */
 #page {
   background: url("../img/pattern-ruf8.png");
   border-radius: 0.5rem;
@@ -96,7 +106,7 @@ body {
   -o-transition: -o-transform 100ms linear;
   transition: transform 100ms linear;
 }
-/* line 31, ../../../src/scss/main.scss */
+/* line 40, ../../../src/scss/main.scss */
 .hide-toolbar #page {
   -webkit-transform: translateX(0);
   -moz-transform: translateX(0);
@@ -105,7 +115,7 @@ body {
   transform: translateX(0);
 }
 
-/* line 36, ../../../src/scss/main.scss */
+/* line 45, ../../../src/scss/main.scss */
 #masthead {
   background: rgba(120, 138, 26, 0.75);
   color: #FFF;
@@ -115,7 +125,7 @@ body {
   border-top-width: 5px;
   position: relative;
 }
-/* line 44, ../../../src/scss/main.scss */
+/* line 53, ../../../src/scss/main.scss */
 #masthead h1 {
   margin: 0;
   font-size: 2rem;
@@ -124,7 +134,7 @@ body {
   text-align: center;
 }
 
-/* line 53, ../../../src/scss/main.scss */
+/* line 62, ../../../src/scss/main.scss */
 #menu-control {
   background: url("../img/icons/menu.svg") no-repeat;
   display: block;
@@ -136,7 +146,7 @@ body {
   width: 5rem;
 }
 
-/* line 64, ../../../src/scss/main.scss */
+/* line 73, ../../../src/scss/main.scss */
 button {
   padding: 0.5rem;
   border-radius: 0.5rem;
@@ -146,7 +156,7 @@ button {
   display: block;
 }
 
-/* line 73, ../../../src/scss/main.scss */
+/* line 82, ../../../src/scss/main.scss */
 button:focus {
   outline: none;
 }
@@ -224,20 +234,20 @@ button:focus {
   background: url("../img/icons/share.svg") no-repeat;
 }
 
-/* line 79, ../../../src/scss/main.scss */
+/* line 88, ../../../src/scss/main.scss */
 #easel {
   margin: 0 auto;
   padding: 0;
   width: 500px;
 }
 
-/* line 85, ../../../src/scss/main.scss */
+/* line 94, ../../../src/scss/main.scss */
 #main-svg {
   margin: 0;
   display: block;
 }
 
-/* line 91, ../../../src/scss/main.scss */
+/* line 100, ../../../src/scss/main.scss */
 .modal-overlay {
   background: rgba(0, 0, 0, 0.5);
   height: 100%;
@@ -247,7 +257,7 @@ button:focus {
   width: 100%;
 }
 
-/* line 100, ../../../src/scss/main.scss */
+/* line 109, ../../../src/scss/main.scss */
 .modal-wrap {
   margin-top: -250px;
   position: absolute;
@@ -255,7 +265,7 @@ button:focus {
   width: 100%;
 }
 
-/* line 107, ../../../src/scss/main.scss */
+/* line 116, ../../../src/scss/main.scss */
 .modal-content {
   background: #FFF;
   border-radius: 0.5rem;

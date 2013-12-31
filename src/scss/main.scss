@@ -18,6 +18,15 @@ body {
   padding: 0;
 }
 
+#site {
+  height: 100%;
+  margin: 0;
+  overflow: hidden;
+  padding: 0;
+  position: absolute;
+  width: 100%;
+}
+
 #page {
   background: url('../img/pattern-ruf8.png');
   border-radius: 0.5rem;

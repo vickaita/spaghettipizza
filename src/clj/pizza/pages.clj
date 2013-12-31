@@ -51,12 +51,13 @@
   (html5 {:lang "en-us"}
     (head "Spaghetti Pizza: The Adventure Begins!")
     [:body
-     (toolbar)
-     [:div#page
-      [:header#masthead
-       [:a#menu-control]
-       [:h1 "Spaghetti Pizza"]]
-      (easel)]
+     [:div#site
+      (toolbar)
+      [:div#page
+       [:header#masthead
+        [:a#menu-control]
+        [:h1 "Spaghetti Pizza"]]
+       (easel)]]
      (if dev?
        (include-js "js/debug/goog/base.js"
                    "js/debug/pizza.js")
@@ -69,15 +70,16 @@
   (html5 {:lang "en-us"}
     (head "Behold! A wonderous pizza created with spaghetti!")
     [:body
-     [:div#page
-      [:p "This pizza was lovingly crafted with the finest locally sourced"
-       [:span "SVG"]
-       ". You may be wondering what makes Spaghetti Pizza so wonderful. Is it
-       perhaps the delicious rich creamyness of the carbs? No it's something
-       more; something special. Take this this pizza for instance:"]
-      [:img.pizza {:src (str "//spaghettipizza.us/pizza/")
-                   :alt "A glorious Spaghetti Pizza!"}]
-      [:p "Does it not tantalize you?"]]]))
+     [:div#site
+      [:div#page
+       [:p "This pizza was lovingly crafted with the finest locally sourced"
+        [:span "SVG"]
+        ". You may be wondering what makes Spaghetti Pizza so wonderful. Is it
+        perhaps the delicious rich creamyness of the carbs? No it's something
+        more; something special. Take this this pizza for instance:"]
+       [:img.pizza {:src (str "//spaghettipizza.us/pizza/")
+                    :alt "A glorious Spaghetti Pizza!"}]
+       [:p "Does it not tantalize you?"]]]]))
 
 (defn error-404
   []
