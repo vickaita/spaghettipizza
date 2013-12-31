@@ -34,5 +34,8 @@
                            :output-dir "resources/public/js"
                            :optimizations :advanced}}]}
   ;:core.typed {:check [pizza.types]}
+  :profiles {:dev {:foo 1}
+             :prod {:aot [pizza.handler]
+                    :foo 2}}
   :aliases {"push-ui" ["run" "-m" "pizza.tasks/push-ui"]
             "push-api" ["run" "-m" "pizza.tasks/push-api"]})

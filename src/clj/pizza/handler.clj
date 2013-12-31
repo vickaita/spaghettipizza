@@ -1,4 +1,5 @@
 (ns pizza.handler
+  (:gen-class) 
   (:require [compojure.core :as c :refer [defroutes GET PATCH PUT POST DELETE]]
             [compojure.handler :as h :refer [site]]
             [compojure.route :as route :refer [files not-found]]
@@ -14,11 +15,10 @@
             [amazonica.core :as aws]
             [digest])
   (:import (org.apache.commons.codec.binary Base64)
-           (javax.imageio ImageIO))
-  (:gen-class))
+           (javax.imageio ImageIO)))
 
-(def ^{:const true} json-header
-  {"Content-Type" "application/json; charset=utf-8"})
+;(def ^{:const true} json-header
+;  {"Content-Type" "application/json; charset=utf-8"})
 
 (def dev-mode (atom true))
 
@@ -31,10 +31,10 @@
 
 (defn set-credentials
   []
-  (let [credential (edn/read-string (slurp "resources/credentials/aws.clj"))]
+  (let [creds (edn/read-string (slurp (io/resource "credentials/aws.clj")))]
     (aws/defcredential
-      (:aws-access-key credential)
-      (:aws-secret-key credential)
+      (:aws-access-key creds)
+      (:aws-secret-key creds)
       "us-east-1")))
 
 (defn ensure-bucket

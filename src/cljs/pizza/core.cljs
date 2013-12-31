@@ -17,6 +17,8 @@
             [pizza.pizza :as pzz]
             [pizza.spaghetti :refer [create-topping add-point!]]))
 
+(enable-console-print!)
+
 (defn event-channel
   [event-type element]
   (let [out (chan)]
@@ -46,9 +48,11 @@
         left (.-left offset)
         top (.-top offset)]
     (case (.-type e)
-      ("touchstart" "touchmove") (let [t (-> e .getBrowserEvent .-touches (aget 0))]
-                                   [(- (.-pageX t) left) (- (.-pageY t) top)])
-      "touchend" nil
+      ("touchstart" "touchmove")
+      (let [t (-> e .getBrowserEvent .-touches (aget 0))]
+        [(- (.-pageX t) left) (- (.-pageY t) top)])
+      "touchend"
+      nil
       (let [b (.getBrowserEvent e)]
         [(- (.-pageX b) left) (- (.-pageY b) top)]))))
 
@@ -124,19 +128,21 @@
                 (fn [e]
                   (.preventDefault e)
                   (go (let [[uri blob] (<! (svg/svg->img-chan svg-elem))
-                            ;"http://api.spaghettipizza.us/pizza/"
                             data (doto (js/FormData.) (.append "data" blob))
-                            resp (<! (xhr-channel "/pizza/" "POST" data))]
-                        (.log js/console resp)
+                            resp (<! (xhr-channel
+                                       "http://api.spaghettipizza.us/pizza/"
+                                       "POST"
+                                       data))]
                         (dom/removeChildren pizza-container)
                         (dom/append pizza-container (node [:img {:src uri}]))
                         (cls/remove modal "hidden")))))))
 
 (defn -main
   []
-  (let [svg-elem (dom/getElement "main-svg")
-        #_send-message #_(connect-to-server)]
-
+  ;; Allow messaging to the api.spaghettipizza.us subdomain.
+  (when (= "spaghettipizza.us" (.-domain js/document))
+    (set! (.-domain js/document) "spaghettipizza.us"))
+  (let [svg-elem (dom/getElement "main-svg")]
     #_(adjust-easel-size svg-elem)
     (evt/listen (dom/getElement "clean") "click"
                 #(doto svg-elem

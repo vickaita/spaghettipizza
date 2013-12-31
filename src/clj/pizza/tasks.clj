@@ -5,13 +5,18 @@
             [clojure.java.io :as io]
             [clojure.java.shell :refer [sh]]
             [cljs.closure :as cljsc]
-            [pizza.pages :as pages]))
+            [environ.core :refer [env]]
+            [pizza.pages :as pages])
+  (:import (java.io File FileNotFoundException)))
+
+;; TODO: should probably replace this file with some Rake tasks. It seems that
+;; Ruby may just be better suited to this type of work.
 
 (defn push-ui
   "Push the files up to S3."
   []
   (let [bucket-name "spaghettipizza.us"
-        creds (edn/read-string (slurp "resources/credentials/aws.clj"))
+        creds (edn/read-string (slurp (io/resource "credentials/aws.clj")))
         home-bytes (.getBytes (pages/home false))
         acl {:grant-permission ["AllUsers" "Read"]}]
     (aws/with-credential [(:aws-access-key creds)
@@ -52,13 +57,20 @@
           :file js
           :access-control-list acl)
         (println "Uploading images ...")
-        (doseq [img (-> "resources/public/img" io/file file-seq rest)]
-          (s3/put-object
-            :bucket-name bucket-name
-            :key (str "img/" (.getName img))
-            :file (io/file img)
-            :access-control-list acl))))))
+        (let [all-files (file-seq (io/file "resources/public/img/"))
+              only-files (remove #(.isDirectory %) all-files)]
+          (doseq [img only-files]
+            (s3/put-object
+              :bucket-name bucket-name
+              :key (.substring (.getPath img) 17)
+              :file (io/file img)
+              :access-control-list acl)))))))
 
 (defn push-api
   []
-  ())
+  (println "Building the uberjar.")
+  (sh "lein" "with-profile" "prod" "uberjar")
+  (println "Copying the jar to the api server.")
+  (sh "scp"
+      (str "./target/pizza-" (:pizza-version env) "-standalone.jar")
+      (str "api.spaghettipizza.us:~/")))
