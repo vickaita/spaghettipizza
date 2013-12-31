@@ -7,7 +7,7 @@
             [goog.events :as evt]
             [goog.net.XhrIo :as xhr]
             [goog.net.WebSocket]
-            [cljs.core.async :refer [put! chan <! map<]]
+            [cljs.core.async :refer [put! close! chan <! map<]]
             [clojure.browser.repl :as repl]
             [dommy.core]
             [vickaita.channels :refer [event websocket]]
@@ -21,6 +21,12 @@
   [event-type element]
   (let [out (chan)]
     (evt/listen element event-type (fn [e] (put! out e)))
+    out))
+
+(defn xhr-channel
+  [url method data]
+  (let [out (chan)]
+    (xhr/send url (fn [res] (put! out res)) method data)
     out))
 
 (defn adjust-easel-size
@@ -117,17 +123,14 @@
     (evt/listen button "click"
                 (fn [e]
                   (.preventDefault e)
-                  (let [img-chan (svg/svg->img-chan svg-elem)]
-                    (go (let [[uri blob] (<! img-chan)]
-                          ;"http://api.spaghettipizza.us/pizza/" 
-                          (xhr/send "/pizza/"
-                                    (fn [resp] (.log js/console resp))
-                                    "POST"
-                                    (doto (js/FormData.)
-                                      (.append "data" blob)))
-                          (dom/removeChildren pizza-container)
-                          (dom/append pizza-container (node [:img {:src uri}]))
-                          (cls/remove modal "hidden"))))))))
+                  (go (let [[uri blob] (<! (svg/svg->img-chan svg-elem))
+                            ;"http://api.spaghettipizza.us/pizza/"
+                            data (doto (js/FormData.) (.append "data" blob))
+                            resp (<! (xhr-channel "/pizza/" "POST" data))]
+                        (.log js/console resp)
+                        (dom/removeChildren pizza-container)
+                        (dom/append pizza-container (node [:img {:src uri}]))
+                        (cls/remove modal "hidden")))))))
 
 (defn -main
   []

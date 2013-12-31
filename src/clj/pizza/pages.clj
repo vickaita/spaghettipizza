@@ -57,8 +57,10 @@
        [:a#menu-control]
        [:h1 "Spaghetti Pizza"]]
       (easel)]
-     (when dev? (include-js "js/goog/base.js"))
-     (include-js "js/pizza.js")
+     (if dev?
+       (include-js "js/debug/goog/base.js"
+                   "js/debug/pizza.js")
+       (include-js "js/pizza.js"))
      (when dev? [:script {:type "text/javascript"}
                  "goog.require(\"pizza.core\");"])]))
 
@@ -76,8 +78,6 @@
       [:img.pizza {:src (str "//spaghettipizza.us/pizza/")
                    :alt "A glorious Spaghetti Pizza!"}]
       [:p "Does it not tantalize you?"]]]))
-
-(show "sadkjfasiodnvsoidnfaslf.jpg")
 
 (defn error-404
   []

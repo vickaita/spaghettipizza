@@ -23,9 +23,9 @@
   :cljsbuild {:builds
               [{:id "dev"
                 :source-paths ["src/cljs"]
-                :compiler {:output-to "resources/public/js/pizza-debug.js"
-                           :output-dir "resources/public/js"
-                           :optimizations :whitespace
+                :compiler {:output-to "resources/public/js/debug/pizza.js"
+                           :output-dir "resources/public/js/debug"
+                           :optimizations :none
                            :pretty-print true
                            :source-map true}}
                {:id "prod"

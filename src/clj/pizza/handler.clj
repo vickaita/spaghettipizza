@@ -5,7 +5,8 @@
             [ring.adapter.jetty :refer [run-jetty]]
             [ring.middleware.reload :as reload] 
             [ring.middleware.multipart-params :as mp]
-            [org.httpkit.server :as s :refer [run-server send! on-close on-receive]]
+            [org.httpkit.server :as s :refer [run-server send! on-close
+                                              on-receive]]
             [pizza.pages :as pages]
             [clojure.edn :as edn]
             [clojure.java.io :as io]
@@ -45,9 +46,9 @@
 
 (defroutes dev-routes
   (GET "/" [] (pages/home @dev-mode))
-  (GET "/pizza/:id" [] (pages/show @dev-mode))
+  #_(GET "/pizza/" [] (pages/show @dev-mode))
   (mp/wrap-multipart-params
-    (POST "/pizza/" {params :params :as req}
+    (POST "/pizza/" {params :params}
           (let [file (get-in params [:data :tempfile])]
             (with-open [png-stream (io/input-stream file)]
               (let [file-name (str "pizza/" (digest/md5 file) ".png")]
@@ -82,9 +83,7 @@
   [& args]
   (set-mode)
   (set-credentials)
-  (ensure-bucket)
-  (run-jetty
-    (if @dev-mode
-      (reload/wrap-reload (site #'dev-routes))
-      (site #'prod-routes))
-    {:port 8080}))
+  ;(ensure-bucket)
+  (if @dev-mode
+    (run-jetty (reload/wrap-reload (site #'dev-routes)) {:port 8080})
+    (run-jetty (site #'prod-routes) {:port 8080})))
