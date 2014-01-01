@@ -1,19 +1,19 @@
 (ns pizza.handler
   (:gen-class) 
-  (:require [compojure.core :as c :refer [defroutes GET PATCH PUT POST DELETE]]
+  (:require [compojure.core :as c :refer [defroutes OPTIONS GET POST]]
             [compojure.handler :as h :refer [site]]
             [compojure.route :as route :refer [files not-found]]
             [ring.adapter.jetty :refer [run-jetty]]
             [ring.middleware.reload :as reload] 
             [ring.middleware.multipart-params :as mp]
-            [org.httpkit.server :as s :refer [run-server send! on-close
-                                              on-receive]]
+            [ring.util.response :as response]
             [pizza.pages :as pages]
             [clojure.edn :as edn]
             [clojure.java.io :as io]
             [amazonica.aws.s3 :as s3]
             [amazonica.core :as aws]
-            [digest])
+            [digest]
+            [environ.core :refer [env]])
   (:import (org.apache.commons.codec.binary Base64)
            (javax.imageio ImageIO)))
 
@@ -45,7 +45,9 @@
     (s3/create-bucket bucket-name)))
 
 (defroutes dev-routes
-  (GET "/" [] (pages/home @dev-mode))
+  (GET "/" [] (if @dev-mode
+                (pages/home true)
+                (response/redirect "spaghettipizza.us")))
   #_(GET "/pizza/" [] (pages/show @dev-mode))
   (mp/wrap-multipart-params
     (POST "/pizza/" {params :params}
@@ -64,6 +66,10 @@
   (route/not-found #(pages/error-404)))
 
 (defroutes prod-routes
+  (OPTIONS "/pizza/" []
+           {:status 200
+            :headers {:access-control-allow-origin "http://spaghettipizza.us"}
+            :body "OK"})
   (mp/wrap-multipart-params
     (POST "/pizza/" {params :params :as req}
           (let [file (get-in params [:data :tempfile])]
@@ -76,7 +82,9 @@
                   :access-control-list {:grant-permission ["AllUsers" "Read"]}
                   :metadata {:content-length (.length file)
                              :content-type "image/png"})
-                (str {:file-name file-name})))))) 
+                {:status 200
+                 :headers {:access-control-allow-origin "http://spaghettipizza.us"}
+                 :body (str {:file-name file-name})}))))) 
   (route/not-found (pages/error-404)))
 
 (defn -main
