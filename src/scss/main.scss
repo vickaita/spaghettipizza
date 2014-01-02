@@ -1,4 +1,5 @@
 @import "compass/reset";
+@import "compass/css3/images";
 @import "compass/css3/transform";
 @import "compass/css3/transition";
 
@@ -43,7 +44,8 @@ body {
 }
 
 #masthead {
-  background: rgba(120, 138, 26, 0.75);
+  $bg: rgb(120, 138, 26);
+  @include background-image(linear-gradient(top, tint($bg, 10%), $bg, shade($bg, 10%)));
   color: #FFF;
   padding: 0.5rem;
   border-top-color: rgb(17, 172, 11);
@@ -60,14 +62,15 @@ body {
 }
 
 #menu-control {
-  background: url('../img/icons/menu.svg') no-repeat;
+  background: url('../img/icons/menu.svg') no-repeat center;
+  background-size: 80% 80%;
   display: block;
   height: 100%;
   left: 0;
   margin-left: 0.5rem;
   position: absolute;
   top: 0;
-  width: 5rem;
+  width: 2rem;
 }
 
 button {
