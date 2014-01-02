@@ -46,10 +46,8 @@
     (s3/create-bucket bucket-name)))
 
 (defroutes dev-routes
-  (GET "/" [] (if @dev-mode
-                (pages/home true)
-                (response/redirect "spaghettipizza.us")))
-  #_(GET "/pizza/" [] (pages/show @dev-mode))
+  (GET "/" [] (pages/home true))
+  #_(GET "/pizza/" [] (pages/show true))
   (mp/wrap-multipart-params
     (POST "/pizza/" {params :params}
           (let [file (get-in params [:data :tempfile])]
@@ -64,7 +62,7 @@
                              :content-type "image/png"})
                 (str {:file-name file-name})))))) 
   (route/files "/" {:root "resources/public"})
-  (route/not-found #(pages/error-404)))
+  (route/not-found (pages/error-404)))
 
 (defroutes prod-routes
   (mp/wrap-multipart-params

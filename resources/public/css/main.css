@@ -93,26 +93,26 @@ body {
   border-radius: 0.5rem;
   box-shadow: 0 0 1rem rgba(0, 0, 0, 0.25);
   overflow: hidden;
-  -webkit-transform: translateX(10rem);
-  -moz-transform: translateX(10rem);
-  -ms-transform: translateX(10rem);
-  -o-transform: translateX(10rem);
-  transform: translateX(10rem);
   position: absolute;
   width: 100%;
   height: 100%;
+  -webkit-transform: translateX(0);
+  -moz-transform: translateX(0);
+  -ms-transform: translateX(0);
+  -o-transform: translateX(0);
+  transform: translateX(0);
   -webkit-transition: -webkit-transform 100ms linear;
   -moz-transition: -moz-transform 100ms linear;
   -o-transition: -o-transform 100ms linear;
   transition: transform 100ms linear;
 }
 /* line 40, ../../../src/scss/main.scss */
-.hide-toolbar #page {
-  -webkit-transform: translateX(0);
-  -moz-transform: translateX(0);
-  -ms-transform: translateX(0);
-  -o-transform: translateX(0);
-  transform: translateX(0);
+.show-toolbar #page {
+  -webkit-transform: translateX(10rem);
+  -moz-transform: translateX(10rem);
+  -ms-transform: translateX(10rem);
+  -o-transform: translateX(10rem);
+  transform: translateX(10rem);
 }
 
 /* line 45, ../../../src/scss/main.scss */

@@ -32,13 +32,13 @@ body {
   border-radius: 0.5rem;
   box-shadow: 0 0 1rem rgba(0, 0, 0, 0.25);
   overflow: hidden;
-  @include transform(translateX($tool-width));
   position: absolute;
   width: 100%;
   height: 100%;
+  @include transform(translateX(0));
   @include transition(transform 100ms linear);
-  .hide-toolbar & {
-    @include transform(translateX(0));
+  .show-toolbar & {
+    @include transform(translateX($tool-width));
   }
 }
 

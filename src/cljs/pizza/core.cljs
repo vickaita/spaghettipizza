@@ -49,7 +49,6 @@
         left (.-left offset)
         top (.-top offset)
         scale-factor (/ 500 (.-width offset))]
-    (prn scale-factor)
     (case (.-type e)
       ("touchstart" "touchmove")
       (let [t (-> e .getBrowserEvent .-touches (aget 0))]
@@ -156,7 +155,7 @@
     (pzz/draw-pizza svg-elem)
 
     (evt/listen (dom/getElement "menu-control") "click"
-                #(cls/toggle (.-body js/document) "hide-toolbar"))
+                #(cls/toggle (.-body js/document) "show-toolbar"))
 
     (enable-spaghetti-drawing svg-elem)
     (enable-tool-selection (dom/getElement "toolbar"))
