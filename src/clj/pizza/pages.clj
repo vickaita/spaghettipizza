@@ -42,7 +42,7 @@
    [:div#easel
     [:svg#main-svg {:width width
                     :height height
-                    :viewPort (str "0 0 " width " " height)
+                    :viewBox (str "0 0 " width " " height)
                     :version "1.1"
                     :xmlns "http://www.w3.org/2000/svg"}]]))
 
