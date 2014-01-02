@@ -35,12 +35,11 @@
 
 (defn adjust-easel-size
   [easel]
-  (let [size (.getBoundingClientRect (dom/getElement "page"))
+  (let [size (.getBoundingClientRect (dom/getElement "easel"))
         side (min (.-width size) (.-height size))]
     (doto easel
       (.setAttribute "width" side)
-      (.setAttribute "height" side)
-      (.setAttribute "viewport" (str "0 0 " side " " side)))))
+      (.setAttribute "height" side))))
 
 (defn normalize-point
   "Convert an event into a point."
@@ -48,15 +47,19 @@
   (let [elem (.-currentTarget e)
         offset (.getBoundingClientRect elem)
         left (.-left offset)
-        top (.-top offset)]
+        top (.-top offset)
+        scale-factor (/ 500 (.-width offset))]
+    (prn scale-factor)
     (case (.-type e)
       ("touchstart" "touchmove")
       (let [t (-> e .getBrowserEvent .-touches (aget 0))]
-        [(- (.-pageX t) left) (- (.-pageY t) top)])
+        [(* scale-factor (- (.-pageX t) left))
+         (* scale-factor (- (.-pageY t) top))])
       "touchend"
       nil
       (let [b (.getBrowserEvent e)]
-        [(- (.-pageX b) left) (- (.-pageY b) top)]))))
+        [(* scale-factor (- (.-pageX b) left))
+         (* scale-factor (- (.-pageY b) top))]))))
 
 (def current-noodle (atom nil))
 (def current-tool (atom :spaghetti))
@@ -145,7 +148,7 @@
   (when (= "spaghettipizza.us" (.-domain js/document))
     (set! (.-domain js/document) "spaghettipizza.us"))
   (let [svg-elem (dom/getElement "main-svg")]
-    #_(adjust-easel-size svg-elem)
+    (adjust-easel-size svg-elem)
     (evt/listen (dom/getElement "clean") "click"
                 #(doto svg-elem
                    dom/removeChildren

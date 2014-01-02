@@ -128,7 +128,7 @@ body {
 /* line 53, ../../../src/scss/main.scss */
 #masthead h1 {
   margin: 0;
-  font-size: 2rem;
+  font-size: 1.2rem;
   line-height: 1.4;
   text-shadow: 1px 1px #F86969;
   text-align: center;
@@ -238,16 +238,17 @@ button:focus {
 #easel {
   margin: 0 auto;
   padding: 0;
-  width: 500px;
+  width: 100%;
+  height: 100%;
 }
 
-/* line 94, ../../../src/scss/main.scss */
+/* line 95, ../../../src/scss/main.scss */
 #main-svg {
   margin: 0;
   display: block;
 }
 
-/* line 100, ../../../src/scss/main.scss */
+/* line 101, ../../../src/scss/main.scss */
 .modal-overlay {
   background: rgba(0, 0, 0, 0.5);
   height: 100%;
@@ -257,7 +258,7 @@ button:focus {
   width: 100%;
 }
 
-/* line 109, ../../../src/scss/main.scss */
+/* line 110, ../../../src/scss/main.scss */
 .modal-wrap {
   margin-top: -250px;
   position: absolute;
@@ -265,7 +266,7 @@ button:focus {
   width: 100%;
 }
 
-/* line 116, ../../../src/scss/main.scss */
+/* line 117, ../../../src/scss/main.scss */
 .modal-content {
   background: #FFF;
   border-radius: 0.5rem;
