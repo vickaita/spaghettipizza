@@ -43,7 +43,8 @@
 (defrecord Spaghetti [element border inner points length]
   Topping
   (add-point! [this point]
-    (if (< length 250)
+    (if (and (< length 400)
+             (< 5 (distance (peek points) point)))
       (let [new-points (conj points point)]
         (.setAttribute inner "points" (points->str new-points))
         (.setAttribute border "points" (points->str new-points))
