@@ -31,6 +31,8 @@
     (xhr/send url (fn [res] (put! out res)) method data)
     out))
 
+;; #(-> out (put! %) (close!))
+
 (defn adjust-easel-size
   [easel]
   (let [size (.getBoundingClientRect (dom/getElement "page"))

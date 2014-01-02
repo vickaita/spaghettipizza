@@ -7,6 +7,7 @@
             [ring.middleware.reload :as reload] 
             [ring.middleware.multipart-params :as mp]
             [ring.util.response :as response]
+            [ring.middleware.cors :as cors]
             [pizza.pages :as pages]
             [clojure.edn :as edn]
             [clojure.java.io :as io]
@@ -66,10 +67,6 @@
   (route/not-found #(pages/error-404)))
 
 (defroutes prod-routes
-  (OPTIONS "/pizza/" []
-           {:status 200
-            :headers {:access-control-allow-origin "http://spaghettipizza.us"}
-            :body "OK"})
   (mp/wrap-multipart-params
     (POST "/pizza/" {params :params :as req}
           (let [file (get-in params [:data :tempfile])]
@@ -83,12 +80,13 @@
                   :metadata {:content-length (.length file)
                              :content-type "image/png"})
                 {:status 200
-                 :headers {:access-control-allow-origin "http://spaghettipizza.us"}
+                 :headers {"Access-Control-Allow-Origin" "http://spaghettipizza.us"}
                  :body (str {:file-name file-name})}))))) 
   (route/not-found (pages/error-404)))
 
 (defn -main
   [& args]
+  (println "Starting server; VERSION =" (:pizza-version env))
   (set-mode)
   (set-credentials)
   ;(ensure-bucket)
