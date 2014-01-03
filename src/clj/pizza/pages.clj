@@ -27,11 +27,12 @@
     [:a#clean.action "Reset"]
     [:a#photo.action "Share"]]
    [:h2 "Toppings!"]
-   [:dl.tools
+   [:dl#pasta.tools
     [:dt.group "Pasta"]
     [:dd [:a.tool.active {:data-tool "spaghetti"} "Spaghetti"]]
     [:dd [:a.tool {:data-tool "ziti"} "Ziti"]]
-    [:dd [:a.tool {:data-tool "linguini"} "Linguini"]]
+    [:dd [:a.tool {:data-tool "linguini"} "Linguini"]]]
+   [:dl#cheese.tools
     [:dt.group "Cheese"]
     [:dd [:a.tool {:data-tool "ricotta"} "Ricotta"]]]])
 
