@@ -38,13 +38,14 @@
 
 (defn easel
   "Create a drawing surface."
-  ([] (easel 500 500))
+  ([] (easel 512 512))
   ([width height]
    [:div#easel
     [:svg#main-svg {:width width
                     :height height
                     :viewBox (str "0 0 " width " " height)
                     :version "1.1"
+                    :preserveAspectRatio "xMidYMid"
                     :xmlns "http://www.w3.org/2000/svg"}]]))
 
 (defn home

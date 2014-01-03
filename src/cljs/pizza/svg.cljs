@@ -78,10 +78,8 @@
       (.setAttribute "d" (str (join " " curves) " Z")))))
 
 (defn svg->img-chan
-  [svg-elem]
-  (let [w (.getAttribute svg-elem "width")
-        h (.getAttribute svg-elem "height")
-        img (doto (js/Image.)
+  [svg-elem w h]
+  (let [img (doto (js/Image.)
               (.setAttribute "width" w)
               (.setAttribute "height" h))
         canvas (doto (dom/createElement "canvas")

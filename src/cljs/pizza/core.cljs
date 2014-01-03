@@ -48,7 +48,7 @@
         offset (.getBoundingClientRect elem)
         left (.-left offset)
         top (.-top offset)
-        scale-factor (/ 500 (.-width offset))]
+        scale-factor (/ 512 (.-width offset))]
     (case (.-type e)
       ("touchstart" "touchmove")
       (let [t (-> e .getBrowserEvent .-touches (aget 0))]
@@ -131,14 +131,14 @@
     (evt/listen button "click"
                 (fn [e]
                   (.preventDefault e)
-                  (go (let [[uri blob] (<! (svg/svg->img-chan svg-elem))
+                  (go (let [[uri blob] (<! (svg/svg->img-chan svg-elem 612 612))
                             data (doto (js/FormData.) (.append "data" blob))
                             resp (<! (xhr-channel
                                        "http://api.spaghettipizza.us/pizza/"
                                        "POST"
                                        data))]
                         (dom/removeChildren pizza-container)
-                        (dom/append pizza-container (node [:img {:src uri}]))
+                        (dom/append pizza-container (node [:img.preview {:src uri}]))
                         (cls/remove modal "hidden")))))))
 
 (defn -main
