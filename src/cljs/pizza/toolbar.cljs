@@ -5,7 +5,8 @@
             [goog.dom :as dom]
             [goog.dom.classlist :as cls]
             [goog.events :as evt]
-            [vickaita.channels :as ch]))
+            [vickaita.channels :as ch]
+            [pizza.spaghetti]))
 
 (def current-tool (atom :spaghetti))
 
@@ -33,7 +34,6 @@
         clicks (map< #(.-target %) (ch/events "click" toolbar))]
     (go-loop [elem (<! clicks)]
              (when-let [tool (keyword (.getAttribute elem "data-tool"))]
-               (prn tool)
                (reset! current-tool tool)
                (js/ga "send" "event" "tool" "select" (name tool))
                (activate-tool! tools elem)

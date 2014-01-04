@@ -2,7 +2,7 @@
   :description "Spaghetti Pizza -- the original pasta on pizza simulator!"
   :url "http://spaghettipizza.us"
   :dependencies [[org.clojure/clojure "1.5.1"]
-                 [org.clojure/clojurescript "0.0-2127"]
+                 [org.clojure/clojurescript "0.0-2138"]
                  [org.clojure/core.async "0.1.242.0-44b1e3-alpha"]
                  [org.clojure/core.typed "0.2.19"]
                  [org.clojure/tools.logging "0.2.6"]
@@ -29,14 +29,22 @@
                            :optimizations :none
                            :pretty-print true
                            :source-map true}}
+               {:id "test"
+                :source-paths ["src/cljs"]
+                :compiler {:output-to "resources/public/js/pizza.js"
+                           :output-dir "resources/public/js"
+                           :source-map "resources/public/js/pizza.js.map"
+                           :optimizations :advanced}}
                {:id "prod"
                 :source-paths ["src/cljs"]
                 :compiler {:output-to "resources/public/js/pizza.js"
                            :output-dir "resources/public/js"
                            :optimizations :advanced}}]}
   ;:core.typed {:check [pizza.types]}
-  :profiles {:dev {:env {:foo 1}}
-             :prod {:aot [pizza.handler]
-                    :env {:foo 2}}}
+  :profiles {:dev {:env {:mode :dev}}
+             :test {:env {:mode :test}
+                    :aot [pizza.handler]}
+             :prod {:env {:mode :prod}
+                    :aot [pizza.handler]}}
   :aliases {"push-ui" ["run" "-m" "pizza.tasks/push-ui"]
             "push-api" ["run" "-m" "pizza.tasks/push-api"]})
