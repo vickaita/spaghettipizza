@@ -52,6 +52,7 @@
 (defn- start-noodle
   [e]
   (.preventDefault e)
+  (.stopPropagation e)
   (let [pt (normalize-point e)
         n (create-topping @toolbar/current-tool pt)]
     (reset! current-noodle n)
@@ -60,12 +61,14 @@
 (defn- move-noodle
   [e]
   (.preventDefault e)
+  (.stopPropagation e)
   (let [pt (normalize-point e)]
     (swap! current-noodle add-point! pt)))
 
 (defn- end-noodle
   [e]
   (.preventDefault e)
+  (.stopPropagation e)
   (reset! current-noodle nil))
 
 (defn enable-spaghetti-drawing
@@ -105,7 +108,7 @@
 
     (enable-spaghetti-drawing svg-elem)
     (toolbar/enable-tool-selection (dom/getElement "toolbar"))
-    (toolbar/enable-photo-button (dom/getElement "photo") svg-elem)))
+    #_(toolbar/enable-photo-button (dom/getElement "photo") svg-elem)))
 
 (evt/listen js/document "DOMContentLoaded" -main)
 #_(repl/connect "http://ui:9000/repl")

@@ -33,6 +33,7 @@
         clicks (map< #(.-target %) (ch/events "click" toolbar))]
     (go-loop [elem (<! clicks)]
              (when-let [tool (keyword (.getAttribute elem "data-tool"))]
+               (prn tool)
                (reset! current-tool tool)
                (js/ga "send" "event" "tool" "select" (name tool))
                (activate-tool! tools elem)
@@ -51,7 +52,7 @@
 ;            (js/ga "send" "event" "tool" "select" (name tool))
 ;            (activate! tools elem)))))))
 
-(defn enable-photo-button
+#_(defn enable-photo-button
   [button svg-elem]
   (let [body (.-body js/document)
         ;; TODO: consider using one of the goog.ui classes such as Dialog or
