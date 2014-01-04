@@ -14,3 +14,15 @@ or
 for automatic compilation when changing files.
 
 # TODO
+
+- SHARING!!!
+  - put uploaded image urls into simple db
+  - better ui for sharing
+  - add share buttons
+    - facebook
+    - twitter
+    - google plus
+    - pinterest
+  - admin interface to see what has been uploaded
+- more toppings!!!!
+- smooth noodles

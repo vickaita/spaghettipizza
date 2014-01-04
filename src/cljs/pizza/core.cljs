@@ -95,7 +95,9 @@
                 #(do (.preventDefault %)
                      (.stopPropagation %)
                      (toolbar/toggle!)))
-    (evt/listen (dom/getElement "page") "click"
+    ;; This seems to be breaking noodle drawing on mobile, so disabled until I
+    ;; have time to investigate
+    #_(evt/listen (dom/getElement "page") "click"
                 #(when (toolbar/visible?)
                    (do (.preventDefault %)
                        (.stopPropagation %)
