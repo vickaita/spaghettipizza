@@ -4,6 +4,7 @@
             [goog.net.WebSocket]
             [goog.Uri]
             [goog.Uri.QueryData :as QD]
+            [goog.net.XhrIo :as xhr]
             [goog.dom.forms :as forms]
             [goog.events :as events]
             [cljs.core.async :as async :refer [put! take! close! chan <! map<]]
@@ -43,21 +44,21 @@
 
 (defn ajax-form-channel
   [form]
-  (evt/listen form "submit" (fn [e]
-                              (.preventDefault e)
-                              (let [req (ajax/request-form form)]
-                                (go (let [res (<! req)]
-                                      (.log js/console res)))))))
+  (events/listen form "submit" (fn [e]
+                                 (.preventDefault e)
+                                 (let [req (ajax/request-form form)]
+                                   (go (let [res (<! req)]
+                                         (.log js/console res)))))))
 
-(defn event
-  "Returns a chan of events of event-type for element. Will optionally
-  preventDefault and stopPropagation if specified. Calling close! on the
+(defn events
+  "Returns a chan of events of event-type for element. By default will
+  preventDefault and stopPropagation on each event. Calling close! on the
   returned channel will remove the event listener."
   ([event-type element] (events event-type element true true))
   ([event-type element halt?] (events event-type element halt? halt?))
   ([event-type element prevent-default? stop-propagation?]
    (let [out (chan)
-         listener (evt/listen element
+         listener (events/listen element
                               event-type
                               (fn [e]
                                 (when prevent-default? (.preventDefault e))
@@ -69,7 +70,7 @@
        impl/WritePort
        (put! [_ val fn0] (impl/put! out val fn0))
        impl/Channel
-       (close! [_] (do (evt/unlistenByKey listener)
+       (close! [_] (do (events/unlistenByKey listener)
                        (impl/close! out)))))))
 
 (defn websocket
@@ -100,3 +101,9 @@
       (close! [_] (do (doto sock (.close) (.removeAllListeners))
                       (impl/close! outgoing)
                       (impl/close! incoming))))))
+
+(defn xhr
+  [url method data]
+  (let [out (chan)]
+    (xhr/send url (fn [res] (put! out res)) method data)
+    out))

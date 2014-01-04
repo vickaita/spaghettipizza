@@ -12,26 +12,13 @@
             [dommy.core]
             [vickaita.channels :refer [event websocket]]
             [vickaita.console :refer [log]]
+            [pizza.toolbar :as toolbar]
             [pizza.ajax :as ajax]
             [pizza.svg :as svg]
             [pizza.pizza :as pzz]
             [pizza.spaghetti :refer [create-topping add-point!]]))
 
 (enable-console-print!)
-
-(defn event-channel
-  [event-type element]
-  (let [out (chan)]
-    (evt/listen element event-type (fn [e] (put! out e)))
-    out))
-
-(defn xhr-channel
-  [url method data]
-  (let [out (chan)]
-    (xhr/send url (fn [res] (put! out res)) method data)
-    out))
-
-;; #(-> out (put! %) (close!))
 
 (defn adjust-easel-size
   [easel]
@@ -61,13 +48,12 @@
          (* scale-factor (- (.-pageY b) top))]))))
 
 (def current-noodle (atom nil))
-(def current-tool (atom :spaghetti))
 
 (defn- start-noodle
   [e]
   (.preventDefault e)
   (let [pt (normalize-point e)
-        n (create-topping @current-tool pt)]
+        n (create-topping @toolbar/current-tool pt)]
     (reset! current-noodle n)
     (dom/append (.-currentTarget e) (:element n))))
 
@@ -91,56 +77,6 @@
   (evt/listen js/document "mouseup" end-noodle)
   (evt/listen svg-elem "touchup" end-noodle))
 
-(defn- activate!
-  "Iterate through all the elements in node-list removing class-name except for
-  node which will have class-name added."
-  ([node-list node] (activate! node-list node "active"))
-  ([node-list node class-name]
-  (dotimes [i (alength node-list)]
-    (let [n (aget node-list i)]
-      (if (= node n)
-        (cls/add node class-name)
-        (cls/remove n class-name))))))
-
-(defn enable-tool-selection
-  [toolbar]
-  (let [clicks (map< #(.-target %) (event-channel "click" toolbar))]
-    (go (while true
-          (let [elem (<! clicks)
-                tool (keyword (.getAttribute elem "data-tool"))]
-            (when tool
-              (reset! current-tool tool)
-              (js/ga "send" "event" "tool" "select" (name tool))
-              (activate! (dom/getElementsByClass "tool" toolbar) elem)))))))
-
-(defn enable-photo-button
-  [button svg-elem]
-  (let [body (.-body js/document)
-        ;; TODO: consider using one of the goog.ui classes such as Dialog or
-        ;; ModalPopup here instead of this homegrown solution.
-        modal (node [:div.modal-overlay.hidden
-                     [:div.modal-wrap
-                      [:div.modal-content
-                       [:p "Share this with your friends!"]
-                       [:div.pizza-container]]]])
-        pizza-container (dom/getElementByClass "pizza-container" modal)]
-    (dom/append body modal)
-    (evt/listen modal "click" (fn [e] (cls/add modal "hidden")))
-    (evt/listen (dom/getElementByClass "modal-content" modal) "click"
-                (fn [e] (.stopPropagation e)))
-    (evt/listen button "click"
-                (fn [e]
-                  (.preventDefault e)
-                  (go (let [[uri blob] (<! (svg/svg->img-chan svg-elem 612 612))
-                            data (doto (js/FormData.) (.append "data" blob))
-                            resp (<! (xhr-channel
-                                       "http://api.spaghettipizza.us/pizza/"
-                                       "POST"
-                                       data))]
-                        (dom/removeChildren pizza-container)
-                        (dom/append pizza-container (node [:img.preview {:src uri}]))
-                        (cls/remove modal "hidden")))))))
-
 (defn -main
   []
   ;; Allow messaging to the api.spaghettipizza.us subdomain.
@@ -158,8 +94,8 @@
                 #(cls/toggle (.-body js/document) "show-toolbar"))
 
     (enable-spaghetti-drawing svg-elem)
-    (enable-tool-selection (dom/getElement "toolbar"))
-    (enable-photo-button (dom/getElement "photo") svg-elem)))
+    (toolbar/enable-tool-selection (dom/getElement "toolbar"))
+    (toolbar/enable-photo-button (dom/getElement "photo") svg-elem)))
 
 (evt/listen js/document "DOMContentLoaded" -main)
 #_(repl/connect "http://ui:9000/repl")
