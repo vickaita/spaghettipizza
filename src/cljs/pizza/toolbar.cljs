@@ -13,6 +13,7 @@
 (defn show! [] (cls/add (.-body js/document) "show-toolbar"))
 (defn hide! [] (cls/remove (.-body js/document) "show-toolbar"))
 (defn toggle!  [] (cls/toggle (.-body js/document) "show-toolbar"))
+(defn visible? [] (cls/contains (.-body js/document) "show-toolbar"))
 
 (defn- activate-tool!
   "Iterate through all the elements in node-list removing class-name except for

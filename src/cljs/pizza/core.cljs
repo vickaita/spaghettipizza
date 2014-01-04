@@ -90,7 +90,16 @@
                    pzz/draw-pizza))
     (pzz/draw-pizza svg-elem)
 
-    (evt/listen (dom/getElement "menu-control") "click" toolbar/toggle!)
+    ;; Some event handlers for managing toolbar opening/closing.
+    (evt/listen (dom/getElement "menu-control") "click"
+                #(do (.preventDefault %)
+                     (.stopPropagation %)
+                     (toolbar/toggle!)))
+    (evt/listen (dom/getElement "page") "click"
+                #(when (toolbar/visible?)
+                   (do (.preventDefault %)
+                       (.stopPropagation %)
+                       (toolbar/hide!))))
 
     (enable-spaghetti-drawing svg-elem)
     (toolbar/enable-tool-selection (dom/getElement "toolbar"))
