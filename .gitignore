@@ -1,3 +1,4 @@
+.lein-env
 .lein-repl-history
 .nrepl-port
 out
