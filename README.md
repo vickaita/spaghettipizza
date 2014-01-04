@@ -24,5 +24,6 @@ for automatic compilation when changing files.
     - google plus
     - pinterest
   - admin interface to see what has been uploaded
-- more toppings!!!!
+- more toppings!!
 - smooth noodles
+- Migrate deployment to the Rakefile
