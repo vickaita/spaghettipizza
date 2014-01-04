@@ -31,11 +31,12 @@
   (let [tools (dom/getElementsByClass "tool" toolbar)
         clicks (map< #(.-target %) (ch/events "click" toolbar))]
     (go-loop [elem (<! clicks)]
-       (when-let [tool (keyword (.getAttribute elem "data-tool"))]
-         (reset! current-tool tool)
-         (js/ga "send" "event" "tool" "select" (name tool))
-         (activate-tool! tools elem))
-       (recur (<! clicks)))))
+             (when-let [tool (keyword (.getAttribute elem "data-tool"))]
+               (reset! current-tool tool)
+               (js/ga "send" "event" "tool" "select" (name tool))
+               (activate-tool! tools elem)
+               (hide!))
+             (recur (<! clicks)))))
 
 ;(defn enable-tool-selection
 ;  [toolbar]
