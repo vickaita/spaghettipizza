@@ -50,10 +50,27 @@
                                       (.log js/console res)))))))
 
 (defn event
-  [event-type element]
-  (let [out (chan)]
-    (evt/listen element event-type #(put! out %))
-    out))
+  "Returns a chan of events of event-type for element. Will optionally
+  preventDefault and stopPropagation if specified. Calling close! on the
+  returned channel will remove the event listener."
+  ([event-type element] (events event-type element true true))
+  ([event-type element halt?] (events event-type element halt? halt?))
+  ([event-type element prevent-default? stop-propagation?]
+   (let [out (chan)
+         listener (evt/listen element
+                              event-type
+                              (fn [e]
+                                (when prevent-default? (.preventDefault e))
+                                (when stop-propagation? (.stopPropagation e))
+                                (put! out e)))]
+     (reify
+       impl/ReadPort
+       (take! [_ fn1] (impl/take! out fn1))
+       impl/WritePort
+       (put! [_ val fn0] (impl/put! out val fn0))
+       impl/Channel
+       (close! [_] (do (evt/unlistenByKey listener)
+                       (impl/close! out)))))))
 
 (defn websocket
   [url]
