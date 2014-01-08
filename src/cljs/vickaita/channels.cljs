@@ -105,5 +105,5 @@
 (defn xhr
   [url method data]
   (let [out (chan)]
-    (xhr/send url (fn [res] (put! out res)) method data)
+    (xhr/send url (fn [res] (put! out (.getResponse (.-target res)))) method data)
     out))

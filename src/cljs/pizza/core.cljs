@@ -108,7 +108,7 @@
 
     (enable-spaghetti-drawing svg-elem)
     (toolbar/enable-tool-selection (dom/getElement "toolbar"))
-    #_(toolbar/enable-photo-button (dom/getElement "photo") svg-elem)))
+    (toolbar/enable-photo-button (dom/getElement "photo") svg-elem)))
 
 (evt/listen js/document "DOMContentLoaded" -main)
 #_(repl/connect "http://ui:9000/repl")

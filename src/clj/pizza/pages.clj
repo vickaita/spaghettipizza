@@ -25,7 +25,7 @@
   [:div#toolbar.toolbar
    [:div.actions
     [:a#clean.action "Reset"]
-    #_[:a#photo.action "Share"]]
+    [:a#photo.action "Share"]]
    [:h2 "Toppings!"]
    [:dl#pasta.tools
     [:dt.group "Pasta"]

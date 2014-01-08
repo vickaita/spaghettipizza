@@ -6,7 +6,8 @@
             [goog.dom.classlist :as cls]
             [goog.events :as evt]
             [vickaita.channels :as ch]
-            [pizza.spaghetti]))
+            #_[pizza.spaghetti]
+            [pizza.svg :as svg]))
 
 (def current-tool (atom :spaghetti))
 
@@ -52,7 +53,7 @@
 ;            (js/ga "send" "event" "tool" "select" (name tool))
 ;            (activate! tools elem)))))))
 
-#_(defn enable-photo-button
+(defn enable-photo-button
   [button svg-elem]
   (let [body (.-body js/document)
         ;; TODO: consider using one of the goog.ui classes such as Dialog or
@@ -72,10 +73,11 @@
                   (.preventDefault e)
                   (go (let [[uri blob] (<! (svg/svg->img-chan svg-elem 612 612))
                             data (doto (js/FormData.) (.append "data" blob))
-                            resp (<! (ch/xhr-channel
-                                       "http://api.spaghettipizza.us/pizza/"
+                            resp (edn/read-string (<! (ch/xhr
+                                       ;"http://api.spaghettipizza.us/pizza/"
+                                       "/pizza/"
                                        "POST"
-                                       data))]
+                                       data)))]
                         (dom/removeChildren pizza-container)
                         (dom/append pizza-container (node [:img.preview {:src uri}]))
                         (cls/remove modal "hidden")))))))

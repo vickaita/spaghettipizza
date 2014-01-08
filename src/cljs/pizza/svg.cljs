@@ -90,16 +90,17 @@
         svg-blob (js/Blob. (array data) (js-obj "type" "image/svg+xml;base64"))
         url (.createObjectURL js/URL svg-blob)
         out (chan)]
-    (events/listen img "load"
-                   (fn [e]
-                     (.drawImage context img 0 0 w h)
-                     (.revokeObjectURL js/URL url)
-                     (let [url (.toDataURL canvas "image/png")
-                           binary (js/atob (aget (.split url ",") 1))
-                           arr (array)]
-                       (dotimes [i (alength binary)]
-                         (aset arr i (.charCodeAt binary i)))
-                       (put! out [url (js/Blob. (array (js/Uint8Array. arr))
-                                             (js-obj "type" "image/png"))]))))
+    (events/listen
+      img "load"
+      (fn [e]
+        (.drawImage context img 0 0 w h)
+        (.revokeObjectURL js/URL url)
+        (let [url (.toDataURL canvas "image/png")
+              binary (js/atob (aget (.split url ",") 1))
+              arr (array)]
+          (dotimes [i (alength binary)]
+            (aset arr i (.charCodeAt binary i)))
+          (put! out [url (js/Blob. (array (js/Uint8Array. arr))
+                                   (js-obj "type" "image/png"))]))))
     (set! (.-src img) url)
     out))
