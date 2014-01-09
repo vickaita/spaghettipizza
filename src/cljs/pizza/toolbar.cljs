@@ -2,6 +2,7 @@
   (:require-macros [cljs.core.async.macros :refer [go go-loop alt!]]
                    [dommy.macros :refer [node]])
   (:require [cljs.core.async :refer [put! close! chan <! map<]]
+            [cljs.reader :as reader]
             [goog.dom :as dom]
             [goog.dom.classlist :as cls]
             [goog.events :as evt]
@@ -73,11 +74,12 @@
                   (.preventDefault e)
                   (go (let [[uri blob] (<! (svg/svg->img-chan svg-elem 612 612))
                             data (doto (js/FormData.) (.append "data" blob))
-                            resp (edn/read-string (<! (ch/xhr
+                            resp (reader/read-string (<! (ch/xhr
                                        ;"http://api.spaghettipizza.us/pizza/"
                                        "/pizza/"
                                        "POST"
                                        data)))]
+                        (.log js/console resp)
                         (dom/removeChildren pizza-container)
                         (dom/append pizza-container (node [:img.preview {:src uri}]))
                         (cls/remove modal "hidden")))))))
