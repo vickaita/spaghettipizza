@@ -13,6 +13,7 @@
             [clojure.java.io :as io]
             [aws.sdk.s3 :as s3]
             [cemerick.rummage :as sdb]
+            [cemerick.rummage.encoding :as enc]
             [digest]
             [environ.core :refer [env]])
   (:import (org.apache.commons.codec.binary Base64)
@@ -34,19 +35,25 @@
 (defn- upload-file
   [file]
   (with-open [file-stream (io/input-stream file)]
-    (let [file-name (str "pizza/" (digest/md5 file) ".png")]
+    (let [file-hash (digest/md5 file)
+          file-name (str "pizza/" file-hash ".png")
+          client (sdb/create-client (:access-key creds) (:secret-key creds))
+          config (assoc enc/keyword-strings :client client)]
       (s3/put-object creds bucket-name file-name file-stream
                      {:content-length (.length file) :content-type "image/png"}
                      (s3/grant :all-users :read))
-      file-name)))
+      (sdb/put-attrs config bucket-name
+                     {::sdb/id file-hash :created-at (System/currentTimeMillis)})
+      [file-hash file-name])))
 
 (defn handle-file
   [file]
   (if file
-    (if-let [file-name (upload-file file)]
+    (
+     if-let [[file-hash file-name] (upload-file file)]
       {:status 200
        :headers {"Access-Control-Allow-Origin" "http://spaghettipizza.us"}
-       :body(str {:file-name file-name})}
+       :body (str {:file-name file-name :file-hash file-hash})}
       {:status 500
        :body "Error uploading the file to S3."})
     {:status 422
