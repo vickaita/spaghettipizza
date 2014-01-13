@@ -74,12 +74,13 @@
                   (.preventDefault e)
                   (go (let [[uri blob] (<! (svg/svg->img-chan svg-elem 612 612))
                             data (doto (js/FormData.) (.append "data" blob))
-                            resp (reader/read-string (<! (ch/xhr
+                            {fh :file-hash} (reader/read-string (<! (ch/xhr
                                        ;"http://api.spaghettipizza.us/pizza/"
                                        "/pizza/"
                                        "POST"
-                                       data)))]
-                        (.log js/console resp)
+                                       data)))
+                            page-url (str (.-origin js/location) "#pizza=" fh)]
+                        (.pushState js/history nil nil page-url)
                         (dom/removeChildren pizza-container)
                         (dom/append pizza-container (node [:img.preview {:src uri}]))
                         (cls/remove modal "hidden")))))))

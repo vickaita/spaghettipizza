@@ -16,17 +16,10 @@
             [pizza.ajax :as ajax]
             [pizza.svg :as svg]
             [pizza.pizza :as pzz]
+            [pizza.easel :as easel]
             [pizza.spaghetti :refer [create-topping add-point!]]))
 
 (enable-console-print!)
-
-(defn adjust-easel-size
-  [easel]
-  (let [size (.getBoundingClientRect (dom/getElement "easel"))
-        side (min (.-width size) (.-height size))]
-    (doto easel
-      (.setAttribute "width" side)
-      (.setAttribute "height" side))))
 
 (defn normalize-point
   "Convert an event into a point."
@@ -82,11 +75,8 @@
 
 (defn -main
   []
-  ;; Allow messaging to the api.spaghettipizza.us subdomain.
-  (when (= "spaghettipizza.us" (.-domain js/document))
-    (set! (.-domain js/document) "spaghettipizza.us"))
   (let [svg-elem (dom/getElement "main-svg")]
-    (adjust-easel-size svg-elem)
+    (easel/adjust-size svg-elem)
     (evt/listen (dom/getElement "clean") "click"
                 #(doto svg-elem
                    dom/removeChildren
