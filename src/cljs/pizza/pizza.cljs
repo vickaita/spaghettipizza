@@ -1,11 +1,17 @@
 (ns pizza.pizza
+  (:require-macros [dommy.macros :refer [node]])
   (:require [pizza.svg :as svg]
             [goog.dom :as dom]))
 
-(defn draw-pizza
+(defn fresh-pizza
   "Draw the pizza."
-  [parent-element]
+  []
   (let [origin [256 256]
+        group (svg/g)
         crust (svg/create-irregular-circle origin 227 "#FAE265" "#DDAB0B" 3)
         sauce (svg/create-irregular-circle origin 210 "#F86969" "#F04F4F" 3)]
-    (dom/append parent-element crust sauce)))
+    (doto group (dom/append crust sauce))))
+
+(defn pizza-img
+  [pizza-hash]
+  (node [:img {:src (str "/pizza/" pizza-hash ".png")}]))

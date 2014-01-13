@@ -10,6 +10,8 @@
   [tag-name]
   (.createElementNS js/document svg-ns tag-name))
 
+(def g (partial create-element "g"))
+
 (defn- create-circle
   [origin radius fill stroke stroke-width]
   (doto (create-element "circle")

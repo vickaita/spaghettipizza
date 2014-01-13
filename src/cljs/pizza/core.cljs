@@ -80,8 +80,10 @@
     (evt/listen (dom/getElement "clean") "click"
                 #(doto svg-elem
                    dom/removeChildren
-                   pzz/draw-pizza))
-    (pzz/draw-pizza svg-elem)
+                   (dom/append (pzz/fresh-pizza))))
+
+    ;; Draw a blank pizza to start with.
+    (dom/append svg-elem (pzz/fresh-pizza))  
 
     ;; Some event handlers for managing toolbar opening/closing.
     (evt/listen (dom/getElement "menu-control") "click"
