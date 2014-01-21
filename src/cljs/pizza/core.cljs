@@ -86,6 +86,7 @@
                   (doto svg-elem
                     dom/removeChildren
                     (dom/append (pzz/fresh-pizza)))
+                  (set! (.-search (.-location js/document)) "")
                   (toolbar/hide!)))
 
     (let [img-wrapper (dom/getElement "img-wrapper")
