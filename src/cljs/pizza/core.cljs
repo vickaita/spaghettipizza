@@ -76,8 +76,8 @@
 (defn -main
   []
   (let [easel (dom/getElement "easel")
-        svg-elem (dom/getElement "main-svg") 
-        pizza-hash (-> (.-hash (.-location js/document))
+        svg-elem (dom/getElement "main-svg")
+        pizza-hash (-> (.-search (.-location js/document))
                        (.split "=")
                        (aget 1))]
     (easel/adjust-size svg-elem)
@@ -96,8 +96,8 @@
               (cls/remove "hidden")
               (dom/append (pzz/pizza-img pizza-hash))))
         (do (cls/add img-wrapper "hidden")
-            (cls/remove svg-wrapper "hidden") 
-            (dom/append svg-elem (pzz/fresh-pizza)))))  
+            (cls/remove svg-wrapper "hidden")
+            (dom/append svg-elem (pzz/fresh-pizza)))))
 
     ;; Some event handlers for managing toolbar opening/closing.
     (evt/listen (dom/getElement "menu-control") "click"
