@@ -92,11 +92,12 @@
                                         (.substr (.-pathname location)
                                                  (count path-prefix)))})]
 
-    (easel/adjust-size! svg-elem)
-    (evt/listen history "navigate" #(easel/update! easel (get-pizza-hash)))
     (doto history
+      (evt/listen "navigate" #(easel/update! easel (get-pizza-hash)))
       (.setUseFragment false)
       (.setEnabled true))
+
+    (easel/adjust-size! svg-elem)
 
     ;; Some event handlers for managing toolbar opening/closing.
     (evt/listen (dom/getElement "menu-control") "click"
