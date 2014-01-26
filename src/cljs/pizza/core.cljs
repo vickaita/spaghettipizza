@@ -7,6 +7,7 @@
             [goog.events :as evt]
             [goog.net.XhrIo :as xhr]
             [goog.net.WebSocket]
+            [goog.history.Html5History]
             [cljs.core.async :refer [put! close! chan <! map<]]
             [clojure.browser.repl :as repl]
             [dommy.core]
@@ -77,10 +78,22 @@
   []
   (let [easel (dom/getElement "easel")
         svg-elem (dom/getElement "main-svg")
+        ;pizza-hash (.. js/document -location -search (split "=") (aget 1))
         pizza-hash (-> (.-search (.-location js/document))
                        (.split "=")
-                       (aget 1))]
+                       (aget 1))
+        history (goog.history.Html5History.)]
+
     (easel/adjust-size svg-elem)
+    (easel/update easel pizza-hash)
+    (evt/listen history "popstate" #(easel/update easel pizza-hash))
+
+    ;; Some event handlers for managing toolbar opening/closing.
+    (evt/listen (dom/getElement "menu-control") "click"
+                #(do (.preventDefault %)
+                     (.stopPropagation %)
+                     (toolbar/toggle!)))
+
     (evt/listen (dom/getElement "clean") "click"
                 (fn [e]
                   (doto svg-elem
@@ -89,29 +102,13 @@
                   (set! (.-search (.-location js/document)) "")
                   (toolbar/hide!)))
 
-    (let [img-wrapper (dom/getElement "img-wrapper")
-          svg-wrapper (dom/getElement "svg-wrapper")]
-      (if pizza-hash
-        (do (cls/add svg-wrapper "hidden")
-            (doto img-wrapper
-              (cls/remove "hidden")
-              (dom/append (pzz/pizza-img pizza-hash))))
-        (do (cls/add img-wrapper "hidden")
-            (cls/remove svg-wrapper "hidden")
-            (dom/append svg-elem (pzz/fresh-pizza)))))
-
-    ;; Some event handlers for managing toolbar opening/closing.
-    (evt/listen (dom/getElement "menu-control") "click"
-                #(do (.preventDefault %)
-                     (.stopPropagation %)
-                     (toolbar/toggle!)))
     ;; This seems to be breaking noodle drawing on mobile, so disabled until I
     ;; have time to investigate
     #_(evt/listen (dom/getElement "page") "click"
-                #(when (toolbar/visible?)
-                   (do (.preventDefault %)
-                       (.stopPropagation %)
-                       (toolbar/hide!))))
+                  #(when (toolbar/visible?)
+                     (do (.preventDefault %)
+                         (.stopPropagation %)
+                         (toolbar/hide!))))
 
     (enable-spaghetti-drawing svg-elem)
     (toolbar/enable-tool-selection (dom/getElement "toolbar"))
