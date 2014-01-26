@@ -4,7 +4,7 @@
             [goog.events :as events]
             [pizza.pizza :as pzz]))
 
-(defn adjust-size
+(defn adjust-size!
   [easel]
   (let [size (.getBoundingClientRect (dom/getElement "easel"))
         side (min (.-width size) (.-height size))]
@@ -12,7 +12,7 @@
       (.setAttribute "width" side)
       (.setAttribute "height" side))))
 
-(defn update
+(defn update!
   ([easel] (update easel nil))
   ([easel pizza-hash]
   (let [img-wrapper (dom/getElement "img-wrapper")

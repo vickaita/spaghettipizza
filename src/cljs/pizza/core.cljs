@@ -74,19 +74,22 @@
   (evt/listen js/document "mouseup" end-noodle)
   (evt/listen svg-elem "touchup" end-noodle))
 
+(defn- get-pizza-hash
+  []
+  ;(.. js/document -location -search (split "=") (aget 1))
+  (-> (.-search (.-location js/document))
+      (.split "=")
+      (aget 1)))
+
 (defn -main
   []
   (let [easel (dom/getElement "easel")
         svg-elem (dom/getElement "main-svg")
-        ;pizza-hash (.. js/document -location -search (split "=") (aget 1))
-        pizza-hash (-> (.-search (.-location js/document))
-                       (.split "=")
-                       (aget 1))
         history (goog.history.Html5History.)]
 
-    (easel/adjust-size svg-elem)
-    (easel/update easel pizza-hash)
-    (evt/listen history "popstate" #(easel/update easel pizza-hash))
+    (easel/adjust-size! svg-elem)
+    (easel/update! easel (get-pizza-hash))
+    (evt/listen history "popstate" #(easel/update! easel (get-pizza-hash)))
 
     ;; Some event handlers for managing toolbar opening/closing.
     (evt/listen (dom/getElement "menu-control") "click"
