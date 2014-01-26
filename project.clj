@@ -17,12 +17,14 @@
                  [com.cemerick/rummage "1.0.1"]
                  [digest "1.4.3"]
                  [prismatic/dommy "0.1.1"]
-                 [environ "0.4.0"]]
+                 [environ "0.4.0"]
+                 [com.cemerick/piggieback "0.1.2"]]
   :source-paths ["src/clj" "src/cljs"]
   :main pizza.handler
   :plugins [[lein-cljsbuild "1.0.0-alpha2"]
             [lein-environ "0.4.0"]
             #_[lein-typed "0.3.1"]]
+  :repl-options {:nrepl-middleware [cemerick.piggieback/wrap-cljs-repl]}
   :cljsbuild {:builds
               [{:id "dev"
                 :source-paths ["src/cljs"]
@@ -31,7 +33,7 @@
                            :optimizations :none
                            :pretty-print true
                            :source-map true}}
-               {:id "test"
+               #_{:id "test"
                 :source-paths ["src/cljs"]
                 :compiler {:output-to "resources/public/js/pizza.js"
                            :output-dir "resources/public/js"
