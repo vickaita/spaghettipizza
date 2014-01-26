@@ -54,15 +54,18 @@
 ;            (activate! tools elem)))))))
 
 (defn enable-photo-button
-  [button svg-elem]
+  [button svg-elem history]
   (evt/listen
     button "click"
     (fn [e]
       (.preventDefault e)
       (hide!)
-      (go (let [api-url "http://api.spaghettipizza.us/pizza/"
+      (go (let [api-url (if (= "spaghettipizza.us" (.-host (.-location js/document)))
+                          "http://api.spaghettipizza.us/pizza/"
+                          "/pizza/")
                 blob (<! (svg/svg->img-chan svg-elem 612 612))
                 data (doto (js/FormData.) (.append "data" blob))
                 {fh :file-hash} (reader/read-string (<! (ch/xhr api-url "POST" data)))
-                page-url (str (.-origin js/location) "?pizza=" fh)]
-            (.pushState js/history nil nil page-url))))))
+                page-url (str #_(.-origin js/location) "?pizza=" fh)]
+            (.setToken history page-url)
+            #_(.pushState js/history nil nil page-url))))))

@@ -87,6 +87,9 @@
         svg-elem (dom/getElement "main-svg")
         history (goog.history.Html5History.)]
 
+    (doto history
+      (.setUseFragment false)
+      (.setEnabled true))
     (easel/adjust-size! svg-elem)
     (easel/update! easel (get-pizza-hash))
     (evt/listen history "popstate" #(easel/update! easel (get-pizza-hash)))
@@ -115,7 +118,7 @@
 
     (enable-spaghetti-drawing svg-elem)
     (toolbar/enable-tool-selection (dom/getElement "toolbar"))
-    (toolbar/enable-photo-button (dom/getElement "photo") svg-elem)))
+    (toolbar/enable-photo-button (dom/getElement "photo") svg-elem history)))
 
 (evt/listen js/document "DOMContentLoaded" -main)
 #_(repl/connect "http://ui:9000/repl")
