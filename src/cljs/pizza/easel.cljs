@@ -1,6 +1,8 @@
 (ns pizza.easel
   (:require [goog.dom :as dom]
-            [goog.events :as events]))
+            [goog.dom.classlist :as cls]
+            [goog.events :as events]
+            [pizza.pizza :as pzz]))
 
 (defn adjust-size
   [easel]
@@ -9,6 +11,21 @@
     (doto easel
       (.setAttribute "width" side)
       (.setAttribute "height" side))))
+
+(defn update
+  ([easel] (update easel nil))
+  ([easel pizza-hash]
+  (let [img-wrapper (dom/getElement "img-wrapper")
+        svg-wrapper (dom/getElement "svg-wrapper")
+        svg-elem (dom/getElement "main-svg")]
+    (if pizza-hash
+      (do (cls/add svg-wrapper "hidden")
+          (doto img-wrapper
+            (cls/remove "hidden")
+            (dom/append (pzz/pizza-img pizza-hash))))
+      (do (cls/add img-wrapper "hidden")
+          (cls/remove svg-wrapper "hidden")
+          (dom/append svg-elem (pzz/fresh-pizza)))))))
 
 ;(defn draw-pizza
 ;  "Draw the pizza."
