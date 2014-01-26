@@ -21,6 +21,7 @@
     (if pizza-hash
       (do (cls/add svg-wrapper "hidden")
           (doto img-wrapper
+            (dom/removeChildren)
             (cls/remove "hidden")
             (dom/append (pzz/pizza-img pizza-hash))))
       (do (cls/add img-wrapper "hidden")
