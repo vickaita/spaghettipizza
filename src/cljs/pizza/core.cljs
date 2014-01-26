@@ -68,6 +68,8 @@
   (.stopPropagation e)
   (reset! current-noodle nil))
 
+;; TODO: this should almost certainly be in the pizza.easel namespace (or
+;; pizza.events if that ends up being a real thing).
 (defn enable-spaghetti-drawing
   [svg-elem]
   (doto svg-elem
