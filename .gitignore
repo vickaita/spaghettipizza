@@ -4,6 +4,7 @@
 out
 resources/public/js/
 repl/
+.repl/
 target/
 resources/credentials/aws.clj
 .sass-cache/
