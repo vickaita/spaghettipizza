@@ -117,8 +117,8 @@
                          (toolbar/hide!))))
 
     (enable-spaghetti-drawing svg-elem)
-    (toolbar/enable-tool-selection (dom/getElement "toolbar"))
-    (toolbar/enable-photo-button (dom/getElement "photo") svg-elem history)))
+    (toolbar/enable-tool-selection! (dom/getElement "toolbar"))
+    (toolbar/enable-save-button! (dom/getElement "photo") svg-elem history)))
 
 (evt/listen js/document "DOMContentLoaded" -main)
 #_(repl/connect "http://ui:9000/repl")

@@ -27,7 +27,7 @@
         (cls/add node "active")
         (cls/remove n "active")))))
 
-(defn enable-tool-selection
+(defn enable-tool-selection!
   [toolbar]
   ;; Since dom/getElementsByClass returns a NodeList which is a "live"
   ;; collection we don't need to update it later.
@@ -41,7 +41,7 @@
                (hide!))
              (recur (<! clicks)))))
 
-;(defn enable-tool-selection
+;(defn enable-tool-selection!
 ;  [toolbar]
 ;  (let [tools (dom/getElementByClass "tool" toolbar)]
 ;    (evt/listen
@@ -51,9 +51,10 @@
 ;          (when-let [tool (keyword (.getAttribute elem "data-tool"))]
 ;            (reset! current-tool tool)
 ;            (js/ga "send" "event" "tool" "select" (name tool))
-;            (activate! tools elem)))))))
+;            (activate! tools elem)
+;            (hide!))))))
 
-(defn enable-photo-button
+(defn enable-save-button!
   [button svg-elem history]
   (evt/listen
     button "click"
@@ -67,5 +68,4 @@
                 data (doto (js/FormData.) (.append "data" blob))
                 {fh :file-hash} (reader/read-string (<! (ch/xhr api-url "POST" data)))
                 page-url (str #_(.-origin js/location) "?pizza=" fh)]
-            (.setToken history page-url)
-            #_(.pushState js/history nil nil page-url))))))
+            (.setToken history page-url))))))
