@@ -92,7 +92,10 @@
       (.setEnabled true))
     (easel/adjust-size! svg-elem)
     (easel/update! easel (get-pizza-hash))
-    (evt/listen history "popstate" #(easel/update! easel (get-pizza-hash)))
+    (evt/listen history "popstate"
+                (fn [e]
+                  (.log js/console e)
+                  (easel/update! easel (get-pizza-hash))))
 
     ;; Some event handlers for managing toolbar opening/closing.
     (evt/listen (dom/getElement "menu-control") "click"
@@ -105,7 +108,7 @@
                   (doto svg-elem
                     dom/removeChildren
                     (dom/append (pzz/fresh-pizza)))
-                  (set! (.-search (.-location js/document)) "")
+                  (.setToken history "")
                   (toolbar/hide!)))
 
     ;; This seems to be breaking noodle drawing on mobile, so disabled until I
