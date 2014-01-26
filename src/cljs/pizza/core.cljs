@@ -85,17 +85,22 @@
   []
   (let [easel (dom/getElement "easel")
         svg-elem (dom/getElement "main-svg")
-        history (goog.history.Html5History.)]
+        history (goog.history.Html5History.
+                  js/window
+                  #js {:createUrl (fn [token _ _] token)
+                       :retrieveToken (fn [path-prefix location]
+                                        (.substr (.-pathname location)
+                                                 (count path-prefix)))})]
 
-    (doto history
-      (.setUseFragment false)
-      (.setEnabled true))
     (easel/adjust-size! svg-elem)
-    (easel/update! easel (get-pizza-hash))
-    (evt/listen history "popstate"
+    ;(easel/update! easel (get-pizza-hash))
+    (evt/listen history "navigate"
                 (fn [e]
                   (.log js/console e)
                   (easel/update! easel (get-pizza-hash))))
+    (doto history
+      (.setUseFragment false)
+      (.setEnabled true))
 
     ;; Some event handlers for managing toolbar opening/closing.
     (evt/listen (dom/getElement "menu-control") "click"
@@ -105,11 +110,9 @@
 
     (evt/listen (dom/getElement "clean") "click"
                 (fn [e]
-                  (doto svg-elem
-                    dom/removeChildren
-                    (dom/append (pzz/fresh-pizza)))
-                  (.setToken history "")
-                  (toolbar/hide!)))
+                  (toolbar/hide!)
+                  (.setToken history (str (.-origin js/location) "/"))
+                  (easel/update! easel (get-pizza-hash))))
 
     ;; This seems to be breaking noodle drawing on mobile, so disabled until I
     ;; have time to investigate

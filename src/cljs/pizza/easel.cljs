@@ -25,6 +25,7 @@
             (dom/append (pzz/pizza-img pizza-hash))))
       (do (cls/add img-wrapper "hidden")
           (cls/remove svg-wrapper "hidden")
+          (dom/removeChildren svg-elem)
           (dom/append svg-elem (pzz/fresh-pizza)))))))
 
 ;(defn draw-pizza
