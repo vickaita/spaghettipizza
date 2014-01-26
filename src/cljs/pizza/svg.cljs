@@ -102,7 +102,7 @@
               arr (array)]
           (dotimes [i (alength binary)]
             (aset arr i (.charCodeAt binary i)))
-          (put! out [url (js/Blob. (array (js/Uint8Array. arr))
-                                   (js-obj "type" "image/png"))]))))
+          (put! out (js/Blob. (array (js/Uint8Array. arr))
+                              (js-obj "type" "image/png"))))))
     (set! (.-src img) url)
     out))
