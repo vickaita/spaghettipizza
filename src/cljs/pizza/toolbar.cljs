@@ -59,6 +59,7 @@
     button "click"
     (fn [e]
       (.preventDefault e)
+      (hide!)
       (go (let [api-url "http://api.spaghettipizza.us/pizza/"
                 blob (<! (svg/svg->img-chan svg-elem 612 612))
                 data (doto (js/FormData.) (.append "data" blob))
