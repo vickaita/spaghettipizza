@@ -22,6 +22,11 @@
 
 (enable-console-print!)
 
+;; TODO: consider consolidating all application state into a single atom.
+(def current-noodle (atom nil))
+
+;; TODO: Move these *-noodle methods and normalize-point into a separate
+;; namespace possibly `pizza.easel` or perhaps a new (pizza.events?).
 (defn normalize-point
   "Convert an event into a point."
   [e]
@@ -40,8 +45,6 @@
       (let [b (.getBrowserEvent e)]
         [(* scale-factor (- (.-pageX b) left))
          (* scale-factor (- (.-pageY b) top))]))))
-
-(def current-noodle (atom nil))
 
 (defn- start-noodle
   [e]
@@ -67,16 +70,20 @@
 
 (defn enable-spaghetti-drawing
   [svg-elem]
-  (evt/listen svg-elem "mousedown" start-noodle)
-  (evt/listen svg-elem "touchstart" start-noodle)
-  (evt/listen svg-elem "mousemove" move-noodle)
-  (evt/listen svg-elem "touchmove" move-noodle)
-  (evt/listen js/document "mouseup" end-noodle)
-  (evt/listen svg-elem "touchup" end-noodle))
+  (doto svg-elem
+    (evt/listen "mousedown" start-noodle)
+    (evt/listen "touchstart" start-noodle)
+    (evt/listen "mousemove" move-noodle)
+    (evt/listen "touchmove" move-noodle)
+    (evt/listen "touchend" end-noodle))
+  ;; Mouseup event triggers on whatever element the pointer is over unlike the
+  ;; touchend event which always fires from the origin element.
+  (evt/listen js/document "mouseup" end-noodle))
 
 (defn- get-pizza-hash
   []
-  ;(.. js/document -location -search (split "=") (aget 1))
+  ;; TODO: Can I get this information straight from the "navigation" event and
+  ;; eliminate this function entirely?
   (-> (.-search (.-location js/document))
       (.split "=")
       (aget 1)))
@@ -85,18 +92,34 @@
   []
   (let [easel (dom/getElement "easel")
         svg-elem (dom/getElement "main-svg")
+        ;; TODO: goog.history.Html5History is pretty annoying and doesn't fit
+        ;; very well with a functional style. I should either use the native
+        ;; HTML5 methods or wrap it.
         history (goog.history.Html5History.
                   js/window
-                  #js {:createUrl (fn [token _ _] token)
-                       :retrieveToken (fn [path-prefix location]
-                                        (.substr (.-pathname location)
-                                                 (count path-prefix)))})]
+                  (let [tt #js {}]
+                    (set! (.-createUrl tt)
+                          (fn [token _ _] token))
+                    (set! (.-retrieveToken tt)
+                          (fn [path-prefix location]
+                            (.substr (.-pathname location)
+                                     (count path-prefix))))
+                    tt)
+                  ;; XXX: For some reason this tagged literal is breaking in
+                  ;; advanced compilation. That's why I'm doing that crazy let
+                  ;; block above. Honestly, I don't know why this isn't working.
+                  ;#js {:createUrl (fn [token _ _] token)
+                  ;     :retrieveToken (fn [path-prefix location]
+                  ;                      (.substr (.-pathname location)
+                  ;                               (count path-prefix)))}
+                  )]
 
     (doto history
       (evt/listen "navigate" #(easel/update! easel (get-pizza-hash)))
       (.setUseFragment false)
       (.setEnabled true))
 
+    ;; TODO: This should also be fired whenever the viewport is resized.
     (easel/adjust-size! svg-elem)
 
     ;; Some event handlers for managing toolbar opening/closing.
@@ -111,8 +134,8 @@
                   (.setToken history (str (.-origin js/location) "/"))
                   (easel/update! easel (get-pizza-hash))))
 
-    ;; This seems to be breaking noodle drawing on mobile, so disabled until I
-    ;; have time to investigate
+    ;; XXX: This seems to be breaking noodle drawing on mobile, so disabled
+    ;; until I have time to investigate.
     #_(evt/listen (dom/getElement "page") "click"
                   #(when (toolbar/visible?)
                      (do (.preventDefault %)
