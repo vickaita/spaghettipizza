@@ -7,7 +7,6 @@
             [goog.dom.classlist :as cls]
             [goog.events :as evt]
             [vickaita.channels :as ch]
-            #_[pizza.spaghetti]
             [pizza.svg :as svg]))
 
 (def current-tool (atom :spaghetti))
@@ -56,31 +55,13 @@
 
 (defn enable-photo-button
   [button svg-elem]
-  (let [body (.-body js/document)
-        ;; TODO: consider using one of the goog.ui classes such as Dialog or
-        ;; ModalPopup here instead of this homegrown solution.
-        modal (node [:div.modal-overlay.hidden
-                     [:div.modal-wrap
-                      [:div.modal-content
-                       [:p "Share this with your friends!"]
-                       [:div.pizza-container]]]])
-        pizza-container (dom/getElementByClass "pizza-container" modal)]
-    (dom/append body modal)
-    (evt/listen modal "click" (fn [e] (cls/add modal "hidden")))
-    (evt/listen (dom/getElementByClass "modal-content" modal) "click"
-                (fn [e] (.stopPropagation e)))
-    (evt/listen button "click"
-                (fn [e]
-                  (.preventDefault e)
-                  (go (let [[uri blob] (<! (svg/svg->img-chan svg-elem 612 612))
-                            data (doto (js/FormData.) (.append "data" blob))
-                            {fh :file-hash} (reader/read-string (<! (ch/xhr
-                                       "http://api.spaghettipizza.us/pizza/"
-                                       ;"/pizza/"
-                                       "POST"
-                                       data)))
-                            page-url (str (.-origin js/location) "?pizza=" fh)]
-                        (.pushState js/history nil nil page-url)
-                        (dom/removeChildren pizza-container)
-                        (dom/append pizza-container (node [:img.preview {:src uri}]))
-                        (cls/remove modal "hidden")))))))
+  (evt/listen
+    button "click"
+    (fn [e]
+      (.preventDefault e)
+      (go (let [api-url "http://api.spaghettipizza.us/pizza/"
+                blob (<! (svg/svg->img-chan svg-elem 612 612))
+                data (doto (js/FormData.) (.append "data" blob))
+                {fh :file-hash} (reader/read-string (<! (ch/xhr api-url "POST" data)))
+                page-url (str (.-origin js/location) "?pizza=" fh)]
+            (.pushState js/history nil nil page-url))))))
