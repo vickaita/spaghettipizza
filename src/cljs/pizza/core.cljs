@@ -93,11 +93,7 @@
                                                  (count path-prefix)))})]
 
     (easel/adjust-size! svg-elem)
-    ;(easel/update! easel (get-pizza-hash))
-    (evt/listen history "navigate"
-                (fn [e]
-                  (.log js/console e)
-                  (easel/update! easel (get-pizza-hash))))
+    (evt/listen history "navigate" #(easel/update! easel (get-pizza-hash)))
     (doto history
       (.setUseFragment false)
       (.setEnabled true))
