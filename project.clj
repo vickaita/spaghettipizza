@@ -17,6 +17,8 @@
                  [com.cemerick/rummage "1.0.1"]
                  [digest "1.4.3"]
                  [prismatic/dommy "0.1.1"]
+                 [om "0.3.0"]
+                 [sablono "0.2.3"]
                  [environ "0.4.0"]
                  [com.cemerick/piggieback "0.1.2"]]
   :source-paths ["src/clj" "src/cljs"]

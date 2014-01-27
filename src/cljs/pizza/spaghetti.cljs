@@ -38,7 +38,32 @@
   nil
   (add-point! [_ _] nil))
 
+(defmulti render :skin)
+
+(defmethod render nil [_] nil)
+
 ;;; Spaghetti
+
+(defn- stroke->polyline-points
+  [stroke]
+  (apply str (interleave (flatten (map #(list (:x %) (:y %)) stroke))
+                         (repeat " "))))
+
+(defmethod render :spaghetti
+  [{stroke :points}]
+  (let [points (stroke->polyline-points stroke)]
+    (html [:g.spaghetti.noodle
+           [:polyline.border {:points points
+                              :fill :transparent
+                              :stroke "#9E9E22"
+                              :stroke-linecap :round
+                              :stroke-width 6}]
+           [:polyline.inner {:points points
+                             :fill :transparent
+                             :stroke "#F5F5AA"
+                             :stroke-linecap :round
+                             :stroke-width 4 
+                             }]])))
 
 (defrecord Spaghetti [element border inner points length]
   Topping

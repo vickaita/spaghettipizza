@@ -61,7 +61,9 @@
        [:header#masthead
         [:a#menu-control]
         [:h1 "Spaghetti Pizza"]]
-       (easel)]]
+       [:div#easel-frame]
+       #_(easel)]]
+     (include-js "http://fb.me/react-0.8.0.js")
      (if dev?
        (include-js "js/debug/goog/base.js"
                    "js/debug/pizza.js")

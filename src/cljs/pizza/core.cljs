@@ -10,6 +10,9 @@
             [goog.history.Html5History]
             [cljs.core.async :refer [put! close! chan <! map<]]
             [clojure.browser.repl :as repl]
+            [om.core :as om :include-macros true]
+            [om.dom :include-macros true]
+            [sablono.core :as html :refer [html] :include-macros true]
             [dommy.core]
             [vickaita.channels :refer [event websocket]]
             [vickaita.console :refer [log]]
@@ -18,69 +21,19 @@
             [pizza.svg :as svg]
             [pizza.pizza :as pzz]
             [pizza.easel :as easel]
-            [pizza.spaghetti :refer [create-topping add-point!]]))
+            [pizza.spaghetti :as skins :refer [create-topping add-point!]]))
 
 (enable-console-print!)
 
-;; TODO: consider consolidating all application state into a single atom.
-(def current-noodle (atom nil))
-
-;; TODO: Move these *-noodle methods and normalize-point into a separate
-;; namespace possibly `pizza.easel` or perhaps a new (pizza.events?).
-(defn normalize-point
-  "Convert an event into a point."
-  [e]
-  (let [elem (.-currentTarget e)
-        offset (.getBoundingClientRect elem)
-        left (.-left offset)
-        top (.-top offset)
-        scale-factor (/ 512 (.-width offset))]
-    (case (.-type e)
-      ("touchstart" "touchmove")
-      (let [t (-> e .getBrowserEvent .-touches (aget 0))]
-        [(* scale-factor (- (.-pageX t) left))
-         (* scale-factor (- (.-pageY t) top))])
-      "touchend"
-      nil
-      (let [b (.getBrowserEvent e)]
-        [(* scale-factor (- (.-pageX b) left))
-         (* scale-factor (- (.-pageY b) top))]))))
-
-(defn- start-noodle
-  [e]
-  (.preventDefault e)
-  (.stopPropagation e)
-  (let [pt (normalize-point e)
-        n (create-topping @toolbar/current-tool pt)]
-    (reset! current-noodle n)
-    (dom/append (.-currentTarget e) (:element n))))
-
-(defn- move-noodle
-  [e]
-  (.preventDefault e)
-  (.stopPropagation e)
-  (let [pt (normalize-point e)]
-    (swap! current-noodle add-point! pt)))
-
-(defn- end-noodle
-  [e]
-  (.preventDefault e)
-  (.stopPropagation e)
-  (reset! current-noodle nil))
-
-;; TODO: this should almost certainly be in the pizza.easel namespace (or
-;; pizza.events if that ends up being a real thing).
-(defn enable-spaghetti-drawing
-  [svg-elem]
-  (doto svg-elem
-    (evt/listen "mousedown" start-noodle)
-    (evt/listen "touchstart" start-noodle)
-    (evt/listen "mousemove" move-noodle)
-    (evt/listen "touchmove" move-noodle)
-    (evt/listen "touchend" end-noodle))
-  ;; Mouseup event triggers on whatever element the pointer is over unlike the
-  ;; touchend event which always fires from the origin element.
-  (evt/listen js/document "mouseup" end-noodle))
+(def app-state
+  (atom {:image-url nil
+         :width 512
+         :height 512
+         :crust (easel/create-irregular-circle [256 256] 227)
+         :sauce (easel/create-irregular-circle [256 256] 210)
+         :strokes []
+         :tools {:spaghetti "Spaghetti"}
+         :tool :spaghetti}))
 
 (defn- get-pizza-hash
   []
@@ -90,11 +43,21 @@
       (.split "=")
       (aget 1)))
 
+(defn app-view
+  [app owner]
+  (om/component
+    (html [:div#site
+           #_(toolbar/toolbar)
+           [:div#page
+            [:header#masthead
+             [:a#menu-control]
+             [:h1 "Spaghetti Pizza"]]
+            (easel/easel app owner)]
+           [:footer [:p "Created by Vick Aita"]]])))
+
 (defn -main
   []
-  (let [easel (dom/getElement "easel")
-        svg-elem (dom/getElement "main-svg")
-        ;; TODO: goog.history.Html5History is pretty annoying and doesn't fit
+  (let [;; TODO: goog.history.Html5History is pretty annoying and doesn't fit
         ;; very well with a functional style. I should either use the native
         ;; HTML5 methods or wrap it.
         history (goog.history.Html5History.
@@ -117,20 +80,25 @@
                   )]
 
     (doto history
-      (evt/listen "navigate" #(easel/update! easel (get-pizza-hash)))
+      (evt/listen "navigate"
+                  #(swap! app-state assoc
+                          :image-url
+                          (let [pizza-hash (get-pizza-hash)]
+                            (when (> (count pizza-hash) 0)
+                              (str "/pizza/" (get-pizza-hash) ".png")))))
       (.setUseFragment false)
       (.setEnabled true))
 
     ;; TODO: This should also be fired whenever the viewport is resized.
-    (easel/adjust-size! svg-elem)
+    #_(easel/adjust-size! svg-elem)
 
     ;; Some event handlers for managing toolbar opening/closing.
-    (evt/listen (dom/getElement "menu-control") "click"
+    #_(evt/listen (dom/getElement "menu-control") "click"
                 #(do (.preventDefault %)
                      (.stopPropagation %)
                      (toolbar/toggle!)))
 
-    (evt/listen (dom/getElement "clean") "click"
+    #_(evt/listen (dom/getElement "clean") "click"
                 (fn [e]
                   (toolbar/hide!)
                   (.setToken history (str (.-origin js/location) "/"))
@@ -144,9 +112,10 @@
                          (.stopPropagation %)
                          (toolbar/hide!))))
 
-    (enable-spaghetti-drawing svg-elem)
-    (toolbar/enable-tool-selection! (dom/getElement "toolbar"))
-    (toolbar/enable-save-button! (dom/getElement "photo") svg-elem history)))
+    ;(enable-spaghetti-drawing svg-elem)
+    #_(toolbar/enable-tool-selection! (dom/getElement "toolbar"))
+    #_(toolbar/enable-save-button! (dom/getElement "photo") svg-elem history)
+    (om/root app-state app-view (.-body js/document))))
 
 (evt/listen js/document "DOMContentLoaded" -main)
 #_(repl/connect "http://ui:9000/repl")

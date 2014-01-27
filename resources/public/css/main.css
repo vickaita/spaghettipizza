@@ -256,7 +256,7 @@ dd:last-child .toolbar .tool {
 }
 
 /* line 91, ../../../src/scss/main.scss */
-#easel {
+.easel {
   margin: 0 auto;
   padding: 0;
   width: 100%;
