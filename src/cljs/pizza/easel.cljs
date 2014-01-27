@@ -1,5 +1,6 @@
 (ns pizza.easel
   (:require [clojure.string :refer [join]]
+            [goog.events :as events]
             [om.core :as om :include-macros true]
             [om.dom :as dom :include-macros true]
             [sablono.core :as html :refer [html] :include-macros true]
@@ -7,6 +8,8 @@
             [pizza.spaghetti :refer [render]]
             [pizza.svg :refer [M C S rotate-point median-point]]))
 
+;; TODO: this needs to be in a geometry or svg namesapce (don't forget to
+;; pizza.svg :require on the ns)
 (defn create-irregular-circle
   [origin radius]
   (let [[x y] origin
@@ -28,6 +31,7 @@
                        (partition 2 1 points))]
     (str (join " " curves) " Z")))
 
+;; TODO: put this back into the pizza namespace
 (defn pizza
   "Draw a pizza."
   [app owner]
@@ -44,27 +48,41 @@
 
 (defn easel
   [{:keys [image-url strokes width height tool] :as app} owner]
-  (html [:section.easel {:width width
-                         :height height
-                         :on-mouse-down
-                         #(om/transact! app [:strokes] conj (stroke/start tool %))
-                         :on-touch-start #(stroke/start tool %)
-                         :on-mouse-move
-                         #(om/transact! app [:strokes 0 :points] conj (stroke/append %))
-                         :on-touch-move #(stroke/append %)}
-         [:div.align-svg
-          [:svg#main-svg {:width width
-                 :height height
-                 :viewBox "0 0 512 512"
-                 :version "1.1"
-                 :preserveAspectRatio "xMidYMid"
-                 :xmlns "http://www.w3.org/2000/svg"}
-           (if image-url
-             [:text "foo"]
-             ;[:g.raster.layer
-             ; [:image {:xlink:href image-url
-             ;          :x "0" :y "0"
-             ;          :height (str height "px") :width (str width "px")}]]
-             [:g.vector.layer
-              (pizza app owner)
-              (map render strokes)])]]]))
+  (reify
+    om/IInitState
+    (init-state [_] {:drawing? false})
+    om/IWillMount
+    (will-mount [_]
+      (events/listen js/document "mouseup" #(om/set-state! owner :drawing? false)))
+    om/IRender
+    (render [_]
+      (html [:section.easel
+             {:width width
+              :height height
+              :on-mouse-down
+              #(do (om/set-state! owner :drawing? true)
+                   (om/transact! app [:strokes] conj (stroke/start tool %)))
+              ;:on-touch-start #(stroke/start tool %)
+              :on-mouse-move
+              #(when (om/get-state owner :drawing?)
+                 (om/transact! app [:strokes (dec (count (:strokes @app))) :points]
+                               conj (stroke/append %)))
+              ;:on-touch-move #(stroke/append %)
+              }
+             [:div.align-svg
+              [:svg#main-svg {:width width
+                              :height height
+                              :viewBox "0 0 512 512"
+                              :version "1.1"
+                              :preserveAspectRatio "xMidYMid"
+                              :xmlns "http://www.w3.org/2000/svg"}
+               (if image-url
+                 [:text "foo"]
+                 ;[:g.raster.layer
+                 ; [:image {:xlink:href image-url
+                 ;          :x "0" :y "0"
+                 ;          :height (str height "px") :width (str width "px")}]]
+                 [:g.vector.layer
+                  (pizza app owner)
+                  (map #(render % owner) (:strokes app))
+                  ])]]]))))

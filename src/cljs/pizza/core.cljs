@@ -31,6 +31,7 @@
          :height 512
          :crust (easel/create-irregular-circle [256 256] 227)
          :sauce (easel/create-irregular-circle [256 256] 210)
+         :drawing? false
          :strokes []
          :tools {:spaghetti "Spaghetti"}
          :tool :spaghetti}))
@@ -52,7 +53,7 @@
             [:header#masthead
              [:a#menu-control]
              [:h1 "Spaghetti Pizza"]]
-            (easel/easel app owner)]
+            (om/build easel/easel app)]
            [:footer [:p "Created by Vick Aita"]]])))
 
 (defn -main

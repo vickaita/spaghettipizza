@@ -1,5 +1,6 @@
 (ns pizza.spaghetti
-  (:require [pizza.svg :as svg]))
+  (:require [pizza.svg :as svg]
+            [sablono.core :as html :refer [html] :include-macros true]))
 
 ;;; Utils
 
@@ -44,26 +45,24 @@
 
 ;;; Spaghetti
 
-(defn- stroke->polyline-points
-  [stroke]
-  (apply str (interleave (flatten (map #(list (:x %) (:y %)) stroke))
-                         (repeat " "))))
+(defn format-points
+  [points]
+  (apply str (interleave (flatten points) (repeat " "))))
 
 (defmethod render :spaghetti
-  [{stroke :points}]
-  (let [points (stroke->polyline-points stroke)]
-    (html [:g.spaghetti.noodle
+  [stroke owner]
+  (let [points (format-points (:points stroke))]
+    (html [:g.spaghetti.noodle {:key (:id stroke)}
            [:polyline.border {:points points
-                              :fill :transparent
+                              :fill "transparent"
                               :stroke "#9E9E22"
-                              :stroke-linecap :round
+                              :stroke-linecap "round"
                               :stroke-width 6}]
            [:polyline.inner {:points points
-                             :fill :transparent
+                             :fill "transparent"
                              :stroke "#F5F5AA"
-                             :stroke-linecap :round
-                             :stroke-width 4 
-                             }]])))
+                             :stroke-linecap "round"
+                             :stroke-width 4}]])))
 
 (defrecord Spaghetti [element border inner points length]
   Topping
