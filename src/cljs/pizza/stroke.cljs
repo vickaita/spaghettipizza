@@ -12,8 +12,6 @@
   "Convert an event into a point."
   [e]
   (doto e .preventDefault .stopPropagation)
-  (.log js/console "target" (.-target e))
-  (.log js/console "currentTarget" (.-currentTarget e))
   (let [; XXX: There is a bug in React.js that incorrectly reports #document as
         ; the current target. When this is fixed upstream then getElement call
         ; can be avoided.
