@@ -1,5 +1,6 @@
 (ns pizza.stroke
-  (:require [om.core :as om :include-macros true]))
+  (:require [om.core :as om :include-macros true]
+            [goog.dom :as gdom]))
 
 (let [counter (atom 0)]
   (defn id
@@ -11,8 +12,9 @@
   "Convert an event into a point."
   [e]
   (doto e .preventDefault .stopPropagation)
-  (let [elem (.-target e)
-        _ (.log js/console elem)
+  (.log js/console "target" (.-target e))
+  (.log js/console "currentTarget" (.-currentTarget e))
+  (let [elem (gdom/getElement "align-svg") ;elem (.-target e)
         offset (.getBoundingClientRect elem)
         left (.-left offset)
         top (.-top offset)

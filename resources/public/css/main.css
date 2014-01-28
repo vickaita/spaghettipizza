@@ -268,38 +268,3 @@ dd:last-child .toolbar .tool {
   margin: 0;
   display: block;
 }
-
-/* line 104, ../../../src/scss/main.scss */
-.modal-overlay {
-  background: rgba(0, 0, 0, 0.5);
-  height: 100%;
-  left: 0;
-  position: fixed;
-  top: 0;
-  width: 100%;
-}
-
-/* line 113, ../../../src/scss/main.scss */
-.modal-wrap {
-  margin-top: -250px;
-  position: absolute;
-  top: 50%;
-  width: 100%;
-}
-
-/* line 120, ../../../src/scss/main.scss */
-.modal-content {
-  background: #FFF;
-  border-radius: 0.5rem;
-  border: 1px solid #11ac0b;
-  height: 500px;
-  margin: 0 auto;
-  padding: 1.5rem;
-  width: 500px;
-}
-
-/* line 130, ../../../src/scss/main.scss */
-img.preview {
-  width: 100%;
-  height: 100%;
-}

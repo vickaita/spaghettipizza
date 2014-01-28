@@ -69,7 +69,7 @@
                                conj (stroke/append %)))
               ;:on-touch-move #(stroke/append %)
               }
-             [:div.align-svg
+             [:div#align-svg
               [:svg#main-svg {:width width
                               :height height
                               :viewBox "0 0 512 512"
