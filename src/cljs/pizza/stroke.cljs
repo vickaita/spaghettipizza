@@ -14,7 +14,10 @@
   (doto e .preventDefault .stopPropagation)
   (.log js/console "target" (.-target e))
   (.log js/console "currentTarget" (.-currentTarget e))
-  (let [elem (gdom/getElement "align-svg") ;elem (.-target e)
+  (let [; XXX: There is a bug in React.js that incorrectly reports #document as
+        ; the current target. When this is fixed upstream then getElement call
+        ; can be avoided.
+        elem (gdom/getElement "align-svg") ;elem (.-currentTarget e)
         offset (.getBoundingClientRect elem)
         left (.-left offset)
         top (.-top offset)
