@@ -84,5 +84,7 @@
                  ;          :height (str height "px") :width (str width "px")}]]
                  [:g.vector.layer
                   (pizza app owner)
-                  (map #(render % owner) (:strokes app))
+                  (for [stroke (:strokes app)]
+                    (om/build render stroke))
+                  ;(map #(render % owner) (:strokes app))
                   ])]]]))))

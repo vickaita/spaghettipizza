@@ -21,7 +21,8 @@
             [pizza.svg :as svg]
             [pizza.pizza :as pzz]
             [pizza.easel :as easel]
-            [pizza.spaghetti :as skins :refer [create-topping add-point!]]))
+            [pizza.spaghetti :as skins :refer [create-topping add-point!]]
+            [pizza.command :refer [exec]]))
 
 (enable-console-print!)
 
@@ -79,6 +80,7 @@
 
         app-state
         (atom {:image-url nil
+               :image {:status :empty}
                :width 512
                :height 512
                :crust (easel/create-irregular-circle [256 256] 227)
@@ -90,7 +92,7 @@
                                            {:id :linguini :name "Linguini"}
                                            {:id :ziti :name "Ziti"}]}]
                          :tool :spaghetti
-                         :cmd commands}
+                         :command-channel commands}
                :tool :spaghetti})]
 
     (doto history
@@ -122,7 +124,8 @@
 
     (go (while true
           (let [command (<! commands)]
-            (prn command))))
+            (prn command)
+            (swap! app-state exec command))))
 
     (om/root app-state app-view (.-body js/document))))
 

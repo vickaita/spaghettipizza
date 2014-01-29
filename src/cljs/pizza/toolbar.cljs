@@ -1,8 +1,13 @@
 (ns pizza.toolbar
-  (:require-macros [cljs.core.async.macros :refer [go go-loop alt!]])
-  (:require [cljs.core.async :refer [put! close! chan <! map<]]
+  (:require [cljs.core.async :refer [put!]]
             [om.core :as om :include-macros true]
             [sablono.core :as html :refer [html] :include-macros true]))
+
+(defn- handler
+  [world message]
+  (fn [e]
+    (doto e .preventDefault .stopPropagation)
+    (put! (:command-channel @world) message)))
 
 (defn toolbar
   [menu owner]
@@ -10,8 +15,8 @@
     (html
       [:section#toolbar.toolbar
        [:section.actions
-        [:a#clear.action {:on-click #(put! (:cmd @menu) [:clear])} "Clear"]
-        [:a#save.action {:on-click #(put! (:cmd @menu) [:save])} "Save"]]
+        [:a#clear.action {:on-click (handler menu [:clear])} "Clear"]
+        [:a#save.action {:on-click (handler menu [:save])} "Save"]]
        [:section.toppings
         [:h1 "Toppings!"]
         [:dl.tools
@@ -20,5 +25,6 @@
                  (for [tool (:tools group)]
                    [:dd [:a.tool {:class (when (= (:id tool) (:tool menu)) "active")
                                   :data-tool (:id tool)
-                                  :key (:id tool)}
+                                  :key (:id tool)
+                                  :on-click (handler menu [:select-tool (:id @tool)])}
                          (:name tool)]])))]]])))
