@@ -84,8 +84,7 @@
                :width 512
                :height 512
                :pizza {:crust (easel/create-irregular-circle [256 256] 227)
-                       :sauce (easel/create-irregular-circle [256 256] 210)
-                       :origin [256 256]}
+                       :sauce (easel/create-irregular-circle [256 256] 210)}
                :strokes []
                :show-toolbar? false
                :toolbar {:groups [{:name "Pasta"

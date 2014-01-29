@@ -34,7 +34,7 @@
 ;; TODO: put this back into the pizza namespace
 (defn pizza
   "Draw a pizza."
-  [{:keys [crust sauce origin]} owner]
+  [{:keys [crust sauce]} owner]
   (om/component
     (html [:g.pizza
            [:path.crust {:d crust
