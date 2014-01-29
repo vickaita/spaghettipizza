@@ -197,7 +197,7 @@ button:focus {
   width: 15rem;
 }
 /* line 28, ../../../src/scss/_toolbar.scss */
-.toolbar h2 {
+.toolbar h1 {
   font-size: 1.4rem;
   color: white;
   padding: 1rem;
@@ -222,12 +222,12 @@ dd:last-child .toolbar .tool {
 }
 
 /* line 58, ../../../src/scss/_toolbar.scss */
-#clean, #photo {
+#clear, #save {
   position: relative;
   padding: 0.75rem 0.75rem 0.75rem 2.25rem;
 }
 /* line 61, ../../../src/scss/_toolbar.scss */
-#clean:before, #photo:before {
+#clear:before, #save:before {
   content: "";
   width: 100%;
   height: 100%;
@@ -237,7 +237,7 @@ dd:last-child .toolbar .tool {
 }
 
 /* line 78, ../../../src/scss/_toolbar.scss */
-#clean, #photo {
+#clear, #save {
   box-sizing: border-box;
   display: block;
   float: left;
@@ -246,12 +246,12 @@ dd:last-child .toolbar .tool {
 }
 
 /* line 73, ../../../src/scss/_toolbar.scss */
-#clean:before {
+#clear:before {
   background: url("../img/icons/refresh.svg") no-repeat;
 }
 
 /* line 73, ../../../src/scss/_toolbar.scss */
-#photo:before {
+#save:before {
   background: url("../img/icons/share.svg") no-repeat;
 }
 

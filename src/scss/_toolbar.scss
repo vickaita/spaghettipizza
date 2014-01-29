@@ -25,7 +25,7 @@
   padding: 0.5rem;
   position: absolute;
   width: $tool-width;
-  h2 {
+  h1 {
     font-size: 1.4rem;
     color: white;
     padding: 1rem;
@@ -83,12 +83,12 @@
   width: 50%;
 }
 
-#clean {
+#clear {
   @include tool-icon('../img/icons/refresh.svg');
   @extend %tool-inline;
 }
 
-#photo {
+#save {
   @include tool-icon('../img/icons/share.svg');
   @extend %tool-inline;
 }

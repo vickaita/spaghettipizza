@@ -25,17 +25,6 @@
 
 (enable-console-print!)
 
-(def app-state
-  (atom {:image-url nil
-         :width 512
-         :height 512
-         :crust (easel/create-irregular-circle [256 256] 227)
-         :sauce (easel/create-irregular-circle [256 256] 210)
-         :drawing? false
-         :strokes []
-         :tools {:spaghetti "Spaghetti"}
-         :tool :spaghetti}))
-
 (defn- get-pizza-hash
   []
   ;; TODO: Can I get this information straight from the "navigation" event and
@@ -47,11 +36,15 @@
 (defn app-view
   [app owner]
   (om/component
-    (html [:div#site
-           #_(toolbar/toolbar)
+    (html [:div#site {:class (when (:show-toolbar? app) "show-toolbar")}
+           (om/build toolbar/toolbar (:toolbar app))
            [:div#page
             [:header#masthead
-             [:a#menu-control]
+             [:a#menu-control
+              {:on-click (fn [e]
+                           (doto e .preventDefault .stopPropagation)
+                           (om/update! app assoc :show-toolbar?
+                                       (not (:show-toolbar? @app))))}]
              [:h1 "Spaghetti Pizza"]]
             (om/build easel/easel app)]
            [:footer [:p "Created by Vick Aita"]]])))
@@ -61,24 +54,44 @@
   (let [;; TODO: goog.history.Html5History is pretty annoying and doesn't fit
         ;; very well with a functional style. I should either use the native
         ;; HTML5 methods or wrap it.
-        history (goog.history.Html5History.
-                  js/window
-                  (let [tt #js {}]
-                    (set! (.-createUrl tt)
-                          (fn [token _ _] token))
-                    (set! (.-retrieveToken tt)
-                          (fn [path-prefix location]
-                            (.substr (.-pathname location)
-                                     (count path-prefix))))
-                    tt)
-                  ;; XXX: For some reason this tagged literal is breaking in
-                  ;; advanced compilation. That's why I'm doing that crazy let
-                  ;; block above. Honestly, I don't know why this isn't working.
-                  ;#js {:createUrl (fn [token _ _] token)
-                  ;     :retrieveToken (fn [path-prefix location]
-                  ;                      (.substr (.-pathname location)
-                  ;                               (count path-prefix)))}
-                  )]
+        history
+        (goog.history.Html5History.
+          js/window
+          (let [tt #js {}]
+            (set! (.-createUrl tt)
+                  (fn [token _ _] token))
+            (set! (.-retrieveToken tt)
+                  (fn [path-prefix location]
+                    (.substr (.-pathname location)
+                             (count path-prefix))))
+            tt)
+          ;; XXX: For some reason this tagged literal is breaking in
+          ;; advanced compilation. That's why I'm doing that crazy let
+          ;; block above. Honestly, I don't know why this isn't working.
+          ;#js {:createUrl (fn [token _ _] token)
+          ;     :retrieveToken (fn [path-prefix location]
+          ;                      (.substr (.-pathname location)
+          ;                               (count path-prefix)))}
+          )
+
+        commands
+        (chan)
+
+        app-state
+        (atom {:image-url nil
+               :width 512
+               :height 512
+               :crust (easel/create-irregular-circle [256 256] 227)
+               :sauce (easel/create-irregular-circle [256 256] 210)
+               :strokes []
+               :show-toolbar? false
+               :toolbar {:groups [{:name "Pasta"
+                                   :tools [{:id :spaghetti :name "Spaghetti"}
+                                           {:id :linguini :name "Linguini"}
+                                           {:id :ziti :name "Ziti"}]}]
+                         :tool :spaghetti
+                         :cmd commands}
+               :tool :spaghetti})]
 
     (doto history
       (evt/listen "navigate"
@@ -90,32 +103,27 @@
       (.setUseFragment false)
       (.setEnabled true))
 
-    ;; TODO: This should also be fired whenever the viewport is resized.
-    #_(easel/adjust-size! svg-elem)
+    ;;;;; TODO: This should also be fired whenever the viewport is resized.
+    ;;;#_(easel/adjust-size! svg-elem)
 
-    ;; Some event handlers for managing toolbar opening/closing.
-    #_(evt/listen (dom/getElement "menu-control") "click"
-                #(do (.preventDefault %)
-                     (.stopPropagation %)
-                     (toolbar/toggle!)))
+    ;;;#_(evt/listen (dom/getElement "clean") "click"
+    ;;;            (fn [e]
+    ;;;              (toolbar/hide!)
+    ;;;              (.setToken history (str (.-origin js/location) "/"))
+    ;;;              (easel/update! easel (get-pizza-hash))))
 
-    #_(evt/listen (dom/getElement "clean") "click"
-                (fn [e]
-                  (toolbar/hide!)
-                  (.setToken history (str (.-origin js/location) "/"))
-                  (easel/update! easel (get-pizza-hash))))
+    ;;;;; XXX: This seems to be breaking noodle drawing on mobile, so disabled
+    ;;;;; until I have time to investigate.
+    ;;;#_(evt/listen (dom/getElement "page") "click"
+    ;;;              #(when (toolbar/visible?)
+    ;;;                 (do (.preventDefault %)
+    ;;;                     (.stopPropagation %)
+    ;;;                     (toolbar/hide!))))
 
-    ;; XXX: This seems to be breaking noodle drawing on mobile, so disabled
-    ;; until I have time to investigate.
-    #_(evt/listen (dom/getElement "page") "click"
-                  #(when (toolbar/visible?)
-                     (do (.preventDefault %)
-                         (.stopPropagation %)
-                         (toolbar/hide!))))
+    (go (while true
+          (let [command (<! commands)]
+            (prn command))))
 
-    ;(enable-spaghetti-drawing svg-elem)
-    #_(toolbar/enable-tool-selection! (dom/getElement "toolbar"))
-    #_(toolbar/enable-save-button! (dom/getElement "photo") svg-elem history)
     (om/root app-state app-view (.-body js/document))))
 
 (evt/listen js/document "DOMContentLoaded" -main)
