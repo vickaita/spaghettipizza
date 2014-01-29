@@ -34,14 +34,14 @@
 ;; TODO: put this back into the pizza namespace
 (defn pizza
   "Draw a pizza."
-  [app owner]
-  (let [origin [256 256]]
+  [{:keys [crust sauce origin]} owner]
+  (om/component
     (html [:g.pizza
-           [:path.crust {:d (:crust app)
+           [:path.crust {:d crust
                          :fill "#FAE265"
                          :stroke "#DDAB0B"
                          :stroke-width 3}]
-           [:path.sauce {:d (:sauce app)
+           [:path.sauce {:d sauce
                          :fill "#F86969"
                          :stroke "#F04F4F"
                          :stroke-width 3}]])))
@@ -83,7 +83,7 @@
                  ;          :x "0" :y "0"
                  ;          :height (str height "px") :width (str width "px")}]]
                  [:g.vector.layer
-                  (pizza app owner)
+                  (om/build pizza (:pizza app))
                   (for [stroke (:strokes app)]
                     (om/build render stroke))
                   ;(map #(render % owner) (:strokes app))
