@@ -24,7 +24,6 @@
            (cons [:dt.group {:key (:name group)} (:name group)]
                  (for [tool (:tools group)]
                    [:dd [:a.tool {:class (when (= (:id tool) (:tool menu)) "active")
-                                  :data-tool (:id tool)
                                   :key (:id tool)
                                   :on-click (handler menu [:select-tool (:id @tool)])}
                          (:name tool)]])))]]])))
