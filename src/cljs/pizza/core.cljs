@@ -1,27 +1,13 @@
 (ns pizza.core
-  (:require-macros [cljs.core.async.macros :refer [go alt!]]
-                   [dommy.macros :refer [node]])
-  (:require [goog.dom :as dom]
-            [goog.dom.classlist :as cls]
-            [goog.dom.forms :as forms]
-            [goog.events :as evt]
-            [goog.net.XhrIo :as xhr]
-            [goog.net.WebSocket]
+  (:require-macros [cljs.core.async.macros :refer [go alt!]])
+  (:require [goog.events :as events]
             [goog.history.Html5History]
             [cljs.core.async :refer [put! close! chan <! map<]]
             [clojure.browser.repl :as repl]
             [om.core :as om :include-macros true]
-            [om.dom :include-macros true]
             [sablono.core :as html :refer [html] :include-macros true]
-            [dommy.core]
-            [vickaita.channels :refer [event websocket]]
-            [vickaita.console :refer [log]]
             [pizza.toolbar :as toolbar]
-            [pizza.ajax :as ajax]
-            [pizza.svg :as svg]
-            [pizza.pizza :as pzz]
             [pizza.easel :as easel]
-            [pizza.spaghetti :as skins :refer [create-topping add-point!]]
             [pizza.command :refer [exec]]))
 
 (enable-console-print!)
@@ -96,7 +82,7 @@
                :tool :spaghetti})]
 
     (doto history
-      (evt/listen "navigate"
+      (events/listen "navigate"
                   #(swap! app-state assoc
                           :image-url
                           (let [pizza-hash (get-pizza-hash)]
@@ -108,15 +94,9 @@
     ;;;;; TODO: This should also be fired whenever the viewport is resized.
     ;;;#_(easel/adjust-size! svg-elem)
 
-    ;;;#_(evt/listen (dom/getElement "clean") "click"
-    ;;;            (fn [e]
-    ;;;              (toolbar/hide!)
-    ;;;              (.setToken history (str (.-origin js/location) "/"))
-    ;;;              (easel/update! easel (get-pizza-hash))))
-
     ;;;;; XXX: This seems to be breaking noodle drawing on mobile, so disabled
     ;;;;; until I have time to investigate.
-    ;;;#_(evt/listen (dom/getElement "page") "click"
+    ;;;#_(events/listen (dom/getElement "page") "click"
     ;;;              #(when (toolbar/visible?)
     ;;;                 (do (.preventDefault %)
     ;;;                     (.stopPropagation %)
@@ -129,5 +109,5 @@
 
     (om/root app-state app-view (.-body js/document))))
 
-(evt/listen js/document "DOMContentLoaded" -main)
+(events/listen js/document "DOMContentLoaded" -main)
 #_(repl/connect "http://ui:9000/repl")
