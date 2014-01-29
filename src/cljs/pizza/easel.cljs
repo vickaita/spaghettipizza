@@ -85,6 +85,4 @@
                  [:g.vector.layer
                   (om/build pizza (:pizza app))
                   (for [stroke (:strokes app)]
-                    (om/build render stroke))
-                  ;(map #(render % owner) (:strokes app))
-                  ])]]]))))
+                    (om/build render stroke))])]]]))))
