@@ -95,6 +95,13 @@ button:focus {
   height: 100%;
 }
 
+#align-svg {
+  // Float left so that div#align-svg will "shrinkwrap" to the same dimensions
+  // as the svg element that it is wrapping. It has to be the same width so
+  // that the scale factor can be correctly calculated.
+  float: left;
+}
+
 #main-svg {
   margin: 0;
   display: block;
