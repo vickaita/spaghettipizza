@@ -3,7 +3,7 @@
             [goog.dom :as gdom]))
 
 (let [counter (atom 0)]
-  (defn id
+  (defn gen-id
     []
     (swap! counter inc)
     (str "stroke_" @counter)))
@@ -36,7 +36,9 @@
 
 (defn start
   [skin e]
-  {:id (id) :skin skin :points (list (normalize-point e))})
+  {:id (gen-id)
+   :skin skin
+   :points (list (normalize-point e))})
 
 (defn append
   [points e granularity]
