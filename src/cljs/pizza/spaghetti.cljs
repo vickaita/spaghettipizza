@@ -31,21 +31,33 @@
 
 ;;; Spaghetti
 
-(defn format-points
+(defn format-points-old
   [points]
   (apply str (interleave (flatten points) (repeat " "))))
+
+(declare format-points)
+
+(def ^:private format-points
+  (memoize
+    (fn [points]
+      (if (empty? points)
+        ""
+        (str (ffirst points) " " (second (first points)) " "
+             (format-points (rest points)))))))
 
 (defmethod render :spaghetti
   [stroke owner]
   (om/component
     (let [points (format-points (:points stroke))]
-      (html [:g.spaghetti.noodle {:key (:id stroke)}
-             [:polyline.border {:points points
+      (html [:g.topping.noodle.spaghetti
+             [:polyline.border {:key (str (:id stroke) "-border")
+                                :points points
                                 :fill "transparent"
                                 :stroke "#9E9E22"
                                 :stroke-linecap "round"
                                 :stroke-width 6}]
-             [:polyline.inner {:points points
+             [:polyline.inner {:key (str (:id stroke) "-inner")
+                               :points points
                                :fill "transparent"
                                :stroke "#F5F5AA"
                                :stroke-linecap "round"
@@ -55,7 +67,7 @@
   [stroke owner]
   (om/component
     (let [points (format-points (:points stroke))]
-      (html [:g.linguini.noodle {:key (:id stroke)}
+      (html [:g.topping.noodle.linguini {:key (:id stroke)}
              [:polyline.border {:points points
                                 :fill "transparent"
                                 :stroke "#9E9E22"
@@ -80,11 +92,11 @@
   [stroke owner]
   (om/component
     (let [points (:points @stroke)
-          begin (first points)
-          end (peek points)
+          begin (last points)
+          end (first points)
           clamped (clamp begin end)
           formated (format-points clamped)]
-      (html [:g.ziti.noodle {:key (:id stroke)}
+      (html [:g.topping.noodle.ziti {:key (:id stroke)}
              [:polyline.border {:points formated
                                 :fill "transparent"
                                 :stroke "#9E9E22"
@@ -100,41 +112,45 @@
                             :cx (first (second clamped))
                             :cy (second (second clamped))}]]))))
 
-;; ---
+(def ^:private max-ricotta-radius 40)
+(def ^:private min-ricotta-radius 10)
 
-;(def ^:private max-ricotta-radius 40)
-;(def ^:private min-ricotta-radius 10)
-;
-;(defn- add-blob
-;  "Adds a circle of ricotta to the element. Creates a circle for the border and
-;  a slightly smaller circle for the fill. By using two circles on different
-;  layers we can give the illusion that it is one irregular shape instead of a
-;  bunch of circles."
-;  [this point]
-;  (let [radius (rand-range 3 (:max-radius this))]
-;    (doto (:border this)
-;      (.appendChild (svg/create-circle point radius "#dde" "#dde" 0)))
-;    (doto (:inner this)
-;      (.appendChild (svg/create-circle point (- radius 2) "#eed" "#eed" 0)))
-;    this))
-;
-;(defrecord Ricotta [element border inner last-point max-radius]
-;  Topping
-;  (add-point! [this point]
-;    (if (> (distance last-point point) (/ max-radius 5))
-;      (do (add-blob this point)
-;          (if (> max-radius min-ricotta-radius)
-;            (Ricotta. element border inner point (* 0.9 max-radius))
-;            nil))
-;      this)))
-;
-;(defmethod create-topping :ricotta
-;  [_ point]
-;  (let [group (svg/create-element "g")
-;        border (svg/create-element "g")
-;        inner (svg/create-element "g")]
-;    (doto group
-;      (.appendChild border)
-;      (.appendChild inner))
-;    (-> (Ricotta. group border inner point (* 0.9 max-ricotta-radius))
-;      (add-blob point))))
+(defn- thin
+  "Takes a seq points and thins them out so that you have a more sparse
+  distribution of points."
+  [points]
+  (loop [acc []
+         prev (first points)
+         [current & remaining] (rest points)]
+    (if (not current)
+      acc
+      (if (> (distance prev current) 10)
+        (recur (conj acc current) current remaining)
+        (recur acc prev remaining)))))
+
+(defn- cheese-blob
+  [point]
+  [point 5])
+
+;(def test-points (take 20 (repeatedly #(vector (rand-int 100) (rand-int 100)))))
+;(map cheese-blob (thin test-points))
+
+(defmethod render :ricotta
+  [stroke owner]
+  (om/component
+    (let [circles (map cheese-blob (:points stroke))]
+      (html [:g.topping.cheese.ricotta
+             ; By using two circles on different layers we can give the illusion
+             ; that it is one irregular shape instead of a  bunch of circles.
+             (list [:g.border
+                    (for [[[x y] radius] circles]
+                      [:circle {:cx x
+                                :cy y
+                                :r (+ radius 2)
+                                :fill "#DDDDEE"}])]
+                   [:g.inner
+                    (for [[[x y] radius] circles]
+                      [:circle {:cx x
+                                :cy y
+                                :r radius
+                                :fill "#EEEEDD"}])])]))))
