@@ -264,6 +264,11 @@ dd:last-child .toolbar .tool {
 }
 
 /* line 98, ../../../src/scss/main.scss */
+#align-svg {
+  float: left;
+}
+
+/* line 105, ../../../src/scss/main.scss */
 #main-svg {
   margin: 0;
   display: block;
