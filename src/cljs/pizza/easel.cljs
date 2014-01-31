@@ -65,8 +65,10 @@
               ;:on-touch-start #(stroke/start tool %)
               :on-mouse-move
               #(when (om/get-state owner :drawing?)
-                 (om/transact! app [:strokes (dec (count (:strokes @app))) :points]
-                               conj (stroke/append %)))
+                 (om/transact!
+                   app
+                   [:strokes (dec (count (:strokes @app))) :points]
+                   stroke/append % (:granularity @app)))
               ;:on-touch-move #(stroke/append %)
               }
              [:div#align-svg
