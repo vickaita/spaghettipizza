@@ -69,6 +69,7 @@
                :image {:status :empty}
                :width 512
                :height 512
+               :granularity 5
                :pizza {:crust (easel/create-irregular-circle [256 256] 227)
                        :sauce (easel/create-irregular-circle [256 256] 210)}
                :strokes []
@@ -76,7 +77,9 @@
                :toolbar {:groups [{:name "Pasta"
                                    :tools [{:id :spaghetti :name "Spaghetti"}
                                            {:id :linguini :name "Linguini"}
-                                           {:id :ziti :name "Ziti"}]}]
+                                           {:id :ziti :name "Ziti"}]}
+                                  {:name "Cheese"
+                                   :tools [{:id :ricotta :name "Ricotta"}]}]
                          :tool :spaghetti
                          :command-channel commands}
                :tool :spaghetti})]
