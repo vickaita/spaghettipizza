@@ -8,6 +8,10 @@
     (swap! counter inc)
     (str "stroke_" @counter)))
 
+(defn- distance
+  [p1 p2]
+  (Math/sqrt (reduce + (map #(* % %) (map - p1 p2)))))
+
 (defn- normalize-point
   "Convert an event into a point."
   [e]
@@ -30,6 +34,13 @@
       [(* scale-factor (- (.-pageX e) left))
        (* scale-factor (- (.-pageY e) top))])))
 
-(defn start [skin e] {:id (id) :skin skin :points [(normalize-point e)]})
+(defn start
+  [skin e]
+  {:id (id) :skin skin :points (list (normalize-point e))})
 
-(defn append [e] (normalize-point e))
+(defn append
+  [points e granularity]
+  (let [pt (normalize-point e)]
+    (if (> (distance pt (first points)) granularity)
+      (cons pt points)
+      points)))
