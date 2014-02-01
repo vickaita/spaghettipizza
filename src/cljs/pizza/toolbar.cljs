@@ -7,7 +7,7 @@
   [world message]
   (fn [e]
     (doto e .preventDefault .stopPropagation)
-    (put! (:commands @world) message)))
+    (put! (:commands world) message)))
 
 (defn toolbar
   [menu owner]
@@ -19,11 +19,12 @@
         [:a#save.action {:on-click (handler menu [:save])} "Save"]]
        [:section.toppings
         [:h1 "Toppings!"]
-        [:dl.tools
+        [:section.tools
          (for [group (:groups menu)]
-           (cons [:dt.group {:key (:name group)} (:name group)]
-                 (for [tool (:tools group)]
-                   [:dd [:a.tool {:class (when (= (:id tool) (:tool menu)) "active")
-                                  :key (:id tool)
-                                  :on-click (handler menu [:select-tool (:id @tool)])}
-                         (:name tool)]])))]]])))
+           [:section.group {:key (:name group)} (:name group)
+            [:ul
+             (for [tool (:tools group)]
+               [:li [:a.tool {:class (when (= (:id tool) (:tool menu)) "active")
+                              :key (:id tool)
+                              :on-click (handler menu [:select-tool (:id tool)])}
+                     (:name tool)]])]])]]])))

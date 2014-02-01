@@ -2,9 +2,9 @@
   :description "Spaghetti Pizza -- the original pasta on pizza simulator!"
   :url "http://spaghettipizza.us"
   :dependencies [[org.clojure/clojure "1.5.1"]
-                 [org.clojure/clojurescript "0.0-2138"]
+                 [org.clojure/clojurescript "0.0-2156"]
                  [org.clojure/core.async "0.1.242.0-44b1e3-alpha"]
-                 [org.clojure/core.typed "0.2.21"]
+                 [org.clojure/core.typed "0.2.26"]
                  [org.clojure/tools.logging "0.2.6"]
                  [commons-codec/commons-codec "1.4"]
                  [ring "1.2.1"]
@@ -17,7 +17,7 @@
                  [com.cemerick/rummage "1.0.1"]
                  [digest "1.4.3"]
                  [prismatic/dommy "0.1.1"]
-                 [om "0.3.0"]
+                 [om "0.3.1"]
                  [sablono "0.2.3"]
                  [environ "0.4.0"]
                  [com.cemerick/piggieback "0.1.2"]]
@@ -25,7 +25,7 @@
   :main pizza.handler
   :plugins [[lein-cljsbuild "1.0.0-alpha2"]
             [lein-environ "0.4.0"]
-            #_[lein-typed "0.3.1"]]
+            [lein-typed "0.3.1"]]
   :repl-options {:nrepl-middleware [cemerick.piggieback/wrap-cljs-repl]}
   :cljsbuild {:builds
               [{:id "dev"
@@ -46,7 +46,7 @@
                 :compiler {:output-to "resources/public/js/pizza.js"
                            :output-dir "resources/public/js"
                            :optimizations :advanced}}]}
-  ;:core.typed {:check [pizza.types]}
+  :core.typed {:check [pizza.core]}
   :profiles {:dev {:env {:environment :dev}}
              :test {:env {:environment :test}
                     :aot [pizza.handler]}

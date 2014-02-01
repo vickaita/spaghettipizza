@@ -1,6 +1,5 @@
 (ns pizza.stroke
-  (:require [om.core :as om :include-macros true]
-            [goog.dom :as gdom]))
+  (:require [om.core :as om :include-macros true]))
 
 (let [counter (atom 0)]
   (defn- gen-id

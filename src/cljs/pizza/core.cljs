@@ -23,20 +23,23 @@
 (defn app-view
   [app owner]
   (om/component
-    (html [:div#site {:class (when (:show-toolbar? app) "show-toolbar")}
-           (om/build toolbar/toolbar
-                     (om/graft {:commands (:commands @app)}
-                               (:toolbar app)))
-           [:div#page
-            [:header#masthead
-             [:a#menu-control
-              {:on-click (fn [e]
-                           (doto e .preventDefault .stopPropagation)
-                           (om/update! app assoc :show-toolbar?
-                                       (not (:show-toolbar? @app))))}]
-             [:h1 "Spaghetti Pizza"]]
-            (om/build easel/easel app)]
-           [:footer [:p "Created by Vick Aita"]]])))
+    (html
+      [:div#site {:class (when (:show-toolbar? app) "show-toolbar")}
+       (om/build toolbar/toolbar
+                 (om/graft {:commands (:commands app)
+                            :tool (:tool app)
+                            :groups (:groups (:toolbar app))}
+                           app))
+       [:div#page
+        [:header#masthead
+         [:a#menu-control
+          {:on-click (fn [e]
+                       (doto e .preventDefault .stopPropagation)
+                       (om/update! app assoc :show-toolbar?
+                                   (not (:show-toolbar? @app))))}]
+         [:h1 "Spaghetti Pizza"]]
+        (om/build easel/easel app)]
+       [:footer [:p "Created by Vick Aita"]]])))
 
 (defn -main
   []
@@ -52,8 +55,7 @@
             (set! (.-retrieveToken tt)
                   (fn [path-prefix location]
                     (.substr (.-pathname location)
-                             (count path-prefix))))
-            tt)
+                             (count path-prefix)))) tt)
           ;; XXX: For some reason this tagged literal is breaking in
           ;; advanced compilation. That's why I'm doing that crazy let
           ;; block above. Honestly, I don't know why this isn't working.
@@ -68,7 +70,7 @@
 
         app-state
         (atom {:commands commands
-               :debug true
+               :debug false
                :image-url nil
                :image {:status :empty}
                :width 512
@@ -83,8 +85,7 @@
                                            {:id :linguini :name "Linguini"}
                                            {:id :ziti :name "Ziti"}]}
                                   {:name "Cheese"
-                                   :tools [{:id :ricotta :name "Ricotta"}]}]
-                         :tool :spaghetti}
+                                   :tools [{:id :ricotta :name "Ricotta"}]}]}
                :tool :spaghetti})]
 
     (doto history
@@ -111,8 +112,7 @@
     (go (while true
           (let [command (<! commands)]
             (when (:debug @app-state) (prn command))
-            (swap! app-state exec command)
-            (when (:debug @app-state) (prn (:strokes @app-state))))))
+            (swap! app-state exec command))))
 
     (om/root app-state app-view (.-body js/document))))
 

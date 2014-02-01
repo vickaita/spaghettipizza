@@ -1,9 +1,6 @@
 (ns pizza.spaghetti
-  (:require [pizza.svg :as svg]
-            [om.core :as om :include-macros true]
+  (:require [om.core :as om :include-macros true]
             [sablono.core :as html :refer [html] :include-macros true]))
-
-;;; Utils
 
 (defn- rand-range
   [min max]
@@ -21,17 +18,17 @@
   [p1 p2]
   (apply Math/atan2 (reverse (map - p2 p1))))
 
-(defn- points->str
-  [pts]
-  (apply str (interleave (flatten pts) (repeat " "))))
+(defn- clamp
+  [[x y :as p1] p2]
+  (let [max-len 60]
+    (if (< (distance p1 p2) max-len)
+    [p1 p2]
+    (let [a (angle p1 p2)]
+      [p1 [(+ x (* max-len (Math/cos a)))
+           (+ y (* max-len (Math/sin a)))]]))))
 
-(defmulti render :skin)
-
-(defmethod render nil [_] nil)
-
-;;; Spaghetti
-
-(defn format-points-old
+(defn- format-points*
+  "A non-memoized version of format points."
   [points]
   (apply str (interleave (flatten points) (repeat " "))))
 
@@ -44,12 +41,17 @@
         ""
         (str (ffirst points) " " (second (first points)) " "
              (format-points (rest points)))))))
+;;; Toppings
+
+(defmulti render :skin)
+
+(defmethod render nil [_] nil)
 
 (defmethod render :spaghetti
   [stroke owner]
   (om/component
     (let [points (format-points (:points stroke))]
-      (html [:g.topping.noodle.spaghetti
+      (html [:g.topping.noodle.spaghetti {:key (str (:id stroke) "-topping")}
              [:polyline.border {:key (str (:id stroke) "-border")
                                 :points points
                                 :fill "transparent"
@@ -78,15 +80,6 @@
                                :stroke "#F5F5AA"
                                :stroke-linecap "square"
                                :stroke-width 10}]]))))
-
-(defn- clamp
-  [[x y :as p1] p2]
-  (let [max-len 60]
-    (if (< (distance p1 p2) max-len)
-    [p1 p2]
-    (let [a (angle p1 p2)]
-      [p1 [(+ x (* max-len (Math/cos a)))
-           (+ y (* max-len (Math/sin a)))]]))))
 
 (defmethod render :ziti
   [stroke owner]
@@ -130,7 +123,7 @@
 
 (defn- cheese-blob
   [point]
-  [point 5])
+  [point (rand-range min-ricotta-radius max-ricotta-radius)])
 
 ;(def test-points (take 20 (repeatedly #(vector (rand-int 100) (rand-int 100)))))
 ;(map cheese-blob (thin test-points))
