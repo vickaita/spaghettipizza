@@ -7,7 +7,7 @@
   [world message]
   (fn [e]
     (doto e .preventDefault .stopPropagation)
-    (put! (:command-channel @world) message)))
+    (put! (:commands @world) message)))
 
 (defn toolbar
   [menu owner]

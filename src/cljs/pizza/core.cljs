@@ -24,7 +24,9 @@
   [app owner]
   (om/component
     (html [:div#site {:class (when (:show-toolbar? app) "show-toolbar")}
-           (om/build toolbar/toolbar (:toolbar app))
+           (om/build toolbar/toolbar
+                     (om/graft {:commands (:commands @app)}
+                               (:toolbar app)))
            [:div#page
             [:header#masthead
              [:a#menu-control
@@ -65,7 +67,9 @@
         (chan)
 
         app-state
-        (atom {:image-url nil
+        (atom {:commands commands
+               :debug true
+               :image-url nil
                :image {:status :empty}
                :width 512
                :height 512
@@ -80,8 +84,7 @@
                                            {:id :ziti :name "Ziti"}]}
                                   {:name "Cheese"
                                    :tools [{:id :ricotta :name "Ricotta"}]}]
-                         :tool :spaghetti
-                         :command-channel commands}
+                         :tool :spaghetti}
                :tool :spaghetti})]
 
     (doto history
@@ -107,8 +110,9 @@
 
     (go (while true
           (let [command (<! commands)]
-            (prn command)
-            (swap! app-state exec command))))
+            (when (:debug @app-state) (prn command))
+            (swap! app-state exec command)
+            (when (:debug @app-state) (prn (:strokes @app-state))))))
 
     (om/root app-state app-view (.-body js/document))))
 
