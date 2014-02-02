@@ -7,4 +7,5 @@ repl/
 .repl/
 target/
 resources/credentials/aws.clj
+resouces/public/css/main.css
 .sass-cache/
