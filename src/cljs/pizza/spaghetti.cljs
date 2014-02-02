@@ -10,9 +10,8 @@
 (defmethod render :edit
   [stroke owner]
   (om/component
-    (html [:g.topping.edit
-           [:polyline.path {:key (str (:id stroke) "-path")
-                            :points (s/format-points stroke)
+    (html [:g.topping.edit {:key (:id stroke)}
+           [:polyline.path {:points (s/format-points stroke)
                             :fill "transparent"
                             :stroke "black"
                             :stroke-width 2}]
@@ -28,9 +27,8 @@
   [stroke owner]
   (om/component
     (let [points (s/format-points stroke)]
-      (html [:g.topping.noodle.spaghetti {:key (str (:id stroke) "-topping")}
-             [:polyline.border {:key (str (:id stroke) "-border")
-                                :points points
+      (html [:g.topping.noodle.spaghetti {:key (:id stroke)}
+             [:polyline.border {:points points
                                 :fill "transparent"
                                 :stroke "#9E9E22"
                                 :stroke-linecap "round"
@@ -85,7 +83,7 @@
     (let [circles (map vector
                        (reverse (:points stroke))
                        (map #(+ 3 (* 20 %)) (s/rand-seq stroke)))]
-      (html [:g.topping.cheese.ricotta
+      (html [:g.topping.cheese.ricotta {:key (:id stroke)}
              ; By using two circles on different layers we can give the illusion
              ; that it is one irregular shape instead of a bunch of circles.
              [:g.border

@@ -43,15 +43,15 @@
     color: mix($tool-bg, white);
     border-bottom: 0.2rem solid lighten($tool-bg, 10);
   }
-  dd {
+  .tool-item {
+    border-bottom: 0.1rem solid lighten($tool-bg, 10);
+    &:last-child {
+      border-bottom: 0;
+    }
   }
   .tool {
     @extend %tool;
     @extend %tool-interactive;
-    border-bottom: 0.1rem solid lighten($tool-bg, 10);
-    dd:last-child & {
-      border-bottom: 0;
-    }
   }
 }
 

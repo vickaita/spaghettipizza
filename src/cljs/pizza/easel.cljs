@@ -36,7 +36,7 @@
   "Draw a pizza."
   [{:keys [crust sauce]} owner]
   (om/component
-    (html [:g.pizza
+    (html [:g.pizza {:key "pizza"}
            [:path.crust {:d crust
                          :fill "#FAE265"
                          :stroke "#DDAB0B"

@@ -22,9 +22,9 @@
         [:section.tools
          (for [group (:groups menu)]
            [:section.group {:key (:name group)} (:name group)
-            [:ul
+            [:ul.tool-list
              (for [tool (:tools group)]
-               [:li [:a.tool {:class (when (= (:id tool) (:tool menu)) "active")
-                              :key (:id tool)
-                              :on-click (handler menu [:select-tool (:id tool)])}
-                     (:name tool)]])]])]]])))
+               [:li.tool-item {:key (str (:id tool))}
+                [:a.tool {:class (when (= (:id tool) (:tool menu)) "active")
+                          :on-click (handler menu [:select-tool (:id tool)])}
+                 (:name tool)]])]])]]])))
