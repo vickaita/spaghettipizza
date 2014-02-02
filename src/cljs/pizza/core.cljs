@@ -33,10 +33,8 @@
        [:div#page
         [:header#masthead
          [:a#menu-control
-          {:on-click (fn [e]
-                       (doto e .preventDefault .stopPropagation)
-                       (om/update! app assoc :show-toolbar?
-                                   (not (:show-toolbar? @app))))}]
+          {:on-click (fn [e] (doto e .preventDefault .stopPropagation)
+                       (om/transact! app [:show-toolbar?] not))}]
          [:h1 "Spaghetti Pizza"]]
         (om/build easel/easel app)]
        [:footer [:p "Created by Vick Aita"]]])))
@@ -85,7 +83,9 @@
                                            {:id :linguini :name "Linguini"}
                                            {:id :ziti :name "Ziti"}]}
                                   {:name "Cheese"
-                                   :tools [{:id :ricotta :name "Ricotta"}]}]}
+                                   :tools [{:id :ricotta :name "Ricotta"}]}
+                                  {:name "Edit"
+                                   :tools [{:id :edit :name "Edit"}]}]}
                :tool :spaghetti})]
 
     (doto history
