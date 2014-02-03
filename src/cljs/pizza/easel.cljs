@@ -60,12 +60,12 @@
     (case (.-type e)
       ("touchstart" "touchmove")
       (let [t (-> e .-touches (aget 0))]
-        [(* scale-factor (- (.-pageX t) left))
-         (* scale-factor (- (.-pageY t) top))])
+        [(Math/floor (* scale-factor (- (.-pageX t) left)))
+         (Math/floor (* scale-factor (- (.-pageY t) top)))])
       "touchend"
       nil
-      [(* scale-factor (- (.-pageX e) left))
-       (* scale-factor (- (.-pageY e) top))])))
+      [(Math/floor (* scale-factor (- (.-pageX e) left)))
+       (Math/floor (* scale-factor (- (.-pageY e) top)))])))
 
 (defn easel
   [{:keys [image-url strokes width height tool] :as app} owner]
