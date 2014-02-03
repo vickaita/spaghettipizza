@@ -70,7 +70,7 @@
         (atom {:commands commands
                :debug false
                :image-url nil
-               :image {:status :empty}
+               :image {:url nil :status :empty}
                :width 512
                :height 512
                :granularity 5

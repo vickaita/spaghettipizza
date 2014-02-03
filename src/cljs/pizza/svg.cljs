@@ -53,31 +53,31 @@
   [[x2 y2] [x y]]
   (str "S" x2 " " y2 " " x " " y))
 
-(defn create-irregular-circle
-  [origin radius fill stroke stroke-width]
-  (let [[x y] origin
-        circ (create-element "path")
-        variance (* 0.008 radius)
-        radii (map #(- % (rand (* 2 variance))) (repeat (+ radius variance)))
-        points (map (fn [dist angle]
-                      [(+ x (* dist (Math/cos angle)))
-                       (+ y (* dist (Math/sin angle)))])
-                    radii
-                    (take-while #(< % (* 2 Math/PI))
-                                (iterate #(+ % 0.2 (rand 0.2)) 0)))
-        curves (reduce (fn [acc [[x1 y1 :as p1] [x2 y2 :as p2]]]
-                         (conj acc (S (rotate-point (median-point p1 p2) p2 (* -0.01 Math/PI)) p2)))
-                       (let [[[x1 y1 :as p1] [x2 y2 :as p2] & _] points]
-                         [(M p1)
-                          (C (rotate-point (median-point p1 p2) p1 (* 0.01 Math/PI))
-                             (rotate-point (median-point p1 p2) p2 (* -0.01 Math/PI))
-                             p2)])
-                       (partition 2 1 points))]
-    (doto (create-element "path")
-      (.setAttribute "fill" fill)
-      (.setAttribute "stroke" stroke)
-      (.setAttribute "stroke-width" stroke-width)
-      (.setAttribute "d" (str (join " " curves) " Z")))))
+;(defn create-irregular-circle
+;  [origin radius fill stroke stroke-width]
+;  (let [[x y] origin
+;        circ (create-element "path")
+;        variance (* 0.008 radius)
+;        radii (map #(- % (rand (* 2 variance))) (repeat (+ radius variance)))
+;        points (map (fn [dist angle]
+;                      [(+ x (* dist (Math/cos angle)))
+;                       (+ y (* dist (Math/sin angle)))])
+;                    radii
+;                    (take-while #(< % (* 2 Math/PI))
+;                                (iterate #(+ % 0.2 (rand 0.2)) 0)))
+;        curves (reduce (fn [acc [[x1 y1 :as p1] [x2 y2 :as p2]]]
+;                         (conj acc (S (rotate-point (median-point p1 p2) p2 (* -0.01 Math/PI)) p2)))
+;                       (let [[[x1 y1 :as p1] [x2 y2 :as p2] & _] points]
+;                         [(M p1)
+;                          (C (rotate-point (median-point p1 p2) p1 (* 0.01 Math/PI))
+;                             (rotate-point (median-point p1 p2) p2 (* -0.01 Math/PI))
+;                             p2)])
+;                       (partition 2 1 points))]
+;    (doto (create-element "path")
+;      (.setAttribute "fill" fill)
+;      (.setAttribute "stroke" stroke)
+;      (.setAttribute "stroke-width" stroke-width)
+;      (.setAttribute "d" (str (join " " curves) " Z")))))
 
 (defn svg->img-chan
   [svg-elem w h]
@@ -88,21 +88,26 @@
                  (.setAttribute "width" w)
                  (.setAttribute "height" h))
         context (.getContext canvas "2d")
-        data (.serializeToString (js/XMLSerializer.) svg-elem)
-        svg-blob (js/Blob. (array data) (js-obj "type" "image/svg+xml;base64"))
+        svg-data (.serializeToString (js/XMLSerializer.) svg-elem)
+        svg-blob (js/Blob. #js [svg-data]
+                           #js {:type "image/svg+xml;base64"})
         url (.createObjectURL js/URL svg-blob)
+        ;url (str "data:image/svg+xml;base64," (js/btoa svg-data))
         out (chan)]
-    (events/listen
-      img "load"
-      (fn [e]
-        (.drawImage context img 0 0 w h)
-        (.revokeObjectURL js/URL url)
-        (let [url (.toDataURL canvas "image/png")
-              binary (js/atob (aget (.split url ",") 1))
-              arr (array)]
-          (dotimes [i (alength binary)]
-            (aset arr i (.charCodeAt binary i)))
-          (put! out (js/Blob. (array (js/Uint8Array. arr))
-                              (js-obj "type" "image/png"))))))
+    (prn :listen)
+    (prn url)
+    (set! (.-onload img)
+          (fn [e]
+            (prn :load)
+            (.drawImage context img 0 0 w h)
+            (.revokeObjectURL js/URL url)
+            (let [url (.toDataURL canvas "image/png")
+                  binary (js/atob (aget (.split url ",") 1))
+                  arr #js []]
+              (dotimes [i (alength binary)]
+                (aset arr i (.charCodeAt binary i)))
+              (put! out (js/Blob. #js [(js/Uint8Array. arr)]
+                                  #js {:type "image/png"})))))
+    (set! (.-onerror img) #(.log js/console "There was an error:" %))
     (set! (.-src img) url)
     out))

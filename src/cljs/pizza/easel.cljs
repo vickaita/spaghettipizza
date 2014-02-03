@@ -85,35 +85,26 @@
                 (doto e (.preventDefault) (.stopPropagation))
                 (om/set-state! owner :drawing? true)
                 (put! (:commands @app) [:new-stroke (normalize-point e)]))
-              ;#(do (om/set-state! owner :drawing? true)
-              ;     (om/transact! app [:strokes] conj (stroke/start tool %)))
               ;:on-touch-start #(stroke/start tool %)
               :on-mouse-move
               (fn [e]
                 (doto e .preventDefault .stopPropagation)
                 (when (om/get-state owner :drawing?)
                   (put! (:commands @app) [:extend-stroke (normalize-point e)])))
-              ;#(when (om/get-state owner :drawing?)
-              ;   (om/transact!
-              ;     app
-              ;     [:strokes (dec (count (:strokes @app))) :points]
-              ;     stroke/append % (:granularity @app)))
               ;:on-touch-move #(stroke/append %)
               }
-             [:div#align-svg
-              [:svg#main-svg {:width width
-                              :height height
-                              :viewBox "0 0 512 512"
-                              :version "1.1"
-                              :preserveAspectRatio "xMidYMid"
-                              :xmlns "http://www.w3.org/2000/svg"}
-               (if image-url
-                 [:text "foo"]
-                 ;[:g.raster.layer
-                 ; [:image {:xlink:href image-url
-                 ;          :x "0" :y "0"
-                 ;          :height (str height "px") :width (str width "px")}]]
+             (if image-url
+               [:div#image-wrapper
+                [:p "images!"]
+                [:img]]
+               [:div#align-svg
+                [:svg#main-svg {:width width
+                                :height height
+                                :viewBox "0 0 512 512"
+                                :version "1.1"
+                                :preserveAspectRatio "xMidYMid"
+                                :xmlns "http://www.w3.org/2000/svg"}
                  [:g.vector.layer
                   (om/build pizza (:pizza app))
                   (for [stroke (:strokes app)]
-                    (om/build render stroke))])]]]))))
+                    (om/build render stroke))]]])]))))
