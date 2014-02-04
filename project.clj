@@ -17,7 +17,7 @@
                  [com.cemerick/rummage "1.0.1"]
                  [digest "1.4.3"]
                  [prismatic/dommy "0.1.1"]
-                 [om "0.3.3"]
+                 [om "0.3.5"]
                  [sablono "0.2.5"]
                  [environ "0.4.0"]
                  [com.cemerick/piggieback "0.1.2"]]
