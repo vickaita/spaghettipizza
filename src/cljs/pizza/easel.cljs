@@ -70,7 +70,7 @@
        (Math/floor (* scale-factor (- (.-pageY e) top)))])))
 
 (defn easel
-  [{:keys [image-url strokes width height tool] :as app} owner]
+  [{:keys [image-url image-loading? strokes width height tool] :as app} owner]
   (reify
     om/IInitState
     (init-state [_] {:drawing? false})
@@ -95,10 +95,16 @@
                   (put! (:commands @app) [:extend-stroke (normalize-point e)])))
               ;:on-touch-move #(stroke/append %)
               }
-             (if image-url
+             (cond
+               image-url
                [:div#image-wrapper
-                [:p "images!"]
-                [:img]]
+                [:img {:src image-url}]]
+
+               image-loading?
+               [:div#image-wrapper
+                [:p "Loading ..."]]
+
+               :else
                [:div#align-svg
                 [:svg#main-svg {:width width
                                 :height height
