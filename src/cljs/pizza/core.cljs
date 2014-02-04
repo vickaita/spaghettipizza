@@ -5,6 +5,7 @@
             [cljs.core.async :refer [put! close! chan <! map<]]
             [clojure.browser.repl :as repl]
             [om.core :as om :include-macros true]
+            [om.dom :as dom :include-macros true]
             [sablono.core :as html :refer [html] :include-macros true]
             [pizza.toolbar :as toolbar]
             [pizza.easel :as easel]
@@ -78,14 +79,16 @@
                        :sauce (easel/create-irregular-circle [256 256] 210)}
                :strokes []
                :show-toolbar? false
-               :toolbar {:groups [{:name "Pasta"
+               :toolbar {:groups [{:name "Test"
+                                   :tools [{:id :edit :name "Edit"}]}
+                                  {:name "Pasta"
                                    :tools [{:id :spaghetti :name "Spaghetti"}
                                            {:id :linguini :name "Linguini"}
                                            {:id :ziti :name "Ziti"}]}
                                   {:name "Cheese"
                                    :tools [{:id :ricotta :name "Ricotta"}]}
-                                  {:name "Edit"
-                                   :tools [{:id :edit :name "Edit"}]}]}
+                                  {:name "Herbs"
+                                   :tools [{:id :basil :name "Basil"}]}]}
                :tool :spaghetti})]
 
     (doto history
