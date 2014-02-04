@@ -68,6 +68,7 @@
 
         app-state
         (atom {:commands commands
+               :history history
                :debug false
                :image-url nil
                :image-loading? false
@@ -92,11 +93,14 @@
 
     (doto history
       (events/listen "navigate"
-                  #(swap! app-state assoc
-                          :image-url
-                          (let [pizza-hash (get-pizza-hash)]
-                            (when (> (count pizza-hash) 0)
-                              (str "/pizza/" (get-pizza-hash))))))
+                     (fn [e]
+                       (prn "navigate")
+                       (let [pizza-hash (get-pizza-hash)
+                             img-url (when (> (count pizza-hash) 0)
+                                       (str "/pizza/" pizza-hash))]
+                         (swap! app-state #(-> %
+                                               (assoc :image-url img-url)
+                                               (assoc :image-loading? false))))))
       (.setUseFragment false)
       (.setEnabled true))
 

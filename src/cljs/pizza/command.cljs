@@ -12,6 +12,7 @@
 
 (defmethod exec :clear
   [app [_ tool]]
+  (.setToken (:history app) "/")
   (-> app
       (assoc :image-url nil)
       (assoc :show-toolbar? false)
@@ -37,7 +38,7 @@
           data (doto (js/FormData.) (.append "data" blob))
           {fh :file-hash} (reader/read-string (<! (ch/xhr api-url "POST" data)))
           page-url (str "?pizza=" fh ".png")]
-      (.pushState js/history nil nil page-url)))
+      (.setToken (:history app) page-url)))
   (-> app
       (assoc :show-toolbar? false)
       (assoc :image-loading? true)))
