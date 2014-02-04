@@ -13,6 +13,7 @@
 (defmethod exec :clear
   [app [_ tool]]
   (-> app
+      (assoc :image-url nil)
       (assoc :show-toolbar? false)
       (assoc :strokes [])))
 
@@ -33,12 +34,9 @@
                      ;; will be an error.
                      (.setAttribute "xmlns" "http://www.w3.org/2000/svg"))
           blob (<! (svg/svg->img-chan svg-elem 612 612))
-          _ (prn "b")
           data (doto (js/FormData.) (.append "data" blob))
-          _ (prn "c")
           {fh :file-hash} (reader/read-string (<! (ch/xhr api-url "POST" data)))
           page-url (str "?pizza=" fh ".png")]
-      (prn "d")
       (.pushState js/history nil nil page-url)))
   (-> app
       (assoc :show-toolbar? false)

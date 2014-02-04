@@ -92,13 +92,9 @@
         svg-blob (js/Blob. #js [svg-data]
                            #js {:type "image/svg+xml;base64"})
         url (.createObjectURL js/URL svg-blob)
-        ;url (str "data:image/svg+xml;base64," (js/btoa svg-data))
         out (chan)]
-    (prn :listen)
-    (prn url)
     (set! (.-onload img)
           (fn [e]
-            (prn :load)
             (.drawImage context img 0 0 w h)
             (.revokeObjectURL js/URL url)
             (let [url (.toDataURL canvas "image/png")
