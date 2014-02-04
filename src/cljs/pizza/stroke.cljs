@@ -73,18 +73,19 @@
       stroke
       (assoc stroke :points (list (clamp-point max-len p1 p2) p1)))))
 
-;(defn- thin
-;  "Takes a seq points and thins them out so that you have a more sparse
-;  distribution of points."
-;  [points]
-;  (loop [acc []
-;         prev (first points)
-;         [current & remaining] (rest points)]
-;    (if (not current)
-;      acc
-;      (if (> (distance prev current) 10)
-;        (recur (conj acc current) current remaining)
-;        (recur acc prev remaining)))))
+(defn- thin
+  "Takes a seq points and thins them out so that you have a more sparse
+  distribution of points."
+  [stroke spacing]
+  (let [points (reverse (:points stroke))]
+    (loop [acc ()
+           prev (first points)
+           [current & remaining] (rest points)]
+      (if (not current)
+        (assoc stroke :points acc)
+        (if (> (distance prev current) spacing)
+          (recur (conj acc current) current remaining)
+          (recur acc prev remaining))))))
 
 (defn- format-points
   "A non-memoized version of format points."
