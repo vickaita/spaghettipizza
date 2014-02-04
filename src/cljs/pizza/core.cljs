@@ -70,7 +70,7 @@
         (atom {:commands commands
                :debug false
                :image-url nil
-               :image {:url nil :status :empty}
+               :image-loading? false
                :width 512
                :height 512
                :granularity 5
@@ -96,7 +96,7 @@
                           :image-url
                           (let [pizza-hash (get-pizza-hash)]
                             (when (> (count pizza-hash) 0)
-                              (str "/pizza/" (get-pizza-hash) ".png")))))
+                              (str "/pizza/" (get-pizza-hash))))))
       (.setUseFragment false)
       (.setEnabled true))
 

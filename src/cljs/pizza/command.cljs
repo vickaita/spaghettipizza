@@ -40,7 +40,7 @@
       (.pushState js/history nil nil page-url)))
   (-> app
       (assoc :show-toolbar? false)
-      (assoc-in [:image :status] :pending)))
+      (assoc :image-loading? true)))
 
 (defmethod exec :display-image
   [app [_ url]]
