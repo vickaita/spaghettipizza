@@ -1,42 +1,118 @@
 (ns pizza.easel
-  (:require [goog.dom :as dom]
-            [goog.dom.classlist :as cls]
+  (:require [clojure.string :refer [join]]
+            [cljs.core.async :refer [put!]]
             [goog.events :as events]
-            [pizza.pizza :as pzz]))
+            [om.core :as om :include-macros true]
+            [sablono.core :refer [html] :include-macros true]
+            [pizza.stroke :as stroke]
+            [pizza.spaghetti :refer [render]]
+            [pizza.svg :refer [M C S rotate-point median-point]]))
 
-(defn adjust-size!
-  [easel]
-  (let [size (.getBoundingClientRect (dom/getElement "easel"))
-        side (min (.-width size) (.-height size))]
-    (doto easel
-      (.setAttribute "width" side)
-      (.setAttribute "height" side))))
+;; TODO: this needs to be in a geometry or svg namesapce (don't forget to
+;; pizza.svg :require on the ns)
+(defn create-irregular-circle
+  [origin radius]
+  (let [[x y] origin
+        variance (* 0.008 radius)
+        ;; A variety of radius lengths
+        radii (repeatedly #(- (+ radius variance) (rand (* 2 variance))))
+        ;; A seq of random angles that go once around a circle
+        angles (take-while #(< % (* 2 Math/PI)) (iterate #(+ % 0.2 (rand 0.2)) 0))
+        ;; Convert the radii and angles into a series of points randomly around
+        ;; the circle
+        points (map #(vector (+ x (* %1 (Math/cos %2))) (+ y (* %1 (Math/sin %2))))
+                    radii angles)
+        ;; Take the points and create smooth curves between them.
+        curves (reduce (fn [acc [[x1 y1 :as p1] [x2 y2 :as p2]]]
+                         (conj acc (S (rotate-point (median-point p1 p2) p2 (* -0.01 Math/PI)) p2)))
+                       (let [[[x1 y1 :as p1] [x2 y2 :as p2] & _] points]
+                         [(M p1)
+                          (C (rotate-point (median-point p1 p2) p1 (* 0.01 Math/PI))
+                             (rotate-point (median-point p1 p2) p2 (* -0.01 Math/PI))
+                             p2)])
+                       (partition 2 1 points))]
+    (str (join " " curves) " Z")))
 
-(defn update!
-  ([easel] (update easel nil))
-  ([easel pizza-hash]
-  (let [img-wrapper (dom/getElement "img-wrapper")
-        svg-wrapper (dom/getElement "svg-wrapper")
-        svg-elem (dom/getElement "main-svg")]
-    (if pizza-hash
-      (do (cls/add svg-wrapper "hidden")
-          (doto img-wrapper
-            (dom/removeChildren)
-            (cls/remove "hidden")
-            (dom/append (pzz/pizza-img pizza-hash))))
-      (do (cls/add img-wrapper "hidden")
-          (cls/remove svg-wrapper "hidden")
-          (dom/removeChildren svg-elem)
-          (dom/append svg-elem (pzz/fresh-pizza)))))))
+;; TODO: put this back into the pizza namespace
+(defn pizza
+  "Draw a pizza."
+  [{:keys [crust sauce]} owner]
+  (om/component
+    (html [:g.pizza {:key "pizza"}
+           [:path.crust {:d crust
+                         :fill "#FAE265"
+                         :stroke "#DDAB0B"
+                         :stroke-width 3}]
+           [:path.sauce {:d sauce
+                         :fill "#F86969"
+                         :stroke "#F04F4F"
+                         :stroke-width 3}]])))
 
-;(defn draw-pizza
-;  "Draw the pizza."
-;  [easel]
-;  (let [origin [256 256]
-;        crust (svg/create-irregular-circle origin 227 "#FAE265" "#DDAB0B" 3)
-;        sauce (svg/create-irregular-circle origin 210 "#F86969" "#F04F4F" 3)]
-;    (dom/append easel crust sauce)))
-;
-;(defn display-pizza
-;  [easel pizza-hash]
-;  (dom/append easel (node [:img {:src (str "/pizza/" pizza-hash ".png")}])))
+(defn- normalize-point
+  "Convert an event into a point."
+  [e]
+  (let [; XXX: There is a bug in React.js that incorrectly reports #document as
+        ; the current target. When this is fixed upstream then getElement call
+        ; can be avoided.
+        elem (.getElementById js/document "align-svg") ;elem (.-currentTarget e)
+        rect (.getBoundingClientRect elem)
+        left (.-left rect)
+        top (.-top rect)
+        scale-factor (/ 512 (.-width rect))]
+    (case (.-type e)
+      ("touchstart" "touchmove")
+      (let [t (-> e .-touches (aget 0))]
+        [(Math/floor (* scale-factor (- (.-pageX t) left)))
+         (Math/floor (* scale-factor (- (.-pageY t) top)))])
+      "touchend"
+      nil
+      [(Math/floor (* scale-factor (- (.-pageX e) left)))
+       (Math/floor (* scale-factor (- (.-pageY e) top)))])))
+
+(defn easel
+  [{:keys [image-url image-loading? strokes width height tool] :as app} owner]
+  (reify
+    om/IInitState
+    (init-state [_] {:drawing? false})
+    om/IWillMount
+    (will-mount [_]
+      (events/listen js/document "mouseup" #(om/set-state! owner :drawing? false)))
+    om/IRender
+    (render [_]
+      (html [:section.easel
+             {:width width
+              :height height
+              :on-mouse-down
+              (fn [e]
+                (doto e (.preventDefault) (.stopPropagation))
+                (om/set-state! owner :drawing? true)
+                (put! (:commands @app) [:new-stroke (normalize-point e)]))
+              ;:on-touch-start #(stroke/start tool %)
+              :on-mouse-move
+              (fn [e]
+                (doto e .preventDefault .stopPropagation)
+                (when (om/get-state owner :drawing?)
+                  (put! (:commands @app) [:extend-stroke (normalize-point e)])))
+              ;:on-touch-move #(stroke/append %)
+              }
+             (cond
+               image-url
+               [:div#image-wrapper
+                [:img {:src image-url}]]
+
+               image-loading?
+               [:div#image-wrapper
+                [:p "Loading ..."]]
+
+               :else
+               [:div#align-svg
+                [:svg#main-svg {:width width
+                                :height height
+                                :viewBox "0 0 512 512"
+                                :version "1.1"
+                                :preserveAspectRatio "xMidYMid"
+                                :xmlns "http://www.w3.org/2000/svg"}
+                 [:g.vector.layer
+                  (om/build pizza (:pizza app))
+                  (for [stroke (:strokes app)]
+                    (om/build render stroke))]]])]))))

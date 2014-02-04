@@ -9,7 +9,7 @@
             [goog.events :as events]
             [cljs.core.async :as async :refer [put! take! close! chan <! map<]]
             [cljs.core.async.impl.protocols :as impl]
-            [vickaita.console :refer [log]]))
+            ))
 
 (def ^{:dynamic true :private true} *xhr-manager* (goog.net.XhrManager. 0))
 (def ^:private id-counter (atom 0))
@@ -23,7 +23,6 @@
   ([url] (request url "GET" nil))
   ([url method] (request url method nil))
   ([url method params]
-   (log params)
    (let [out (chan)]
      (.send *xhr-manager*
             (id)
@@ -42,13 +41,13 @@
            (forms/getFormDataString form)))
 
 
-(defn ajax-form-channel
-  [form]
-  (events/listen form "submit" (fn [e]
-                                 (.preventDefault e)
-                                 (let [req (ajax/request-form form)]
-                                   (go (let [res (<! req)]
-                                         (.log js/console res)))))))
+;(defn ajax-form-channel
+;  [form]
+;  (events/listen form "submit" (fn [e]
+;                                 (.preventDefault e)
+;                                 (let [req (ajax/request-form form)]
+;                                   (go (let [res (<! req)]
+;                                         (.log js/console res)))))))
 
 (defn events
   "Returns a chan of events of event-type for element. By default will

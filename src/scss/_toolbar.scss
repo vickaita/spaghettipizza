@@ -25,7 +25,7 @@
   padding: 0.5rem;
   position: absolute;
   width: $tool-width;
-  h2 {
+  h1 {
     font-size: 1.4rem;
     color: white;
     padding: 1rem;
@@ -43,15 +43,15 @@
     color: mix($tool-bg, white);
     border-bottom: 0.2rem solid lighten($tool-bg, 10);
   }
-  dd {
+  .tool-item {
+    border-bottom: 0.1rem solid lighten($tool-bg, 10);
+    &:last-child {
+      border-bottom: 0;
+    }
   }
   .tool {
     @extend %tool;
     @extend %tool-interactive;
-    border-bottom: 0.1rem solid lighten($tool-bg, 10);
-    dd:last-child & {
-      border-bottom: 0;
-    }
   }
 }
 
@@ -83,12 +83,12 @@
   width: 50%;
 }
 
-#clean {
+#clear {
   @include tool-icon('../img/icons/refresh.svg');
   @extend %tool-inline;
 }
 
-#photo {
+#save {
   @include tool-icon('../img/icons/share.svg');
   @extend %tool-inline;
 }

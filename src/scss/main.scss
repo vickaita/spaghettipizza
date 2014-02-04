@@ -88,46 +88,21 @@ button:focus {
 
 @import 'toolbar';
 
-#easel {
+.easel {
   margin: 0 auto;
   padding: 0;
   width: 100%;
   height: 100%;
 }
 
+#align-svg {
+  // Float left so that div#align-svg will "shrinkwrap" to the same dimensions
+  // as the svg element that it is wrapping. It has to be the same width so
+  // that the scale factor can be correctly calculated.
+  float: left;
+}
+
 #main-svg {
   margin: 0;
   display: block;
-}
-
-
-.modal-overlay {
-  background: rgba(0, 0, 0, 0.5);
-  height: 100%;
-  left: 0;
-  position: fixed;
-  top: 0;
-  width: 100%;
-}
-
-.modal-wrap {
-  margin-top: -250px;
-  position: absolute;
-  top: 50%;
-  width: 100%;
-}
-
-.modal-content {
-  background: #FFF;
-  border-radius: 0.5rem;
-  border: 1px solid $green;
-  height: 500px;
-  margin: 0 auto;
-  padding: 1.5rem;
-  width: 500px;
-}
-
-img.preview {
-  width: 100%;
-  height: 100%;
 }
