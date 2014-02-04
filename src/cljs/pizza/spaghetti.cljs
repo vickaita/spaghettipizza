@@ -1,7 +1,8 @@
 (ns pizza.spaghetti
   (:require [om.core :as om :include-macros true]
             [sablono.core :as html :refer [html] :include-macros true]
-            [pizza.stroke :as s]))
+            [pizza.stroke :as s]
+            [pizza.geometry :as g]))
 
 (defmulti render :skin)
 
@@ -10,18 +11,19 @@
 (defmethod render :edit
   [stroke owner]
   (om/component
-    (html [:g.topping.edit {:key (:id stroke)}
-           [:polyline.path {:points (s/format-points stroke)
+    (let [sparse (s/thin stroke 30)]
+      (html [:g.topping.edit {:key (:id stroke)}
+           [:polyline.path {:points (s/format-points sparse)
                             :fill "transparent"
                             :stroke "black"
                             :stroke-width 2}]
-           (for [point (:points stroke)]
+           (for [point (:points sparse)]
              [:circle.point {:cx (first point)
                              :cy (second point)
                              :r 3
                              :fill "red"
                              :stroke "blue"
-                             :stroke-width 1}])])))
+                             :stroke-width 1}])]))))
 
 (defmethod render :spaghetti
   [stroke owner]
@@ -98,3 +100,30 @@
                           :cy y
                           :r radius
                           :fill "#EEEEDD"}])]]))))
+
+(defmethod render :basil
+  [stroke owner]
+  (om/component
+    (let [points (s/format-points stroke)]
+      (html [:g.topping.herb.basil {:key (:id stroke)}
+             [:polyline.border {:points points
+                                :fill "transparent"
+                                :stroke "#F5F5AA"
+                                :stroke-linecap "round"
+                                :stroke-width 6}]
+             [:polyline.inner {:key (str (:id stroke) "-inner")
+                               :points points
+                               :fill "transparent"
+                               :stroke "#9E9E22"
+                               :stroke-linecap "round"
+                               :stroke-width 4}]
+             [:g.leaves
+              (for [[[x y] sign] (map vector
+                                      (reverse (:points (s/thin stroke 40)))
+                                      (cycle [-1 1]))]
+                (let [outline (apply str (interleave [x y,
+                                                      (+ x (* 20 (Math/cos 90))) (+ y (* 20 (Math/sin 90))),
+                                                      x y]
+                                          (repeat " ")))]
+                  [:g.leaf
+                 [:polyline {:points outline}]]))]]))))
