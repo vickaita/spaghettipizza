@@ -14,13 +14,15 @@
   [origin radius]
   (let [[x y] origin
         variance (* 0.008 radius)
-        radii (map #(- % (rand (* 2 variance))) (repeat (+ radius variance)))
-        points (map (fn [dist angle]
-                      [(+ x (* dist (Math/cos angle)))
-                       (+ y (* dist (Math/sin angle)))])
-                    radii
-                    (take-while #(< % (* 2 Math/PI))
-                                (iterate #(+ % 0.2 (rand 0.2)) 0)))
+        ;; A variety of radius lengths
+        radii (repeatedly #(- (+ radius variance) (rand (* 2 variance))))
+        ;; A seq of random angles that go once around a circle
+        angles (take-while #(< % (* 2 Math/PI)) (iterate #(+ % 0.2 (rand 0.2)) 0))
+        ;; Convert the radii and angles into a series of points randomly around
+        ;; the circle
+        points (map #(vector (+ x (* %1 (Math/cos %2))) (+ y (* %1 (Math/sin %2))))
+                    radii angles)
+        ;; Take the points and create smooth curves between them.
         curves (reduce (fn [acc [[x1 y1 :as p1] [x2 y2 :as p2]]]
                          (conj acc (S (rotate-point (median-point p1 p2) p2 (* -0.01 Math/PI)) p2)))
                        (let [[[x1 y1 :as p1] [x2 y2 :as p2] & _] points]
@@ -53,10 +55,10 @@
         ; the current target. When this is fixed upstream then getElement call
         ; can be avoided.
         elem (.getElementById js/document "align-svg") ;elem (.-currentTarget e)
-        offset (.getBoundingClientRect elem)
-        left (.-left offset)
-        top (.-top offset)
-        scale-factor (/ 512 (.-width offset))]
+        rect (.getBoundingClientRect elem)
+        left (.-left rect)
+        top (.-top rect)
+        scale-factor (/ 512 (.-width rect))]
     (case (.-type e)
       ("touchstart" "touchmove")
       (let [t (-> e .-touches (aget 0))]
