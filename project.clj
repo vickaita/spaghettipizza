@@ -9,7 +9,6 @@
                  [commons-codec/commons-codec "1.4"]
                  [ring "1.2.1"]
                  [ring-cors "0.1.0"]
-                 #_[http-kit "2.1.13"]
                  [compojure "1.1.6"]
                  [hiccup "1.0.4"]
                  [amazonica "0.1.32"]
@@ -45,6 +44,8 @@
                 :source-paths ["src/cljs"]
                 :compiler {:output-to "resources/public/js/pizza.js"
                            :output-dir "resources/public/js"
+                           :preamble ["react/react.min.js"]
+                           :externs ["react/externs/react.js"]
                            :optimizations :advanced}}]}
   :core.typed {:check [pizza.core]}
   :profiles {:dev {:env {:environment :dev}}
