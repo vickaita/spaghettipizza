@@ -3,7 +3,7 @@
             [cljs.core.async :refer [put!]]
             [goog.events :as events]
             [om.core :as om :include-macros true]
-            [sablono.core :refer [html] :include-macros true]
+            [sablono.core :refer-macros [html]]
             [pizza.stroke :as stroke]
             [pizza.spaghetti :refer [render]]
             [pizza.svg :refer [M C S rotate-point median-point]]))
@@ -51,23 +51,24 @@
 (defn- normalize-point
   "Convert an event into a point."
   [e]
-  (let [; XXX: There is a bug in React.js that incorrectly reports #document as
-        ; the current target. When this is fixed upstream then getElement call
-        ; can be avoided.
-        elem (.getElementById js/document "align-svg") ;elem (.-currentTarget e)
-        rect (.getBoundingClientRect elem)
-        left (.-left rect)
-        top (.-top rect)
-        scale-factor (/ 512 (.-width rect))]
-    (case (.-type e)
-      ("touchstart" "touchmove")
-      (let [t (-> e .-touches (aget 0))]
-        [(Math/floor (* scale-factor (- (.-pageX t) left)))
-         (Math/floor (* scale-factor (- (.-pageY t) top)))])
-      "touchend"
-      nil
-      [(Math/floor (* scale-factor (- (.-pageX e) left)))
-       (Math/floor (* scale-factor (- (.-pageY e) top)))])))
+  (when-let [elem (.getElementById js/document "align-svg")]
+    (let [; XXX: There is a bug in React.js that incorrectly reports #document as
+          ; the current target. When this is fixed upstream then getElement call
+          ; can be avoided.
+          ;elem (.getElementById js/document "align-svg") ;elem (.-currentTarget e)
+          rect (.getBoundingClientRect elem)
+          left (.-left rect)
+          top (.-top rect)
+          scale-factor (/ 512 (.-width rect))]
+      (case (.-type e)
+        ("touchstart" "touchmove")
+        (let [t (-> e .-touches (aget 0))]
+          [(Math/floor (* scale-factor (- (.-pageX t) left)))
+           (Math/floor (* scale-factor (- (.-pageY t) top)))])
+        "touchend"
+        nil
+        [(Math/floor (* scale-factor (- (.-pageX e) left)))
+         (Math/floor (* scale-factor (- (.-pageY e) top)))]))))
 
 (defn easel
   [{:keys [image-url image-loading? strokes width height tool] :as app} owner]
@@ -96,22 +97,23 @@
               ;:on-touch-move #(stroke/append %)
               }
              (cond
-               image-url
+               (:image-url app)
                [:div#image-wrapper
-                [:img {:src image-url}]]
+                [:img {:src (:image-url app)}]]
 
-               image-loading?
+               (:image-loading? app)
                [:div#image-wrapper
                 [:p "Loading ..."]]
 
                :else
-               [:div#align-svg
-                [:svg#main-svg {:width width
-                                :height height
-                                :viewBox "0 0 512 512"
-                                :version "1.1"
-                                :preserveAspectRatio "xMidYMid"
-                                :xmlns "http://www.w3.org/2000/svg"}
+               [:div {:id "align-svg"}
+                [:svg {:id "main-svg"
+                       :width width
+                       :height height
+                       :viewBox "0 0 512 512"
+                       :version "1.1"
+                       :preserveAspectRatio "xMidYMid"
+                       :xmlns "http://www.w3.org/2000/svg"}
                  [:g.vector.layer
                   (om/build pizza (:pizza app))
                   (for [stroke (:strokes app)]
