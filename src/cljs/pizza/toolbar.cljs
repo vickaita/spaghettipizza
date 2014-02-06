@@ -15,8 +15,8 @@
     (html
       [:section.toolbar
        [:section.actions
-        [:a.action {:on-click (handler menu [:clear])} "Clear"]
-        [:a.action {:on-click (handler menu [:save])} "Save"]]
+        [:a#clear.action {:on-click (handler menu [:clear])} "Clear"]
+        [:a#save.action {:on-click (handler menu [:save])} "Save"]]
        [:section.toppings
         [:h1 "Toppings!"]
         [:section.tools
