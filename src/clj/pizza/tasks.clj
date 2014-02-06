@@ -47,9 +47,12 @@
           :access-control-list acl)
         (println "Building ClojureScript ...")
         (cljsc/build "src/cljs/pizza/core.cljs"
-                     {:optimizations :advanced
+                     {:output-to "resources/public/js/pizza.js"
                       :output-dir "resources/public/js"
-                      :output-to "resources/public/js/pizza.js"})
+                      :preamble ["react/react.min.js"]
+                      :externs ["react/externs/react.js"]
+                      :source-map "resources/public/js/pizza.js.map"
+                      :optimizations :advanced})
         (println "Uploading" (.getName js) "...")
         (s3/put-object
           :bucket-name bucket-name
