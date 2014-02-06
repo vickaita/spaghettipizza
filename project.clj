@@ -3,7 +3,8 @@
   :url "http://spaghettipizza.us"
   :dependencies [[org.clojure/clojure "1.5.1"]
                  [org.clojure/clojurescript "0.0-2156"]
-                 [org.clojure/core.async "0.1.242.0-44b1e3-alpha"]
+                 ;[org.clojure/core.async "0.1.242.0-44b1e3-alpha"]
+                 [org.clojure/core.async "0.1.267.0-0d7780-alpha"]
                  [org.clojure/core.typed "0.2.26"]
                  [org.clojure/tools.logging "0.2.6"]
                  [commons-codec/commons-codec "1.4"]
@@ -16,13 +17,14 @@
                  [com.cemerick/rummage "1.0.1"]
                  [digest "1.4.3"]
                  [prismatic/dommy "0.1.1"]
-                 [om "0.3.5"]
-                 [sablono "0.2.5"]
+                 [om "0.3.6"]
+                 [com.facebook/react "0.8.0.1"]
+                 [sablono "0.2.6"]
                  [environ "0.4.0"]
                  [com.cemerick/piggieback "0.1.2"]]
   :source-paths ["src/clj" "src/cljs"]
   :main pizza.handler
-  :plugins [[lein-cljsbuild "1.0.0-alpha2"]
+  :plugins [[lein-cljsbuild "1.0.2"]
             [lein-environ "0.4.0"]
             [lein-typed "0.3.1"]]
   :repl-options {:nrepl-middleware [cemerick.piggieback/wrap-cljs-repl]}
@@ -34,18 +36,13 @@
                            :optimizations :none
                            :pretty-print true
                            :source-map true}}
-               #_{:id "test"
-                :source-paths ["src/cljs"]
-                :compiler {:output-to "resources/public/js/pizza.js"
-                           :output-dir "resources/public/js"
-                           :source-map "resources/public/js/pizza.js.map"
-                           :optimizations :advanced}}
                {:id "prod"
                 :source-paths ["src/cljs"]
                 :compiler {:output-to "resources/public/js/pizza.js"
                            :output-dir "resources/public/js"
                            :preamble ["react/react.min.js"]
                            :externs ["react/externs/react.js"]
+                           :source-map "resources/public/js/pizza.js.map"
                            :optimizations :advanced}}]}
   :core.typed {:check [pizza.core]}
   :profiles {:dev {:env {:environment :dev}}
