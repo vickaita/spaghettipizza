@@ -1,6 +1,6 @@
 (ns pizza.spaghetti
   (:require [om.core :as om :include-macros true]
-            [sablono.core :as html :refer [html] :include-macros true]
+            [sablono.core :refer-macros [html]]
             [pizza.stroke :as s]
             [pizza.geometry :as g]))
 
