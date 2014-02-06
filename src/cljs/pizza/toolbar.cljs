@@ -1,7 +1,7 @@
 (ns pizza.toolbar
   (:require [cljs.core.async :refer [put!]]
             [om.core :as om :include-macros true]
-            [sablono.core :as html :refer [html] :include-macros true]))
+            [sablono.core :refer-macros [html]]))
 
 (defn- handler
   [world message]
@@ -13,10 +13,10 @@
   [menu owner]
   (om/component
     (html
-      [:section#toolbar.toolbar
+      [:section.toolbar
        [:section.actions
-        [:a#clear.action {:on-click (handler menu [:clear])} "Clear"]
-        [:a#save.action {:on-click (handler menu [:save])} "Save"]]
+        [:a.action {:on-click (handler menu [:clear])} "Clear"]
+        [:a.action {:on-click (handler menu [:save])} "Save"]]
        [:section.toppings
         [:h1 "Toppings!"]
         [:section.tools
