@@ -63,7 +63,6 @@
         [:h1 "Spaghetti Pizza"]]
        [:div#easel-frame]
        #_(easel)]]
-     (include-js)
      (if dev?
        (include-js "http://fb.me/react-0.8.0.js"
                    "js/debug/goog/base.js"
