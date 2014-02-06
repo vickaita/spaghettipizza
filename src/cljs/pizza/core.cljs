@@ -5,7 +5,7 @@
             [cljs.core.async :refer [put! close! chan <! map<]]
             [clojure.browser.repl :as repl]
             [om.core :as om :include-macros true]
-            [sablono.core :as html :refer [html] :include-macros true]
+            [sablono.core :refer-macros [html]]
             [pizza.toolbar :as toolbar]
             [pizza.easel :as easel]
             [pizza.command :refer [exec]]))
