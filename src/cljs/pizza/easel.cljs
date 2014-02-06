@@ -88,14 +88,25 @@
                 (doto e (.preventDefault) (.stopPropagation))
                 (om/set-state! owner :drawing? true)
                 (put! (:commands @app) [:new-stroke (normalize-point e)]))
-              ;:on-touch-start #(stroke/start tool %)
+              :on-touch-start
+              (fn [e]
+                (doto e (.preventDefault) (.stopPropagation))
+                (om/set-state! owner :drawing? true)
+                (put! (:commands @app) [:new-stroke (normalize-point e)]))
               :on-mouse-move
               (fn [e]
                 (doto e .preventDefault .stopPropagation)
                 (when (om/get-state owner :drawing?)
                   (put! (:commands @app) [:extend-stroke (normalize-point e)])))
-              ;:on-touch-move #(stroke/append %)
-              }
+              :on-touch-move
+              (fn [e]
+                (doto e .preventDefault .stopPropagation)
+                (when (om/get-state owner :drawing?)
+                  (put! (:commands @app) [:extend-stroke (normalize-point e)])))
+              :on-touch-end
+              (fn [e]
+                (doto e .preventDefault .stopPropagation)
+                (om/set-state! owner :drawing? false))}
              (cond
                (:image-url app)
                [:div#image-wrapper

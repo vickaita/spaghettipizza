@@ -121,5 +121,7 @@
 
     (om/root app-state app-view (.-body js/document))))
 
+
+(.initializeTouchEvents js/React true)
 (events/listen js/document "DOMContentLoaded" -main)
 #_(repl/connect "http://ui:9000/repl")
