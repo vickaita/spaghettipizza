@@ -94,7 +94,6 @@
     (doto history
       (events/listen "navigate"
                      (fn [e]
-                       (prn "navigate")
                        (let [pizza-hash (get-pizza-hash)
                              img-url (when (> (count pizza-hash) 0)
                                        (str "/pizza/" pizza-hash))]
