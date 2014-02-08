@@ -6,9 +6,7 @@
             [pizza.svg :as svg]
             [vickaita.channels :as ch]))
 
-(defmulti exec
-  (fn [_ [directive & arguments]] directive)
-  :default (fn [_ cmd] (prn (str "Unknown command!" (pr-str cmd)))))
+(defmulti exec (fn [app [directive & _]] directive))
 
 (defmethod exec :clear
   [app [_ tool]]
