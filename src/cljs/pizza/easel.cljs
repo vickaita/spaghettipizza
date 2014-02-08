@@ -50,25 +50,27 @@
 
 (defn- normalize-point
   "Convert an event into a point."
-  [e]
+  [viewport-width e]
   (when-let [elem (.getElementById js/document "align-svg")]
     (let [; XXX: There is a bug in React.js that incorrectly reports #document as
           ; the current target. When this is fixed upstream then getElement call
-          ; can be avoided.
+          ; can be avoided. Fixed with this pull request:
+          ; https://github.com/facebook/react/pull/747, but not in current
+          ; release yet.
           ;elem (.getElementById js/document "align-svg") ;elem (.-currentTarget e)
           rect (.getBoundingClientRect elem)
           left (.-left rect)
           top (.-top rect)
-          scale-factor (/ 512 (.-width rect))]
+          scale-factor (/ viewport-width (.-width rect))]
       (case (.-type e)
         ("touchstart" "touchmove")
         (let [t (-> e .-touches (aget 0))]
-          [(Math/floor (* scale-factor (- (.-pageX t) left)))
-           (Math/floor (* scale-factor (- (.-pageY t) top)))])
+          [(-> t (.-pageX) (- left) (* scale-factor) Math/floor)
+           (-> t (.-pageY) (- top) (* scale-factor) Math/floor)])
         "touchend"
         nil
-        [(Math/floor (* scale-factor (- (.-pageX e) left)))
-         (Math/floor (* scale-factor (- (.-pageY e) top)))]))))
+        [(-> e (.-pageX) (- left) (* scale-factor) Math/floor)
+         (-> e (.-pageY) (- top) (* scale-factor) Math/floor)]))))
 
 (defn easel
   [{:keys [image-url image-loading? strokes width height tool] :as app} owner]
@@ -87,22 +89,26 @@
               (fn [e]
                 (doto e (.preventDefault) (.stopPropagation))
                 (om/set-state! owner :drawing? true)
-                (put! (:commands @app) [:new-stroke (normalize-point e)]))
+                (put! (:commands @app)
+                      [:new-stroke (normalize-point (:width @app) e)]))
               :on-touch-start
               (fn [e]
                 (doto e (.preventDefault) (.stopPropagation))
                 (om/set-state! owner :drawing? true)
-                (put! (:commands @app) [:new-stroke (normalize-point e)]))
+                (put! (:commands @app)
+                      [:new-stroke (normalize-point (:width @app) e)]))
               :on-mouse-move
               (fn [e]
                 (doto e .preventDefault .stopPropagation)
                 (when (om/get-state owner :drawing?)
-                  (put! (:commands @app) [:extend-stroke (normalize-point e)])))
+                  (put! (:commands @app)
+                        [:extend-stroke (normalize-point (:width @app) e)])))
               :on-touch-move
               (fn [e]
                 (doto e .preventDefault .stopPropagation)
                 (when (om/get-state owner :drawing?)
-                  (put! (:commands @app) [:extend-stroke (normalize-point e)])))
+                  (put! (:commands @app)
+                        [:extend-stroke (normalize-point (:width @app) e)])))
               :on-touch-end
               (fn [e]
                 (doto e .preventDefault .stopPropagation)
