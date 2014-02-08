@@ -6,7 +6,7 @@
             [pizza.svg :as svg]
             [vickaita.channels :as ch]))
 
-(defmulti exec (fn [app [directive & _]] directive))
+(defmulti exec (fn [_ [directive & _]] directive))
 
 (defmethod exec :clear
   [app [_ tool]]
