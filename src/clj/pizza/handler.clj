@@ -60,7 +60,7 @@
      :body "Missing File."}))
 
 (defroutes dev-routes
-  (GET "/" [] (pages/home true))
+  (GET "/" [debug] (pages/home false))
   (mp/wrap-multipart-params
     (POST "/pizza/" {{{file :tempfile} :data} :params} (handle-file file)))
   (route/files "/" {:root "resources/public"})
