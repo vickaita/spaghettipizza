@@ -49,7 +49,7 @@
         (cljsc/build "src/cljs/pizza/core.cljs"
                      {:output-to "resources/public/js/pizza.js"
                       :output-dir "resources/public/js"
-                      :preamble ["react/react.min.js"]
+                      :preamble ["react/react.js"]
                       :externs ["react/externs/react.js"]
                       :source-map "resources/public/js/pizza.js.map"
                       :optimizations :advanced})

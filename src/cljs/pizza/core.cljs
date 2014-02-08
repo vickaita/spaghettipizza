@@ -12,14 +12,6 @@
 
 (enable-console-print!)
 
-(defn- get-pizza-hash
-  []
-  ;; TODO: Can I get this information straight from the "navigation" event and
-  ;; eliminate this function entirely?
-  (-> (.-search (.-location js/document))
-      (.split "=")
-      (aget 1)))
-
 (defn app-view
   [app owner]
   (om/component
@@ -33,7 +25,8 @@
        [:div#page
         [:header#masthead
          [:a#menu-control
-          {:on-click (fn [e] (doto e .preventDefault .stopPropagation)
+          {:on-click (fn [e]
+                       (doto e .preventDefault .stopPropagation)
                        (om/transact! app [:show-toolbar?] not))}]
          [:h1 "Spaghetti Pizza"]]
         (om/build easel/easel app)]
@@ -41,10 +34,7 @@
 
 (defn -main
   []
-  (let [;; TODO: goog.history.Html5History is pretty annoying and doesn't fit
-        ;; very well with a functional style. I should either use the native
-        ;; HTML5 methods or wrap it.
-        history
+  (let [history
         (goog.history.Html5History.
           js/window
           (let [tt #js {}]
@@ -69,7 +59,7 @@
         app-state
         (atom {:commands commands
                :history history
-               :debug false
+               :debug true
                :image-url nil
                :image-loading? false
                :width 512
@@ -91,37 +81,31 @@
                                    :tools [{:id :basil :name "Basil"}]}]}
                :tool :spaghetti})]
 
-    (doto history
-      (events/listen "navigate"
-                     (fn [e]
-                       (let [pizza-hash (get-pizza-hash)
-                             img-url (when (> (count pizza-hash) 0)
-                                       (str "/pizza/" pizza-hash))]
-                         (swap! app-state #(-> %
-                                               (assoc :image-url img-url)
-                                               (assoc :image-loading? false))))))
+    #_(doto history
+      (events/listen
+        "navigate"
+        (fn [e]
+          (.log js/console e)
+          (when-let [search (.-search (.-location js/document))]
+            (let [pizza-hash (-> search (.split "=") (aget 1))
+                  img-url (when (> (count pizza-hash) 0)
+                            (str "/pizza/" pizza-hash))]
+              (swap! app-state #(-> %
+                                    (assoc :image-url img-url)
+                                    (assoc :image-loading? false)))))))
       (.setUseFragment false)
       (.setEnabled true))
 
-    ;;;;; TODO: This should also be fired whenever the viewport is resized.
-    ;;;#_(easel/adjust-size! svg-elem)
-
-    ;;;;; XXX: This seems to be breaking noodle drawing on mobile, so disabled
-    ;;;;; until I have time to investigate.
-    ;;;#_(events/listen (dom/getElement "page") "click"
-    ;;;              #(when (toolbar/visible?)
-    ;;;                 (do (.preventDefault %)
-    ;;;                     (.stopPropagation %)
-    ;;;                     (toolbar/hide!))))
+    ;; TODO: This should also be fired whenever the viewport is resized.
+    #_(easel/adjust-size! svg-elem)
 
     (go (while true
           (let [command (<! commands)]
-            (when (:debug @app-state) (prn command))
+            ;(when (:debug @app-state) (prn command))
             (swap! app-state exec command))))
 
     (om/root app-state app-view (.-body js/document))))
 
-
 (.initializeTouchEvents js/React true)
 (events/listen js/document "DOMContentLoaded" -main)
-#_(repl/connect "http://ui:9000/repl")
+;(repl/connect "http://ui:9000/repl")

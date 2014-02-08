@@ -94,14 +94,14 @@
                 (om/set-state! owner :drawing? true)
                 (put! (:commands @app) [:new-stroke (normalize-point e)]))
               :on-mouse-move
-              (when (om/get-state owner :drawing?)
-                (fn [e]
-                  (doto e .preventDefault .stopPropagation)
+              (fn [e]
+                (doto e .preventDefault .stopPropagation)
+                (when (om/get-state owner :drawing?)
                   (put! (:commands @app) [:extend-stroke (normalize-point e)])))
               :on-touch-move
-              (when (om/get-state owner :drawing?)
-                (fn [e]
-                  (doto e .preventDefault .stopPropagation)
+              (fn [e]
+                (doto e .preventDefault .stopPropagation)
+                (when (om/get-state owner :drawing?)
                   (put! (:commands @app) [:extend-stroke (normalize-point e)])))
               :on-touch-end
               (fn [e]
