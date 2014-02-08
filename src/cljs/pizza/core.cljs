@@ -69,7 +69,7 @@
                        :sauce (easel/create-irregular-circle [256 256] 210)}
                :strokes []
                :show-toolbar? false
-               :toolbar {:groups [{:name "Test"
+               :toolbar {:groups [#_{:name "Test"
                                    :tools [{:id :edit :name "Edit"}]}
                                   {:name "Pasta"
                                    :tools [{:id :spaghetti :name "Spaghetti"}
