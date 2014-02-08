@@ -62,8 +62,10 @@
                :debug true
                :image-url nil
                :image-loading? false
-               :width 512
-               :height 512
+               :easel-width 512
+               :easel-height 512
+               :viewport-width 512
+               :viewport-height 512
                :granularity 5
                :pizza {:crust (easel/create-irregular-circle [256 256] 227)
                        :sauce (easel/create-irregular-circle [256 256] 210)}

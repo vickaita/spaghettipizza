@@ -73,7 +73,7 @@
          (-> e (.-pageY) (- top) (* scale-factor) Math/floor)]))))
 
 (defn easel
-  [{:keys [image-url image-loading? strokes width height tool] :as app} owner]
+  [{:keys [image-url image-loading? strokes tool] :as app} owner]
   (reify
     om/IInitState
     (init-state [_] {:drawing? false})
@@ -83,32 +83,32 @@
     om/IRender
     (render [_]
       (html [:section.easel
-             {:width width
-              :height height
+             {:easel-width (:easel-width app)
+              :easel-height (:easel-height app)
               :on-mouse-down
               (fn [e]
                 (doto e (.preventDefault) (.stopPropagation))
                 (om/set-state! owner :drawing? true)
                 (put! (:commands @app)
-                      [:new-stroke (normalize-point (:width @app) e)]))
+                      [:new-stroke (normalize-point (:viewport-width @app) e)]))
               :on-touch-start
               (fn [e]
                 (doto e (.preventDefault) (.stopPropagation))
                 (om/set-state! owner :drawing? true)
                 (put! (:commands @app)
-                      [:new-stroke (normalize-point (:width @app) e)]))
+                      [:new-stroke (normalize-point (:viewport-width @app) e)]))
               :on-mouse-move
               (fn [e]
                 (doto e .preventDefault .stopPropagation)
                 (when (om/get-state owner :drawing?)
                   (put! (:commands @app)
-                        [:extend-stroke (normalize-point (:width @app) e)])))
+                        [:extend-stroke (normalize-point (:viewport-width @app) e)])))
               :on-touch-move
               (fn [e]
                 (doto e .preventDefault .stopPropagation)
                 (when (om/get-state owner :drawing?)
                   (put! (:commands @app)
-                        [:extend-stroke (normalize-point (:width @app) e)])))
+                        [:extend-stroke (normalize-point (:viewport-width @app) e)])))
               :on-touch-end
               (fn [e]
                 (doto e .preventDefault .stopPropagation)
@@ -125,9 +125,10 @@
                :else
                [:div {:id "align-svg"}
                 [:svg {:id "main-svg"
-                       :width width
-                       :height height
-                       :viewBox "0 0 512 512"
+                       :width (:easel-width app)
+                       :height (:easel-height app)
+                       :viewBox (str "0 0 " (:viewport-width app) " "
+                                     (:viewport-height app))
                        :version "1.1"
                        :preserveAspectRatio "xMidYMid"
                        :xmlns "http://www.w3.org/2000/svg"}
