@@ -17,6 +17,15 @@
        [:section.actions
         [:a#clear.action {:on-click (handler menu [:clear])} "Clear"]
         [:a#save.action {:on-click (handler menu [:save])} "Save"]]
+       [:section.colors
+        [:h1 "Colors"]
+        [:ul
+         (for [color (:colors menu)]
+           [:li.color {:class (when (= color (:color menu)) "active")
+                       :style {:border-color (:stroke color)
+                               :background-color (:fill color)}
+                       :on-click (handler menu [:set-color color])}
+            (:name color)])]]
        [:section.toppings
         [:h1 "Toppings!"]
         [:section.tools

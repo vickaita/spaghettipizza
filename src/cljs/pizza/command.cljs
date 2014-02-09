@@ -68,7 +68,8 @@
   [app [_ e]]
   (let [new-stroke (-> (stroke/stroke)
                        (stroke/append e)
-                       (assoc :skin (:tool app)))]
+                       (assoc :skin (:tool app))
+                       (assoc :color (:color app)))]
   (update-in app [:strokes] #(conj % new-stroke))))
 
 (defmethod exec :extend-stroke
@@ -76,3 +77,7 @@
   (assoc-in app
             [:strokes (-> app :strokes count dec)]
             (stroke/append (-> app :strokes peek) e)))
+
+(defmethod exec :set-color
+  [app [_ color]]
+  (assoc app :color color))

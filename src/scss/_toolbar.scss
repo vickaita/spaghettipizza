@@ -53,6 +53,21 @@
     @extend %tool;
     @extend %tool-interactive;
   }
+  .color {
+    border-radius: 15px;
+    border: 3px solid black;
+    color: transparent;
+    display: inline-block;
+    height: 24px;
+    margin: 10px;
+    width: 24px;
+    transition: -webkit-transform 100ms ease-in;
+    -webkit-transition: transform 100ms ease-in;
+    &.active {
+      transform: scale(1.4);
+      -webkit-transform: scale(1.4);
+    }
+  }
 }
 
 %tool-icon {
