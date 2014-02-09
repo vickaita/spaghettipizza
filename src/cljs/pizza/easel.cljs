@@ -50,7 +50,7 @@
 
 (defn- normalize-point
   "Convert an event into a point."
-  [viewport-width e]
+  [scale-by e]
   (when-let [elem (.getElementById js/document "align-svg")]
     (let [; XXX: There is a bug in React.js that incorrectly reports #document as
           ; the current target. When this is fixed upstream then getElement call
@@ -60,17 +60,16 @@
           ;elem (.getElementById js/document "align-svg") ;elem (.-currentTarget e)
           rect (.getBoundingClientRect elem)
           left (.-left rect)
-          top (.-top rect)
-          scale-factor (/ viewport-width (.-width rect))]
+          top (.-top rect)]
       (case (.-type e)
         ("touchstart" "touchmove")
         (let [t (-> e .-touches (aget 0))]
-          [(-> t (.-pageX) (- left) (* scale-factor) Math/floor)
-           (-> t (.-pageY) (- top) (* scale-factor) Math/floor)])
+          [(-> t (.-pageX) (- left) (* scale-by) Math/floor)
+           (-> t (.-pageY) (- top) (* scale-by) Math/floor)])
         "touchend"
         nil
-        [(-> e (.-pageX) (- left) (* scale-factor) Math/floor)
-         (-> e (.-pageY) (- top) (* scale-factor) Math/floor)]))))
+        [(-> e (.-pageX) (- left) (* scale-by) Math/floor)
+         (-> e (.-pageY) (- top) (* scale-by) Math/floor)]))))
 
 (defn easel
   [{:keys [image-url image-loading? strokes tool] :as app} owner]
@@ -82,33 +81,34 @@
       (events/listen js/document "mouseup" #(om/set-state! owner :drawing? false)))
     om/IRender
     (render [_]
-      (html [:section.easel
-             {:easel-width (:easel-width app)
-              :easel-height (:easel-height app)
+      (let [side (min (:easel-width app) (:easel-height app))]
+        (html [:section.easel
+             {:width side
+              :height side
               :on-mouse-down
               (fn [e]
                 (doto e (.preventDefault) (.stopPropagation))
                 (om/set-state! owner :drawing? true)
-                (put! (:commands @app)
-                      [:new-stroke (normalize-point (:viewport-width @app) e)]))
+                (let [{:keys [commands scale-by]} @app]
+                  (put! commands [:new-stroke (normalize-point scale-by e)])))
               :on-touch-start
               (fn [e]
                 (doto e (.preventDefault) (.stopPropagation))
                 (om/set-state! owner :drawing? true)
-                (put! (:commands @app)
-                      [:new-stroke (normalize-point (:viewport-width @app) e)]))
+                (let [{:keys [commands scale-by]} @app]
+                  (put! commands [:new-stroke (normalize-point scale-by e)])))
               :on-mouse-move
               (fn [e]
                 (doto e .preventDefault .stopPropagation)
                 (when (om/get-state owner :drawing?)
-                  (put! (:commands @app)
-                        [:extend-stroke (normalize-point (:viewport-width @app) e)])))
+                  (let [{:keys [commands scale-by]} @app]
+                    (put! commands [:extend-stroke (normalize-point scale-by e)]))))
               :on-touch-move
               (fn [e]
                 (doto e .preventDefault .stopPropagation)
                 (when (om/get-state owner :drawing?)
-                  (put! (:commands @app)
-                        [:extend-stroke (normalize-point (:viewport-width @app) e)])))
+                  (let [{:keys [commands scale-by]} @app]
+                    (put! commands [:extend-stroke (normalize-point scale-by e)]))))
               :on-touch-end
               (fn [e]
                 (doto e .preventDefault .stopPropagation)
@@ -125,8 +125,8 @@
                :else
                [:div {:id "align-svg"}
                 [:svg {:id "main-svg"
-                       :width (:easel-width app)
-                       :height (:easel-height app)
+                       :width side
+                       :height side
                        :viewBox (str "0 0 " (:viewport-width app) " "
                                      (:viewport-height app))
                        :version "1.1"
@@ -135,4 +135,4 @@
                  [:g.vector.layer
                   (om/build pizza (:pizza app))
                   (for [stroke (:strokes app)]
-                    (om/build render stroke))]]])]))))
+                    (om/build render stroke))]]])])))))

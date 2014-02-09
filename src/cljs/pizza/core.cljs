@@ -2,6 +2,8 @@
   (:require-macros [cljs.core.async.macros :refer [go alt!]])
   (:require [goog.events :as events]
             [goog.history.Html5History]
+            [goog.dom]
+            [goog.dom.ViewportSizeMonitor]
             [cljs.core.async :refer [put! close! chan <! map<]]
             [clojure.browser.repl :as repl]
             [om.core :as om :include-macros true]
@@ -10,31 +12,11 @@
             [pizza.easel :as easel]
             [pizza.command :refer [exec]]))
 
-(enable-console-print!)
-
-(defn app-view
-  [app owner]
-  (om/component
-    (html
-      [:div#site {:class (when (:show-toolbar? app) "show-toolbar")}
-       (om/build toolbar/toolbar
-                 (om/graft {:commands (:commands app)
-                            :tool (:tool app)
-                            :groups (:groups (:toolbar app))}
-                           app))
-       [:div#page
-        [:header#masthead
-         [:a#menu-control
-          {:on-click (fn [e]
-                       (doto e .preventDefault .stopPropagation)
-                       (om/transact! app [:show-toolbar?] not))}]
-         [:h1 "Spaghetti Pizza"]]
-        (om/build easel/easel app)]
-       [:footer [:p "Created by Vick Aita"]]])))
-
 (defn -main
   []
-  (let [history
+  (let [commands (chan)
+
+        history
         (goog.history.Html5History.
           js/window
           (let [tt #js {}]
@@ -53,37 +35,68 @@
           ;                               (count path-prefix)))}
           )
 
-        commands
-        (chan)
+        sizeMonitor (goog.dom.ViewportSizeMonitor.)
 
         app-state
-        (atom {:commands commands
-               :history history
-               :debug true
-               :image-url nil
-               :image-loading? false
-               :easel-width 512
-               :easel-height 512
-               :viewport-width 512
-               :viewport-height 512
-               :granularity 5
-               :pizza {:crust (easel/create-irregular-circle [256 256] 227)
-                       :sauce (easel/create-irregular-circle [256 256] 210)}
-               :strokes []
-               :show-toolbar? false
-               :toolbar {:groups [#_{:name "Test"
-                                   :tools [{:id :edit :name "Edit"}]}
-                                  {:name "Pasta"
-                                   :tools [{:id :spaghetti :name "Spaghetti"}
-                                           {:id :linguini :name "Linguini"}
-                                           {:id :ziti :name "Ziti"}]}
-                                  {:name "Cheese"
-                                   :tools [{:id :ricotta :name "Ricotta"}]}
-                                  {:name "Herbs"
-                                   :tools [{:id :basil :name "Basil"}]}]}
-               :tool :spaghetti})]
+        (let [size (goog.dom.getViewportSize)
+              w (.-width sizeMonitor)
+              h (.-height sizeMonitor)]
+          (prn [w h])
+          (atom {:commands commands
+                 :history history
+                 :debug true
+                 :image-url nil
+                 :image-loading? false
+                 :easel-width w
+                 :easel-height h
+                 :viewport-width 512
+                 :viewport-height 512
+                 :scale-by (/ (min w h) 512)
+                 :granularity 5
+                 :pizza {:crust (easel/create-irregular-circle [256 256] 227)
+                         :sauce (easel/create-irregular-circle [256 256] 210)}
+                 :strokes []
+                 :show-toolbar? false
+                 :toolbar {:groups [#_{:name "Test"
+                                       :tools [{:id :edit :name "Edit"}]}
+                                    {:name "Pasta"
+                                     :tools [{:id :spaghetti :name "Spaghetti"}
+                                             {:id :linguini :name "Linguini"}
+                                             {:id :ziti :name "Ziti"}]}
+                                    {:name "Cheese"
+                                     :tools [{:id :ricotta :name "Ricotta"}]}
+                                    {:name "Herbs"
+                                     :tools [{:id :basil :name "Basil"}]}]}
+                 :tool :spaghetti}))
+        
+        app-view
+        (fn [app owner]
+          (om/component
+            (html
+              [:div#site {:class (when (:show-toolbar? app) "show-toolbar")}
+               (om/build toolbar/toolbar
+                         (om/graft {:commands (:commands app)
+                                    :tool (:tool app)
+                                    :groups (:groups (:toolbar app))}
+                                   app))
+               [:div#page
+                [:header#masthead
+                 [:a#menu-control
+                  {:on-click (fn [e]
+                               (doto e .preventDefault .stopPropagation)
+                               (om/transact! app [:show-toolbar?] not))}]
+                 [:h1 "Spaghetti Pizza"]]
+                (om/build easel/easel app)]
+               [:footer [:p "Created by Vick Aita"]]]))) ]
 
-    #_(doto history
+    ;; Main event loop of the program.
+    (go (while true
+          (let [command (<! commands)]
+            ;(when (:debug @app-state) (prn command))
+            (swap! app-state exec command))))
+
+    ;; Monitor the URL for changes and fire [:navigate] events as appropriate.
+    (doto history
       (events/listen
         "navigate"
         (fn [e]
@@ -98,16 +111,20 @@
       (.setUseFragment false)
       (.setEnabled true))
 
-    ;; TODO: This should also be fired whenever the viewport is resized.
-    #_(easel/adjust-size! svg-elem)
+    ;; Monitor the size of the window and update accordingly.
+    (events/listen
+      sizeMonitor 
+      "resize"
+      (fn [e]
+        (when-let [size (.getSize sizeMonitor)]
+          (let [w (.-width size)
+                h (.-height size)]
+            (put! commands [:resize w h])))))
 
-    (go (while true
-          (let [command (<! commands)]
-            ;(when (:debug @app-state) (prn command))
-            (swap! app-state exec command))))
-
+    ;; Render the the application and update as the state changes.
     (om/root app-state app-view (.-body js/document))))
 
+(enable-console-print!)
 (.initializeTouchEvents js/React true)
 (events/listen js/document "DOMContentLoaded" -main)
 ;(repl/connect "http://ui:9000/repl")

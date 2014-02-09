@@ -8,6 +8,15 @@
 
 (defmulti exec (fn [_ [directive & _]] directive))
 
+(defmethod exec :resize
+  [app [_ w h]]
+   (-> app
+       (assoc :easel-width w)
+       (assoc :easel-height h)
+       (assoc :scale-by (/ (:viewport-width app) (min w h)))
+       (assoc :scale-x (/ (:viewport-width app) w))
+       (assoc :scale-y (/ (:viewport-height app) h))))
+
 (defmethod exec :clear
   [app [_ tool]]
   (.setToken (:history app) "/")
