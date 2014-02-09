@@ -81,58 +81,50 @@
       (events/listen js/document "mouseup" #(om/set-state! owner :drawing? false)))
     om/IRender
     (render [_]
-      (let [side (min (:easel-width app) (:easel-height app))]
-        (html [:section.easel
-             {:width side
-              :height side
-              :on-mouse-down
-              (fn [e]
-                (doto e (.preventDefault) (.stopPropagation))
-                (om/set-state! owner :drawing? true)
+      (let [side (min (:easel-width app) (:easel-height app))
+            start-stroke
+            (fn [e]
+              (doto e (.preventDefault) (.stopPropagation))
+              (om/set-state! owner :drawing? true)
+              (let [{:keys [commands scale-by]} @app]
+                (put! commands [:new-stroke (normalize-point scale-by e)])))
+            extend-stroke
+            (fn [e]
+              (doto e .preventDefault .stopPropagation)
+              (when (om/get-state owner :drawing?)
                 (let [{:keys [commands scale-by]} @app]
-                  (put! commands [:new-stroke (normalize-point scale-by e)])))
-              :on-touch-start
-              (fn [e]
-                (doto e (.preventDefault) (.stopPropagation))
-                (om/set-state! owner :drawing? true)
-                (let [{:keys [commands scale-by]} @app]
-                  (put! commands [:new-stroke (normalize-point scale-by e)])))
-              :on-mouse-move
-              (fn [e]
-                (doto e .preventDefault .stopPropagation)
-                (when (om/get-state owner :drawing?)
-                  (let [{:keys [commands scale-by]} @app]
-                    (put! commands [:extend-stroke (normalize-point scale-by e)]))))
-              :on-touch-move
-              (fn [e]
-                (doto e .preventDefault .stopPropagation)
-                (when (om/get-state owner :drawing?)
-                  (let [{:keys [commands scale-by]} @app]
-                    (put! commands [:extend-stroke (normalize-point scale-by e)]))))
-              :on-touch-end
-              (fn [e]
-                (doto e .preventDefault .stopPropagation)
-                (om/set-state! owner :drawing? false))}
-             (cond
-               (:image-url app)
-               [:div#image-wrapper
-                [:img {:src (:image-url app)}]]
+                  (put! commands [:extend-stroke (normalize-point scale-by e)]))))
+            end-stroke
+            (fn [e]
+              (doto e .preventDefault .stopPropagation)
+              (om/set-state! owner :drawing? false))]
+        (html [:section.easel {:id "align-svg"
+                               :width side
+                               :height side
+                               :on-mouse-down start-stroke
+                               :on-touch-start start-stroke
+                               :on-mouse-move extend-stroke
+                               :on-touch-move extend-stroke
+                               :on-touch-end end-stroke}
+               (cond
+                 (:image-url app)
+                 [:div#image-wrapper
+                  [:img {:src (:image-url app)}]]
 
                (:image-loading? app)
                [:div#image-wrapper
                 [:p "Loading ..."]]
 
                :else
-               [:div {:id "align-svg"}
-                [:svg {:id "main-svg"
-                       :width side
-                       :height side
-                       :viewBox (str "0 0 " (:viewport-width app) " "
-                                     (:viewport-height app))
-                       :version "1.1"
-                       :preserveAspectRatio "xMidYMid"
-                       :xmlns "http://www.w3.org/2000/svg"}
-                 [:g.vector.layer
-                  (om/build pizza (:pizza app))
-                  (for [stroke (:strokes app)]
-                    (om/build render stroke))]]])])))))
+               [:svg {:id "main-svg"
+                      :width side
+                      :height side
+                      :viewBox (str "0 0 " (:viewport-width app) " "
+                                    (:viewport-height app))
+                      :version "1.1"
+                      :preserveAspectRatio "xMidYMid"
+                      :xmlns "http://www.w3.org/2000/svg"}
+                [:g.vector.layer
+                 (om/build pizza (:pizza app))
+                 (for [stroke (:strokes app)]
+                   (om/build render stroke))]])])))))

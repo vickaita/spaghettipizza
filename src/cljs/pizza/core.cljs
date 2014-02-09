@@ -38,36 +38,32 @@
         sizeMonitor (goog.dom.ViewportSizeMonitor.)
 
         app-state
-        (let [size (goog.dom.getViewportSize)
-              w (.-width sizeMonitor)
-              h (.-height sizeMonitor)]
-          (prn [w h])
-          (atom {:commands commands
-                 :history history
-                 :debug true
-                 :image-url nil
-                 :image-loading? false
-                 :easel-width w
-                 :easel-height h
-                 :viewport-width 512
-                 :viewport-height 512
-                 :scale-by (/ (min w h) 512)
-                 :granularity 5
-                 :pizza {:crust (easel/create-irregular-circle [256 256] 227)
-                         :sauce (easel/create-irregular-circle [256 256] 210)}
-                 :strokes []
-                 :show-toolbar? false
-                 :toolbar {:groups [#_{:name "Test"
-                                       :tools [{:id :edit :name "Edit"}]}
-                                    {:name "Pasta"
-                                     :tools [{:id :spaghetti :name "Spaghetti"}
-                                             {:id :linguini :name "Linguini"}
-                                             {:id :ziti :name "Ziti"}]}
-                                    {:name "Cheese"
-                                     :tools [{:id :ricotta :name "Ricotta"}]}
-                                    {:name "Herbs"
-                                     :tools [{:id :basil :name "Basil"}]}]}
-                 :tool :spaghetti}))
+        (atom {:commands commands
+               :history history
+               :debug true
+               :image-url nil
+               :image-loading? false
+               :easel-width 0
+               :easel-height 0
+               :viewport-width 512
+               :viewport-height 512
+               :scale-by 1
+               :granularity 5
+               :pizza {:crust (easel/create-irregular-circle [256 256] 227)
+                       :sauce (easel/create-irregular-circle [256 256] 210)}
+               :strokes []
+               :show-toolbar? false
+               :toolbar {:groups [#_{:name "Test"
+                                     :tools [{:id :edit :name "Edit"}]}
+                                  {:name "Pasta"
+                                   :tools [{:id :spaghetti :name "Spaghetti"}
+                                           {:id :linguini :name "Linguini"}
+                                           {:id :ziti :name "Ziti"}]}
+                                  {:name "Cheese"
+                                   :tools [{:id :ricotta :name "Ricotta"}]}
+                                  {:name "Herbs"
+                                   :tools [{:id :basil :name "Basil"}]}]}
+               :tool :spaghetti})
         
         app-view
         (fn [app owner]
@@ -122,7 +118,12 @@
             (put! commands [:resize w h])))))
 
     ;; Render the the application and update as the state changes.
-    (om/root app-state app-view (.-body js/document))))
+    (om/root app-state app-view (.-body js/document))
+
+    ;; Trigger a resize event after the DOM has rendered.
+    (.dispatchEvent sizeMonitor "resize") 
+
+))
 
 (enable-console-print!)
 (.initializeTouchEvents js/React true)
