@@ -9,6 +9,33 @@
     (doto e .preventDefault .stopPropagation)
     (put! (:commands world) message)))
 
+(defn color-wheel
+  [app owner]
+  (om/component
+    (html
+      [:section.color-wheel
+       [:h1 "Color Selector"]
+       [:p.tooltip "Mouseover a color to select it."]
+       [:ul
+        (let [angle-step (/ Math/PI (count (:color app)))
+              radius 100]
+          (map-indexed
+          (fn [i color]
+            (let [angle (* i angle-step)]
+              [:li.color {:class (when (= color (:color app)) "active")
+                        :style {:border-color (:stroke color)
+                                :background-color (:fill color)
+                                :left (* radius (Math/cos angle))
+                                :top (* radius (Math/sin angle))}
+                        :on-click
+                        (fn [e]
+                          (doto e .preventDefault .stopPropagation)
+                          (doto (:commands app)
+                            (put! [:set-color color])
+                            (put! [:hide-color-wheel])))}
+             [:span.name (:name color)]]))
+          (:colors app)))]])))
+
 (defn toolbar
   [menu owner]
   (om/component

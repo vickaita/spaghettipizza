@@ -73,11 +73,19 @@
   (update-in app [:strokes] #(conj % new-stroke))))
 
 (defmethod exec :extend-stroke
-  [app [_ e]]
+  [app [_ pt]]
   (assoc-in app
             [:strokes (-> app :strokes count dec)]
-            (stroke/append (-> app :strokes peek) e)))
+            (stroke/append (-> app :strokes peek) pt)))
 
 (defmethod exec :set-color
   [app [_ color]]
   (assoc app :color color))
+
+(defmethod exec :show-color-wheel
+  [app _]
+  (assoc app :show-color-wheel? true))
+
+(defmethod exec :hide-color-wheel
+  [app _]
+  (assoc app :show-color-wheel? false))
