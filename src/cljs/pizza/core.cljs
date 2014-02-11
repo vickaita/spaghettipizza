@@ -83,7 +83,7 @@
                  :sauce (easel/create-irregular-circle [256 256] 210)}
          :strokes []
          :show-toolbar? false
-         :show-color-wheel? true
+         :show-color-wheel? false
          :toolbar {:groups [#_{:name "Test"
                                :tools [{:id :edit :name "Edit"}]}
                             {:name "Pasta"
