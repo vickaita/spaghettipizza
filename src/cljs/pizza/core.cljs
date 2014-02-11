@@ -23,21 +23,14 @@
                            (set! (.-retrieveToken tt)
                                  (fn [path-prefix location]
                                    (.substr (.-pathname location)
-                                            (count path-prefix)))) tt)
-                         ;; XXX: For some reason this tagged literal is breaking in
-                         ;; advanced compilation. That's why I'm doing that crazy let
-                         ;; block above. Honestly, I don't know why this isn't working.
-                         ;#js {:createUrl (fn [token _ _] token)
-                         ;     :retrieveToken (fn [path-prefix location]
-                         ;                      (.substr (.-pathname location)
-                         ;                               (count path-prefix)))}
-                         ))
+                                            (count path-prefix))))
+                           tt)))
 
 (defn- monitor-history
   [history commands]
   (doto history
     (.setUseFragment false)
-    (.setEnabled true)  
+    (.setEnabled true)
     (events/listen
       "navigate"
       (fn [e]
@@ -49,11 +42,12 @@
             (put! commands [:display-image img-url])))))))
 
 (def ^:private sizeMonitor (goog.dom.ViewportSizeMonitor.))
+
 (defn- monitor-viewport-size
   "Monitor the size of the window and update accordingly."
   [sizeMonitor commands]
   (events/listen
-    sizeMonitor 
+    sizeMonitor
     "resize"
     (fn [e]
       (when-let [size (.getSize sizeMonitor)]
@@ -139,7 +133,7 @@
                              :color (:color app)
                              :colors (:colors (:toolbar app))}
                             app))]
-       [:footer [:p "Created by Vick Aita"]]])))  
+       [:footer [:p "Created by Vick Aita"]]])))
 
 
 (defn -main
@@ -158,6 +152,6 @@
 (.initializeTouchEvents js/React true)
 (monitor-history history commands)
 (monitor-viewport-size sizeMonitor commands)
-(monitor-keypress js/document commands)  
+(monitor-keypress js/document commands)
 (events/listen js/document "DOMContentLoaded" -main)
 ;(repl/connect "http://ui:9000/repl")
