@@ -89,3 +89,7 @@
 (defmethod exec :hide-color-wheel
   [app _]
   (assoc app :show-color-wheel? false))
+
+(defmethod exec :toggle-color-wheel
+  [app _]
+  (assoc app :show-color-wheel? (not (:show-color-wheel? app))))
