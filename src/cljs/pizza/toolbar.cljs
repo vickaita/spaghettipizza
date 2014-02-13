@@ -16,25 +16,30 @@
       [:section.color-wheel
        [:h1 "Color Selector"]
        [:p.tooltip "Mouseover a color to select it."]
-       [:ul
-        (let [angle-step (/ Math/PI (count (:color app)))
-              radius 100]
+       [:svg {:width 500
+              :height 500
+              :viewBox (str "0 0 500 500")
+              :version "1.1"
+              :preserveAspectRatio "xMidYMid"
+              :xmlns "http://www.w3.org/2000/svg"}
+        (let [angle-step (/ Math/PI (inc (count (:color app))))
+              wheel-radius 120]
           (map-indexed
-          (fn [i color]
-            (let [angle (* i angle-step)]
-              [:li.color {:class (when (= color (:color app)) "active")
-                        :style {:border-color (:stroke color)
-                                :background-color (:fill color)
-                                :left (* radius (Math/cos angle))
-                                :top (* radius (Math/sin angle))}
-                        :on-click
-                        (fn [e]
-                          (doto e .preventDefault .stopPropagation)
-                          (doto (:commands app)
-                            (put! [:set-color color])
-                            (put! [:hide-color-wheel])))}
-             [:span.name (:name color)]]))
-          (:colors app)))]])))
+            (fn [i color]
+              (let [angle (* i angle-step)]
+                [:circle.color
+                 {:fill (:fill color)
+                  :stroke (:stroke color)
+                  :stroke-width 4
+                  :cx (+ 250 (Math/floor (* wheel-radius (Math/cos angle))))
+                  :cy (+ 250 (Math/floor (* wheel-radius (Math/sin angle))))
+                  :r (if (= color (:color app)) 30 25)
+                  :on-click (fn [e]
+                              (doto e .preventDefault .stopPropagation)
+                              (doto (:commands app)
+                                (put! [:set-color color])
+                                (put! [:hide-color-wheel])))}]))
+            (:colors app)))]])))
 
 (defn toolbar
   [menu owner]

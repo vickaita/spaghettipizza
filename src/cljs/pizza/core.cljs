@@ -34,7 +34,6 @@
     (events/listen
       "navigate"
       (fn [e]
-        (.log js/console e)
         (when-let [search (.-search (.-location js/document))]
           (let [pizza-hash (-> search (.split "=") (aget 1))
                 img-url (when (> (count pizza-hash) 0)
