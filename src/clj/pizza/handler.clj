@@ -59,16 +59,9 @@
     {:status 422
      :body "Missing File."}))
 
-(defroutes dev-routes
-  (GET "/debug" [] (pages/home true))
-  (GET "/" [] (pages/home false))
-  (mp/wrap-multipart-params
-    (POST "/pizza/" {{{file :tempfile} :data} :params} (handle-file file)))
-  (route/files "/" {:root "resources/public"})
-  (route/not-found (pages/error-404)))
-
-(defroutes prod-routes
-  (GET "/" [] (pages/home false))
+(defroutes all-routes
+  (GET "/" {{debug :debug} :params}
+       (pages/home (and debug (= :dev (:environment env)))))
   (mp/wrap-multipart-params
     (POST "/pizza/" {{{file :tempfile} :data} :params} (handle-file file)))
   (route/files "/" {:root "resources/public"})
@@ -78,6 +71,6 @@
   [& args]
   (println "Starting server; VERSION =" (:pizza-version env))
   (if (= :dev (:environment env))
-    (run-jetty (reload/wrap-reload (site #'dev-routes)) {:port 8080})
+    (run-jetty (reload/wrap-reload (site #'all-routes)) {:port 8080})
     (do (ensure-bucket)
-        (run-jetty (site #'prod-routes) {:port 8080}))))
+        (run-jetty (site #'all-routes) {:port 8080}))))

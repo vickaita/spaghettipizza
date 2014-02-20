@@ -86,14 +86,16 @@
             (fn [e]
               (doto e (.preventDefault) (.stopPropagation))
               (om/set-state! owner :drawing? true)
-              (let [{:keys [commands scale-by]} @app]
-                (put! commands [:new-stroke (normalize-point scale-by e)])))
+              (let [{:keys [scale-by]} @app]
+                (put! (:commands (om/get-shared owner))
+                      [:new-stroke (normalize-point scale-by e)])))
             extend-stroke
             (fn [e]
               (doto e .preventDefault .stopPropagation)
               (when (om/get-state owner :drawing?)
-                (let [{:keys [commands scale-by]} @app]
-                  (put! commands [:extend-stroke (normalize-point scale-by e)]))))
+                (let [{:keys [scale-by]} @app]
+                  (put! (:commands (om/get-shared owner))
+                        [:extend-stroke (normalize-point scale-by e)]))))
             end-stroke
             (fn [e]
               (doto e .preventDefault .stopPropagation)

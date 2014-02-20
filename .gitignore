@@ -3,9 +3,9 @@
 .nrepl-port
 out
 resources/public/js/
+resources/public/css/main.css
 repl/
 .repl/
 target/
 resources/credentials/aws.clj
-resouces/public/css/
 .sass-cache/

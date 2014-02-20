@@ -1,0 +1,5 @@
+.color-wheel {
+  position: absolute;
+  display: none;
+  .show-color-wheel & { display: block; }
+}

@@ -32,13 +32,13 @@
       (html [:g.topping.noodle.spaghetti {:key (:id stroke)}
              [:polyline.border {:points points
                                 :fill "transparent"
-                                :stroke "#9E9E22"
+                                :stroke (:stroke (:color stroke))
                                 :stroke-linecap "round"
                                 :stroke-width 6}]
              [:polyline.inner {:key (str (:id stroke) "-inner")
                                :points points
                                :fill "transparent"
-                               :stroke "#F5F5AA"
+                               :stroke (:fill (:color stroke))
                                :stroke-linecap "round"
                                :stroke-width 4}]]))))
 
@@ -49,12 +49,12 @@
       (html [:g.topping.noodle.linguini {:key (:id stroke)}
              [:polyline.border {:points points
                                 :fill "transparent"
-                                :stroke "#9E9E22"
+                                :stroke (:stroke (:color stroke))
                                 :stroke-linecap "square"
                                 :stroke-width 12}]
              [:polyline.inner {:points points
                                :fill "transparent"
-                               :stroke "#F5F5AA"
+                               :stroke (:fill (:color stroke))
                                :stroke-linecap "square"
                                :stroke-width 10}]]))))
 

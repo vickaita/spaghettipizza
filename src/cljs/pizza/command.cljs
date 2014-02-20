@@ -51,7 +51,7 @@
       (assoc :show-toolbar? false)
       (assoc :image-loading? true)))
 
-(defmethod exec :display-image
+#_(defmethod exec :display-image
   [app [_ url]]
   (-> app
       (assoc-in [:image :status] :ready)
@@ -68,11 +68,28 @@
   [app [_ e]]
   (let [new-stroke (-> (stroke/stroke)
                        (stroke/append e)
-                       (assoc :skin (:tool app)))]
+                       (assoc :skin (:tool app))
+                       (assoc :color (:color app)))]
   (update-in app [:strokes] #(conj % new-stroke))))
 
 (defmethod exec :extend-stroke
-  [app [_ e]]
+  [app [_ pt]]
   (assoc-in app
             [:strokes (-> app :strokes count dec)]
-            (stroke/append (-> app :strokes peek) e)))
+            (stroke/append (-> app :strokes peek) pt)))
+
+(defmethod exec :set-color
+  [app [_ color]]
+  (assoc app :color color))
+
+(defmethod exec :show-color-wheel
+  [app _]
+  (assoc app :show-color-wheel? true))
+
+(defmethod exec :hide-color-wheel
+  [app _]
+  (assoc app :show-color-wheel? false))
+
+(defmethod exec :toggle-color-wheel
+  [app _]
+  (assoc app :show-color-wheel? (not (:show-color-wheel? app))))
