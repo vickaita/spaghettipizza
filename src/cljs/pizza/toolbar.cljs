@@ -53,8 +53,7 @@
                     {:cx (+ 250 (Math/floor (* wheel-radius (Math/cos angle))))
                      :cy (+ 250 (Math/floor (* wheel-radius (Math/sin angle))))
                      :r 25
-                     :active? (= color (:color app))
-                     :commands (:commands app)}))))
+                     :active? (= color (:color app))}))))
             (:colors app)))]])))
 
 (defn toolbar
