@@ -9,6 +9,26 @@
     (doto e .preventDefault .stopPropagation)
     (put! (:commands world) message)))
 
+(defn- color-circle
+  [color owner]
+  (om/component
+    (html
+      [:circle.color
+       {:key (:fill color)
+        :fill (:fill color)
+        :stroke (:stroke color)
+        :stroke-width 4
+        :cx (:cx color)
+        :cy (:cy color)
+        :r (:r color)
+        :on-click (fn [e]
+                    ;(doto e .preventDefault .stopPropagation)
+                    (doto (:commands @color)
+                      (put! [:set-color @color])
+                      (put! [:hide-color-wheel])))}
+       ;; Not supported by React.js (yet)
+       #_[:animate {:attribute-name "r" :from "25" :to "30" :dur "100ms"}]])))
+
 (defn color-wheel
   [app owner]
   (om/component
@@ -27,18 +47,15 @@
           (map-indexed
             (fn [i color]
               (let [angle (* i angle-step)]
-                [:circle.color
-                 {:fill (:fill color)
-                  :stroke (:stroke color)
-                  :stroke-width 4
-                  :cx (+ 250 (Math/floor (* wheel-radius (Math/cos angle))))
-                  :cy (+ 250 (Math/floor (* wheel-radius (Math/sin angle))))
-                  :r (if (= color (:color app)) 30 25)
-                  :on-click (fn [e]
-                              (doto e .preventDefault .stopPropagation)
-                              (doto (:commands app)
-                                (put! [:set-color color])
-                                (put! [:hide-color-wheel])))}]))
+                (om/build
+                  color-circle
+                  (merge
+                    color
+                    {:cx (+ 250 (Math/floor (* wheel-radius (Math/cos angle))))
+                     :cy (+ 250 (Math/floor (* wheel-radius (Math/sin angle))))
+                     :r 25
+                     :active? (= color (:color app))
+                     :commands (:commands app)}))))
             (:colors app)))]])))
 
 (defn toolbar

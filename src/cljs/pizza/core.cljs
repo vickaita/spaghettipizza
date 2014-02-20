@@ -9,36 +9,15 @@
             [clojure.string :refer [join]]
             [om.core :as om :include-macros true]
             [sablono.core :refer-macros [html]]
+            [secretary.core :as secretary :include-macros true :refer [defroute]]
             [pizza.toolbar :as toolbar]
             [pizza.easel :as easel]
             [pizza.command :refer [exec]]))
 
 (def ^:private commands (chan))
 
-(def ^:private history (goog.history.Html5History.
-                         js/window
-                         (let [tt #js {}]
-                           (set! (.-createUrl tt)
-                                 (fn [token _ _] token))
-                           (set! (.-retrieveToken tt)
-                                 (fn [path-prefix location]
-                                   (.substr (.-pathname location)
-                                            (count path-prefix))))
-                           tt)))
-
-(defn- monitor-history
-  [history commands]
-  (doto history
-    (.setUseFragment false)
-    (.setEnabled true)
-    (events/listen
-      "navigate"
-      (fn [e]
-        (when-let [search (.-search (.-location js/document))]
-          (let [pizza-hash (-> search (.split "=") (aget 1))
-                img-url (when (> (count pizza-hash) 0)
-                          (str "/pizza/" pizza-hash))]
-            (put! commands [:display-image img-url])))))))
+(defroute "/pizza/:pizza-hash" [pizza-hash]
+  (put! commands [:display-image (str "/pizza/" pizza-hash)]))
 
 (def ^:private sizeMonitor (goog.dom.ViewportSizeMonitor.))
 
@@ -68,7 +47,6 @@
 
 (def ^:private app-state
   (atom {:commands commands
-         :history history
          :debug true
          :image-url nil
          :image-loading? false
@@ -134,23 +112,15 @@
                             app))]
        [:footer [:p "Created by Vick Aita"]]])))
 
-
-(defn -main
-  []
-  (go (while true
-         (let [command (<! commands)]
-           ;(when (:debug @app-state) (prn command))
-           (swap! app-state exec command))))
-   ;; Render the the application and update as the state changes.
-   (om/root app-state app-view (.-body js/document))
-   ;; Trigger a resize event after the DOM has rendered.
-   (.dispatchEvent sizeMonitor "resize"))
-
-
 (enable-console-print!)
 (.initializeTouchEvents js/React true)
-(monitor-history history commands)
+(go (while true
+      (let [command (<! commands)]
+        (swap! app-state exec command))))
 (monitor-viewport-size sizeMonitor commands)
 (monitor-keypress js/document commands)
-(events/listen js/document "DOMContentLoaded" -main)
+(om/root
+  app-view app-state
+  {:target (.-body js/document) :shared {:commands commands}})
+(.dispatchEvent sizeMonitor "resize")
 ;(repl/connect "http://ui:9000/repl")
