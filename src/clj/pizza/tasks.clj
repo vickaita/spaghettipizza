@@ -49,9 +49,8 @@
         (cljsc/build "src/cljs/pizza/core.cljs"
                      {:output-to "resources/public/js/pizza.js"
                       :output-dir "resources/public/js"
-                      :preamble ["react/react.js"]
+                      :preamble ["react/react.min.js"]
                       :externs ["react/externs/react.js"]
-                      :source-map "resources/public/js/pizza.js.map"
                       :optimizations :advanced})
         (println "Uploading" (.getName js) "...")
         (s3/put-object
