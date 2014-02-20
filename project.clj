@@ -39,7 +39,7 @@
                 :source-paths ["src/cljs"]
                 :compiler {:output-to "resources/public/js/pizza.js"
                            :output-dir "resources/public/js"
-                           :preamble ["react/react.js"]
+                           :preamble ["react/react.min.js"]
                            :externs ["react/externs/react.js"]
                            :source-map "resources/public/js/pizza.js.map"
                            :optimizations :advanced}}]}
