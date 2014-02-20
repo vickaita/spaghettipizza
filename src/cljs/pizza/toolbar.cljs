@@ -22,8 +22,7 @@
         :cy (:cy color)
         :r (:r color)
         :on-click (fn [e]
-                    ;(doto e .preventDefault .stopPropagation)
-                    (doto (:commands @color)
+                    (doto (:commands (om/get-shared owner))
                       (put! [:set-color @color])
                       (put! [:hide-color-wheel])))}
        ;; Not supported by React.js (yet)
