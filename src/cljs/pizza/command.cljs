@@ -21,6 +21,7 @@
   [app [_ tool]]
   (.setToken (:history app) "/")
   (-> app
+      (assoc :image-loading? false)
       (assoc :image-url nil)
       (assoc :show-toolbar? false)
       (assoc :strokes [])))
@@ -55,6 +56,7 @@
   [app [_ url]]
   (-> app
       (assoc-in [:image :status] :ready)
+      (assoc :image-loading? false)
       (assoc :image-url url)))
 
 (defmethod exec :select-tool
