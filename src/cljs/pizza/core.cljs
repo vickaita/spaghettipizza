@@ -21,7 +21,6 @@
   (put! commands [:display-image (str "/pizza/" pizza)]))
 
 (defroute "/" [query-params]
-  (.log js/console (str query-params))
   (when-let [pizza-hash (get query-params "pizza")]
     (put! commands [:display-image (str "/pizza/" pizza-hash)])))
 
