@@ -1,8 +1,9 @@
 (ns pizza.core
   (:require-macros [cljs.core.async.macros :refer [go alt!]])
   (:require [goog.events :as events]
-            [goog.history.Html5History]
             [goog.dom]
+            [goog.history.Html5History]
+            [goog.history.EventType]
             [goog.dom.ViewportSizeMonitor]
             [cljs.core.async :refer [put! close! chan <! map<]]
             [clojure.browser.repl :as repl]
@@ -16,8 +17,30 @@
 
 (def ^:private commands (chan))
 
-(defroute "/pizza/:pizza-hash" [pizza-hash]
-  (put! commands [:display-image (str "/pizza/" pizza-hash)]))
+(defroute "/pizza/:pizza" [pizza]
+  (put! commands [:display-image (str "/pizza/" pizza)]))
+
+(defroute "/" [query-params]
+  (.log js/console (str query-params))
+  (when-let [pizza-hash (get query-params "pizza")]
+    (put! commands [:display-image (str "/pizza/" pizza-hash)])))
+
+(def ^:private history
+  (goog.history.Html5History.
+    js/window
+    (let [transformer #js {}]
+      (set! (.-createUrl transformer) (fn [token _ _] token))
+      (set! (.-retrieveToken transformer) (fn [path-prefix location]
+                                            (.substr (.-pathname location)
+                                                     (count path-prefix))))
+      transformer)))
+
+(doto history
+  (events/listen goog.history.EventType/NAVIGATE
+                 #(secretary/dispatch! (str (.-pathname js/location)
+                                            (.-search js/location))))
+  (.setUseFragment false)
+  (.setEnabled true))
 
 (def ^:private sizeMonitor (goog.dom.ViewportSizeMonitor.))
 
@@ -47,6 +70,7 @@
 
 (def ^:private app-state
   (atom {:commands commands
+         :history history
          :debug true
          :image-url nil
          :image-loading? false
@@ -80,7 +104,7 @@
                             {:name "White" :fill "#F2F2F2" :stroke "#D9D9D9"}
                             {:name "Black" :fill "#202020" :stroke "#181818"}]}
          :tool :spaghetti
-         :color {:name "Red" :fill "#F86969" :stroke "#F04F4F"}}))
+         :color {:name "Yellow" :fill "#FAE265" :stroke "#DDAB0B"}}))
 
 (defn- app-view
   [app owner]

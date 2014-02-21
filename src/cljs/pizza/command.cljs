@@ -51,7 +51,7 @@
       (assoc :show-toolbar? false)
       (assoc :image-loading? true)))
 
-#_(defmethod exec :display-image
+(defmethod exec :display-image
   [app [_ url]]
   (-> app
       (assoc-in [:image :status] :ready)

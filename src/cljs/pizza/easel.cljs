@@ -84,7 +84,7 @@
       (let [side (min (:easel-width app) (:easel-height app))
             start-stroke
             (fn [e]
-              (doto e (.preventDefault) (.stopPropagation))
+              (doto e .preventDefault .stopPropagation)
               (om/set-state! owner :drawing? true)
               (let [{:keys [scale-by]} @app]
                 (put! (:commands (om/get-shared owner))
