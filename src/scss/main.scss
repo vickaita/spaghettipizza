@@ -88,6 +88,7 @@ button:focus {
 
 @import 'toolbar';
 @import 'color_wheel';
+@import 'menu_bar';
 
 .easel {
   margin: 0 auto;
@@ -106,4 +107,7 @@ button:focus {
 #main-svg {
   margin: 0;
   display: block;
+}
+
+#site-footer {
 }
