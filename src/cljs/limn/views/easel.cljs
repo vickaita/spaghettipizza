@@ -1,14 +1,11 @@
 (ns limn.views.easel
-  (:require [clojure.string :refer [join]]
-            [cljs.core.async :refer [put!]]
+  (:require [cljs.core.async :refer [put!]]
             [goog.events :as events]
             [om.core :as om :include-macros true]
             [sablono.core :refer-macros [html]]
             [limn.stroke :as stroke]
             [limn.spaghetti :refer [render]]))
 
-
-;; TODO: put this back into the pizza namespace
 (defn pizza
   "Draw a pizza."
   [{:keys [crust sauce]} owner]
