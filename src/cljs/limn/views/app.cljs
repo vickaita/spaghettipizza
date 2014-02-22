@@ -2,9 +2,9 @@
   (:require [clojure.string :refer [join]]
             [om.core :as om :include-macros true]
             [sablono.core :refer-macros [html]]
-            [limn.toolbar :as toolbar]
+            [limn.toolbar :refer [toolbar color-wheel]]
             [limn.menu :refer [menu-bar]]
-            [limn.easel :as easel]))
+            [limn.easel :refer [easel]]))
 
 (defn- site-classes
   [app]
@@ -23,25 +23,32 @@
                      (om/transact! app [:show-toolbar?] not))}]
        [:h1 "Spaghetti Pizza"]])))
 
+(defn- footer
+  [app owner]
+  (om/component
+    (html
+      [:footer#site-footer
+       [:p "Spaghetti pizza is a great new site that lets you take control of
+           your own virtual pizza shop and create crazy combinations of pizza
+           toppings including such whacky things as spaghetti and ziti!"]
+       [:p (str "Vick Aita © " (.getFullYear (js/Date.)))]])))
+
 (defn app-view
   [app owner]
   (om/component
     (html
       [:div#site {:class (site-classes app)}
-       (om/build toolbar/toolbar
+       (om/build toolbar
                  (om/graft {:tool (:tool app)
                             :color (:color app)
                             :groups (:groups (:toolbar app))
                             :colors (:colors (:toolbar app))} app))
-       [:div.palettes
-        (om/build toolbar/color-wheel
-                  (om/graft {:commands (:commands app)
-                             :color (:color app)
-                             :colors (:colors (:toolbar app))}
-                            app))]
        [:div#page
         (om/build masthead app)
         (om/build menu-bar (:menu-bar app))
-        (om/build easel/easel app)
-        [:footer#site-footer
-         [:p (str "Vick Aita © " (.getFullYear (js/Date.)))]]]])))
+        (om/build easel app)
+        (om/build footer app)]
+       [:div.palettes
+        (om/build color-wheel
+                  (om/graft {:color (:color app)
+                             :colors (:colors (:toolbar app))} app))]])))
