@@ -10,7 +10,7 @@
     (init-state [_] {:open false})
     om/IRender
     (render [_]
-      (html [:section.menu
+      (html [:section.menu {:class (when (om/get-state owner :open) "open")}
              [:a.menu-title
               {:on-click (fn [e]
                            (doto e .preventDefault .stopPropagation)
@@ -21,7 +21,7 @@
              [:ul.menu-list
               (for [item (:items app)]
                 [:li.menu-item
-                 {:on-click #(prn (:command item))}
+                 {:on-click #(prn (:command @item))}
                  (:name item)])]]))))
 
 (defn menu-bar
