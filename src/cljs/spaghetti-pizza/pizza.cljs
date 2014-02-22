@@ -23,11 +23,11 @@
                          (let [ angle (* -0.01 Math/PI)]
                            (S (rotate-point (median-point p1 p2) p2 angle)
                               p2)))
-        segment->curve (fn [acc [[x1 y1 :as p1] [x2 y2 :as p2]]]
+        segment->curve (fn [acc [p1 p2]]
                          (conj acc (S (rotate-point (median-point p1 p2)
                                                     p2
                                                     (* -0.01 Math/PI)) p2)))
-        segments (let [[[x1 y1 :as p1] [x2 y2 :as p2] & _] points]
+        segments (let [[p1 p2 & _] points]
                    [(M p1)
                     (C (rotate-point (median-point p1 p2) p1 (* 0.01 Math/PI))
                        (rotate-point (median-point p1 p2) p2 (* -0.01 Math/PI))
