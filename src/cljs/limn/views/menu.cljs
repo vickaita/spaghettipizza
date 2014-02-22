@@ -3,29 +3,25 @@
             [om.core :as om :include-macros true]
             [sablono.core :refer-macros [html]]))
 
-(defn menu
+(defn menu-bar
   [app owner]
   (reify
     om/IInitState
-    (init-state [_] {:open false})
+    (init-state [_] {:open nil})
     om/IRender
     (render [_]
-      (html [:section.menu
-             [:a.menu-title
-              {:on-click (fn [e]
-                           (doto e .preventDefault .stopPropagation)
-                           (om/set-state!
-                            owner :open
-                            (not (om/get-state owner :open))))}
-              (:name app)]
-             [:ul.menu-list
-              (for [item (:items app)]
-                [:li.menu-item
-                 {:on-click #(prn (:command item))}
-                 (:name item)])]]))))
-
-(defn menu-bar
-  [app owner]
-  (om/component
-    (html [:section.menu-bar
-           (map #(om/build menu %) app)])))
+      (html [:section.menu-bar
+             (for [menu app]
+               [:section.menu {:key (:name menu)
+                               :class (when (= (om/get-state owner :open) menu)
+                                        "open")}
+                [:a.menu-title
+                 {:on-click (fn [e]
+                              (doto e .preventDefault .stopPropagation)
+                              (om/set-state! owner :open menu))}
+                 (:name menu)]
+                [:ul.menu-list
+                 (for [item (:items menu)]
+                   [:li.menu-item
+                    {:on-click #(prn (:command @item))}
+                    (:name item)])]])]))))

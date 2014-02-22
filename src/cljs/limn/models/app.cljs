@@ -33,8 +33,9 @@
                       {:name "Purple" :fill "#D459A4" :stroke "#AE4173"}
                       {:name "White" :fill "#F2F2F2" :stroke "#D9D9D9"}
                       {:name "Black" :fill "#202020" :stroke "#181818"}]}
-   :menu-bar [{:name "Tools"
-               :items [{:name "Foo" :command "foo"}
-                       {:name "Bar" :command "bar"}]}]
+   :menu-bar [{:name "Colors"
+               :items [{:name "Show Color Wheel" :command "foo"}]}
+              {:name "Tools"
+               :items [{:name "Spaghetti" :command "Spaghetti"}]}]
    :tool :spaghetti
    :color {:name "Yellow" :fill "#FAE265" :stroke "#DDAB0B"}})
