@@ -2,9 +2,9 @@
   (:require [clojure.string :refer [join]]
             [om.core :as om :include-macros true]
             [sablono.core :refer-macros [html]]
-            [limn.toolbar :refer [toolbar color-wheel]]
-            [limn.menu :refer [menu-bar]]
-            [limn.easel :refer [easel]]))
+            [limn.views.toolbar :refer [toolbar color-wheel]]
+            [limn.views.menu :refer [menu-bar]]
+            [limn.views.easel :refer [easel]]))
 
 (defn- site-classes
   [app]

@@ -1,5 +1,5 @@
 (ns limn.models.app
-  (:require [limn.easel :as easel]))
+  (:require [limn.pizza :refer [fresh-pizza]]))
 
 (def default-app-state
   {:debug true
@@ -11,8 +11,7 @@
    :viewport-height 512
    :scale-by 1
    :granularity 5
-   :pizza {:crust (easel/create-irregular-circle [256 256] 227)
-           :sauce (easel/create-irregular-circle [256 256] 210)}
+   :pizza (fresh-pizza)
    :strokes []
    :show-toolbar? false
    :show-color-wheel? false

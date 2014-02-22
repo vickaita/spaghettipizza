@@ -1,4 +1,4 @@
-(ns limn.toolbar
+(ns limn.views.toolbar
   (:require [cljs.core.async :refer [put!]]
             [om.core :as om :include-macros true]
             [sablono.core :refer-macros [html]]))
