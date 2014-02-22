@@ -1,4 +1,4 @@
-(ns pizza.tasks
+(ns limn.tasks
   (:require [amazonica.aws.s3 :as s3]
             [amazonica.core :as aws]
             [clojure.edn :as edn]
@@ -6,7 +6,7 @@
             [clojure.java.shell :refer [sh]]
             [cljs.closure :as cljsc]
             [environ.core :refer [env]]
-            [pizza.pages :as pages])
+            [limn.pages :as pages])
   (:import (java.io File FileNotFoundException)))
 
 ;; TODO: should probably replace this file with some Rake tasks. It seems that

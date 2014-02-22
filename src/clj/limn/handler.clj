@@ -1,4 +1,4 @@
-(ns pizza.handler
+(ns limn.handler
   (:gen-class)
   (:require [compojure.core :as c :refer [defroutes OPTIONS GET POST]]
             [compojure.handler :as h :refer [site]]
@@ -8,7 +8,7 @@
             [ring.middleware.multipart-params :as mp]
             [ring.util.response :as response]
             [ring.middleware.cors :as cors]
-            [pizza.pages :as pages]
+            [limn.pages :as pages]
             [clojure.edn :as edn]
             [clojure.java.io :as io]
             [aws.sdk.s3 :as s3]

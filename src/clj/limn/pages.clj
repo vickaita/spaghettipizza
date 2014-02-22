@@ -1,4 +1,4 @@
-(ns pizza.pages
+(ns limn.pages
   (:require [hiccup.core :refer [h html]]
             [hiccup.form :as form]
             [hiccup.page :refer [html5 include-css include-js]]))
@@ -54,7 +54,7 @@
   [dev?]
   (html5 {:lang "en-us"}
     (head "Spaghetti Pizza: The Adventure Begins!")
-    [:body
+    [:body.fuck
      [:div#site
       (toolbar)
       [:div#page
@@ -69,7 +69,7 @@
                    "js/debug/pizza.js")
        (include-js "js/pizza.js"))
      (when dev? [:script {:type "text/javascript"}
-                 "goog.require(\"pizza.core\");"])]))
+                 "goog.require(\"limn.core\");"])]))
 
 (defn show
   [dev?]

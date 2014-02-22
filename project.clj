@@ -22,7 +22,7 @@
                  [environ "0.4.0"]
                  [com.cemerick/piggieback "0.1.2"]]
   :source-paths ["src/clj" "src/cljs"]
-  :main pizza.handler
+  :main limn.handler
   :plugins [[lein-cljsbuild "1.0.2"]
             [lein-environ "0.4.0"]
             [lein-typed "0.3.1"]]
@@ -43,11 +43,10 @@
                            :externs ["react/externs/react.js"]
                            :source-map "resources/public/js/pizza.js.map"
                            :optimizations :advanced}}]}
-  :core.typed {:check [pizza.core]}
   :profiles {:dev {:env {:environment :dev}}
              :test {:env {:environment :test}
-                    :aot [pizza.handler]}
+                    :aot [limn.handler]}
              :prod {:env {:environment :prod}
-                    :aot [pizza.handler]}}
+                    :aot [limn.handler]}}
   :aliases {"push-ui" ["run" "-m" "pizza.tasks/push-ui"]
             "push-api" ["run" "-m" "pizza.tasks/push-api"]})
