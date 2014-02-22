@@ -1,0 +1,25 @@
+.menu-bar {
+  background: black;
+  clear: both;
+}
+
+.menu {
+  display: inline-block;
+  background: red;
+}
+
+.menu-title {
+
+}
+
+.menu-list {
+  position: absolute;
+  background: yellow;
+
+  display: none;
+  .menu.open & { display: block; }
+}
+
+.menu-item {
+  display: block;
+}
