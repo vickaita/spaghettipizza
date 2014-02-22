@@ -1,4 +1,4 @@
-(ns pizza.history
+(ns limn.history
   (:require [goog.events :as evt]
             [goog.history.Html5History]))
 

@@ -1,9 +1,9 @@
-(ns pizza.command
+(ns limn.command
   (:require-macros [cljs.core.async.macros :refer [go]])
   (:require [cljs.core.async :refer [put! close! chan <! map<]]
             [cljs.reader :as reader]
-            [pizza.stroke :as stroke]
-            [pizza.svg :as svg]
+            [limn.stroke :as stroke]
+            [limn.svg :as svg]
             [vickaita.channels :as ch]))
 
 (defmulti exec (fn [_ [directive & _]] directive))

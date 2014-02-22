@@ -1,4 +1,4 @@
-(ns pizza.stroke
+(ns limn.stroke
   (:require [goog.testing.PseudoRandom]))
 
 (let [counter (atom 0)]

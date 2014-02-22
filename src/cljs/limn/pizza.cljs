@@ -1,6 +1,6 @@
-(ns pizza.pizza
+(ns limn.pizza
   (:require-macros [dommy.macros :refer [node]])
-  (:require [pizza.svg :as svg]
+  (:require [limn.svg :as svg]
             [goog.dom :as dom]))
 
 (defn fresh-pizza

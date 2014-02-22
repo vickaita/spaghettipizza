@@ -1,8 +1,8 @@
-(ns pizza.spaghetti
+(ns limn.spaghetti
   (:require [om.core :as om :include-macros true]
             [sablono.core :refer-macros [html]]
-            [pizza.stroke :as s]
-            [pizza.geometry :as g]))
+            [limn.stroke :as s]
+            [limn.geometry :as g]))
 
 (defmulti render :skin)
 

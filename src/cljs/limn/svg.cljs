@@ -1,4 +1,4 @@
-(ns pizza.svg
+(ns limn.svg
   (:require [clojure.string :refer [join]]
             [cljs.core.async :refer [put! chan]]
             [goog.dom :as dom]

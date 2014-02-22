@@ -1,12 +1,12 @@
-(ns pizza.easel
+(ns limn.easel
   (:require [clojure.string :refer [join]]
             [cljs.core.async :refer [put!]]
             [goog.events :as events]
             [om.core :as om :include-macros true]
             [sablono.core :refer-macros [html]]
-            [pizza.stroke :as stroke]
-            [pizza.spaghetti :refer [render]]
-            [pizza.svg :refer [M C S rotate-point median-point]]))
+            [limn.stroke :as stroke]
+            [limn.spaghetti :refer [render]]
+            [limn.svg :refer [M C S rotate-point median-point]]))
 
 ;; TODO: this needs to be in a geometry or svg namesapce (don't forget to
 ;; pizza.svg :require on the ns)

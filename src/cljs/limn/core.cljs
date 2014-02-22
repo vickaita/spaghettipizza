@@ -1,4 +1,4 @@
-(ns pizza.core
+(ns limn.core
   (:require-macros [cljs.core.async.macros :refer [go alt!]])
   (:require [goog.events :as events]
             [goog.dom]
@@ -11,9 +11,9 @@
             [om.core :as om :include-macros true]
             [sablono.core :refer-macros [html]]
             [secretary.core :as secretary :include-macros true :refer [defroute]]
-            [pizza.toolbar :as toolbar]
-            [pizza.easel :as easel]
-            [pizza.command :refer [exec]]))
+            [limn.toolbar :as toolbar]
+            [limn.easel :as easel]
+            [limn.command :refer [exec]]))
 
 (def ^:private commands (chan))
 

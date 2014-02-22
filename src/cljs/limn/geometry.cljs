@@ -1,4 +1,4 @@
-(ns pizza.geometry)
+(ns limn.geometry)
 
 (defn distance
   [p1 p2]
