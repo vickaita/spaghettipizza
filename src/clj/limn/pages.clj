@@ -54,7 +54,7 @@
   [dev?]
   (html5 {:lang "en-us"}
     (head "Spaghetti Pizza: The Adventure Begins!")
-    [:body.fuck
+    [:body
      [:div#site
       (toolbar)
       [:div#page
