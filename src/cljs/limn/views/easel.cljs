@@ -4,11 +4,8 @@
             [goog.events :as events]
             [om.core :as om :include-macros true]
             [sablono.core :refer-macros [html]]
-            [limn.stroke :as stroke]
-            [limn.spaghetti :refer [render]]))
+            [limn.stroke :refer [stroke render]]))
 
-
-;; TODO: put this back into the pizza namespace
 (defn pizza
   "Draw a pizza."
   [{:keys [crust sauce]} owner]
@@ -50,31 +47,31 @@
   [{:keys [image-url image-loading? strokes tool] :as app} owner]
   (reify
     om/IInitState
-    (init-state [_] {:drawing? false})
+    (init-state [_] {:draw-target nil
+                     :edit-target nil})
     om/IWillMount
     (will-mount [_]
-      (events/listen js/document "mouseup" #(om/set-state! owner :drawing? false)))
+      (events/listen js/document "mouseup" #(om/set-state! owner :draw-target nil)))
     om/IRender
     (render [_]
       (let [side (min (:easel-width app) (:easel-height app))
             start-stroke
             (fn [e]
               (doto e .preventDefault .stopPropagation)
-              (om/set-state! owner :drawing? true)
               (let [{:keys [scale-by]} @app]
-                (put! (:commands (om/get-shared owner))
-                      [:new-stroke (normalize-point scale-by e)])))
+                (om/set-state! owner :draw-target
+                               (stroke (normalize-point scale-by e)))))
             extend-stroke
             (fn [e]
               (doto e .preventDefault .stopPropagation)
-              (when (om/get-state owner :drawing?)
+              (when-let [target (om/get-state owner :draw-target)]
                 (let [{:keys [scale-by]} @app]
                   (put! (:commands (om/get-shared owner))
                         [:extend-stroke (normalize-point scale-by e)]))))
             end-stroke
             (fn [e]
               (doto e .preventDefault .stopPropagation)
-              (om/set-state! owner :drawing? false))]
+              (om/set-state! owner :draw-target nil))]
         (html [:section.easel {:id "align-svg"
                                :width side
                                :height side

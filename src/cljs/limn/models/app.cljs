@@ -1,5 +1,5 @@
 (ns limn.models.app
-  (:require [limn.pizza :refer [fresh-pizza]]))
+  (:require [spaghetti-pizza.pizza :refer [fresh-pizza]]))
 
 (def default-app-state
   {:debug true

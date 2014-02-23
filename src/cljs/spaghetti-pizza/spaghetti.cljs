@@ -1,19 +1,15 @@
-(ns limn.spaghetti
+(ns spaghetti-pizza.spaghetti
   (:require [om.core :as om :include-macros true]
             [sablono.core :refer-macros [html]]
-            [limn.stroke :as s]
+            [limn.stroke :as stroke :refer [render]]
             [limn.geometry :as g]))
-
-(defmulti render :skin)
-
-(defmethod render nil [_] nil)
 
 (defmethod render :edit
   [stroke owner]
   (om/component
-    (let [sparse (s/thin stroke 30)]
+    (let [sparse (stroke/thin stroke 30)]
       (html [:g.topping.edit {:key (:id stroke)}
-           [:polyline.path {:points (s/format-points sparse)
+           [:polyline.path {:points (stroke/format-points sparse)
                             :fill "transparent"
                             :stroke "black"
                             :stroke-width 2}]
@@ -28,7 +24,7 @@
 (defmethod render :spaghetti
   [stroke owner]
   (om/component
-    (let [points (s/format-points stroke)]
+    (let [points (stroke/format-points stroke)]
       (html [:g.topping.noodle.spaghetti {:key (:id stroke)}
              [:polyline.border {:points points
                                 :fill "transparent"
@@ -45,7 +41,7 @@
 (defmethod render :linguini
   [stroke owner]
   (om/component
-    (let [points (s/format-points stroke)]
+    (let [points (stroke/format-points stroke)]
       (html [:g.topping.noodle.linguini {:key (:id stroke)}
              [:polyline.border {:points points
                                 :fill "transparent"
@@ -61,8 +57,8 @@
 (defmethod render :ziti
   [stroke owner]
   (om/component
-    (let [clamped (s/clamp stroke 60)
-          points (s/format-points clamped)]
+    (let [clamped (stroke/clamp stroke 60)
+          points (stroke/format-points clamped)]
       (html [:g.topping.noodle.ziti {:key (:id stroke)}
              [:polyline.border {:points points
                                 :fill "transparent"
@@ -76,15 +72,15 @@
                                :stroke-width 15}]
              [:circle.hole {:fill "#9E9E22"
                             :r 6
-                            :cx (first (s/destin clamped))
-                            :cy (second (s/destin clamped))}]]))))
+                            :cx (first (stroke/destin clamped))
+                            :cy (second (stroke/destin clamped))}]]))))
 
 (defmethod render :ricotta
   [stroke owner]
   (om/component
     (let [circles (map vector
                        (reverse (:points stroke))
-                       (map #(+ 3 (* 20 %)) (s/rand-seq stroke)))]
+                       (map #(+ 3 (* 20 %)) (stroke/rand-seq stroke)))]
       (html [:g.topping.cheese.ricotta {:key (:id stroke)}
              ; By using two circles on different layers we can give the illusion
              ; that it is one irregular shape instead of a bunch of circles.
@@ -104,7 +100,7 @@
 (defmethod render :basil
   [stroke owner]
   (om/component
-    (let [points (s/format-points stroke)]
+    (let [points (stroke/format-points stroke)]
       (html [:g.topping.herb.basil {:key (:id stroke)}
              [:polyline.border {:points points
                                 :fill "transparent"
@@ -119,7 +115,7 @@
                                :stroke-width 4}]
              [:g.leaves
               (for [[[x y] sign] (map vector
-                                      (reverse (:points (s/thin stroke 40)))
+                                      (reverse (:points (stroke/thin stroke 40)))
                                       (cycle [-1 1]))]
                 (let [outline (apply str (interleave [x y,
                                                       (+ x (* 20 (Math/cos 90))) (+ y (* 20 (Math/sin 90))),

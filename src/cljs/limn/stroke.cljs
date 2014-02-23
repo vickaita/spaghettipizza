@@ -1,21 +1,12 @@
 (ns limn.stroke
-  (:require [goog.testing.PseudoRandom]))
+  (:require [limn.geometry :as geometry]))
 
 (let [counter (atom 0)]
   (defn- gen-id
+    "Generates an uniqe id for the stroke."
     []
     (swap! counter inc)
     (str "stroke_" @counter)))
-
-(defn- distance
-  "The distance between two points."
-  [p1 p2]
-  (Math/sqrt (reduce + (map #(* % %) (map - p1 p2)))))
-
-(defn- angle
-  "The angle between two points."
-  [p1 p2]
-  (apply Math/atan2 (reverse (map - p2 p1))))
 
 (defn stroke
   [& points]
@@ -29,15 +20,14 @@
   [stroke pt]
   (let [points (:points stroke)]
     (if (or (empty? points)
-            (> (distance pt (first points)) (:granularity stroke)))
+            (> (geometry/distance pt (first points)) (:granularity stroke)))
       (assoc stroke :points (cons pt points))
       stroke)))
 
 (defn length
   "The length of the stroke."
   [stroke]
-  (let [points (:points stroke)]
-    (reduce + (map distance points (drop 1 points)))))
+  (geometry/length (:points stroke)))
 
 (defn origin
   "Returns the originating point of the stroke."
@@ -49,16 +39,11 @@
   [stroke]
   (first (:points stroke)))
 
-(defn rand-seq
-  [stroke]
-  (let [rng (goog.testing.PseudoRandom. (:seed stroke))]
-    (repeatedly #(.random rng))))
-
 (defn- clamp-point
   [max-len [x y :as p1] p2]
-  (if (< (distance p1 p2) max-len)
+  (if (< (geometry/distance p1 p2) max-len)
     p2
-    (let [a (angle p1 p2)]
+    (let [a (geometry/angle p1 p2)]
       [(+ x (* max-len (Math/cos a)))
        (+ y (* max-len (Math/sin a)))])))
 
@@ -83,7 +68,7 @@
            [current & remaining] (rest points)]
       (if (not current)
         (assoc stroke :points acc)
-        (if (> (distance prev current) spacing)
+        (if (> (geometry/distance prev current) spacing)
           (recur (conj acc current) current remaining)
           (recur acc prev remaining))))))
 
@@ -102,3 +87,7 @@
 ;        (str (ffirst points) " " (second (first points)) " "
 ;             (format-points (rest points)))))))
 ;
+
+(defmulti render :skin)
+
+(defmethod render nil [_] nil)

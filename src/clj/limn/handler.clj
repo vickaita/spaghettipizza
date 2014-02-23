@@ -49,8 +49,7 @@
 (defn handle-file
   [file]
   (if file
-    (
-     if-let [[file-hash file-name] (upload-file file)]
+    (if-let [[file-hash file-name] (upload-file file)]
       {:status 200
        :headers {"Access-Control-Allow-Origin" "http://spaghettipizza.us"}
        :body (str {:file-name file-name :file-hash file-hash})}
