@@ -48,24 +48,22 @@
   (let [start-stroke
         (fn [e]
           (doto e .preventDefault .stopPropagation)
-          (let [new-stroke (-> (s/stroke (normalize-point (:scale-by @app) e))
-                               (assoc :skin (:tool @app))
-                               (assoc :color (:color @app)))]
-            (om/set-state! owner :draw-target (count (:strokes @app)))
-            (om/transact! app [:strokes] #(conj % new-stroke))))
+          (om/set-state! owner :drawing? true)
+          (put! (om/get-shared owner :commands)
+                [:new-stroke (normalize-point (:scale-by @app) e)]))
         extend-stroke
         (fn [e]
           (doto e .preventDefault .stopPropagation)
-          (when-let [target (om/get-state owner :draw-target)]
-            (let [pt (normalize-point (:scale-by @app) e)]
-              (om/transact! app [:strokes target] #(s/append % pt)))))
+          (when (om/get-state owner :drawing?)
+            (put! (om/get-shared owner :commands)
+                  [:extend-stroke (normalize-point (:scale-by @app) e)])))
         end-stroke
         (fn [e]
           (doto e .preventDefault .stopPropagation)
-          (om/set-state! owner :draw-target nil))]
+          (om/set-state! owner :drawing? false))]
     (reify
       om/IInitState
-      (init-state [_] {:draw-target nil :edit-target nil})
+      (init-state [_] {:drawing? false})
       om/IWillMount
       (will-mount [_]
         (events/listen js/document "mouseup" end-stroke))
@@ -100,6 +98,4 @@
                           :xmlns "http://www.w3.org/2000/svg"}
                     [:g.vector.layer
                      (om/build pizza (:pizza app))
-                     (for [stroke (:strokes app)]
-                       (when stroke
-                         (om/build s/render stroke)))]])]))))))
+                     (om/build-all s/render (:strokes app))]])]))))))
