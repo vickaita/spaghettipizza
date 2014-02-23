@@ -39,9 +39,15 @@
                       {:name "Purple" :fill "#D459A4" :stroke "#AE4173"}
                       {:name "White" :fill "#F2F2F2" :stroke "#D9D9D9"}
                       {:name "Black" :fill "#202020" :stroke "#181818"}]}
-   :menu-bar [{:name "Colors"
+   :menu-bar [{:name "File"
+               :items [{:name "Save" :command "save" :shortcut "^s"}]}
+              {:name "Edit"
+               :items [{:name "Clear" :command "clear" :shortcut "^x"}]}
+              {:name "Colors"
                :items [{:name "Show Color Wheel" :command "foo"}]}
               {:name "Tools"
-               :items [{:name "Spaghetti" :command "Spaghetti"}]}]
+               :items [{:name "Spaghetti" :command "Spaghetti"}]}
+              {:name "Help"
+               :items [{:name "Help" :command "Help"}]}]
    :tool :spaghetti
    :color {:name "Yellow" :fill "#FAE265" :stroke "#DDAB0B"}})
