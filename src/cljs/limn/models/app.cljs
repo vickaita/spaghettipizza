@@ -15,6 +15,12 @@
    :strokes []
    :show-toolbar? false
    :show-color-wheel? false
+   :easel {:scale-factor 1
+           :strokes []
+           :width 0
+           :height 0
+           :viewport-width 512
+           :viewport-height 512}
    :toolbar {:groups [#_{:name "Test"
                          :tools [{:id :edit :name "Edit"}]}
                       {:name "Pasta"

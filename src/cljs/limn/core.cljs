@@ -13,7 +13,8 @@
             [secretary.core :as secretary :include-macros true :refer [defroute]]
             [limn.models.app :refer [default-app-state]]
             [limn.views.app :refer [app-view]]
-            [limn.command :refer [exec]]))
+            [limn.command :refer [exec]]
+            [spaghetti-pizza.spaghetti]))
 
 (enable-console-print!)
 (.initializeTouchEvents js/React true)
