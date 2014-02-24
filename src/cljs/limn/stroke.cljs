@@ -1,5 +1,6 @@
 (ns limn.stroke
-  (:require [limn.geometry :as geometry]))
+  (:require [goog.testing.PseudoRandom]
+            [limn.geometry :as geometry]))
 
 (let [counter (atom 0)]
   (defn- gen-id
@@ -7,6 +8,11 @@
     []
     (swap! counter inc)
     (str "stroke_" @counter)))
+
+(defn rand-seq
+  [stroke]
+  (let [rng (goog.testing.PseudoRandom. (:seed stroke))]
+    (repeatedly #(.random rng))))
 
 (defn stroke
   [& points]
