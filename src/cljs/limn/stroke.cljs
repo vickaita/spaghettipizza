@@ -83,17 +83,6 @@
   [stroke]
   (apply str (interleave (flatten (:points stroke)) (repeat " "))))
 
-;(declare format-points)
-;
-;(def ^:private format-points
-;  (memoize
-;    (fn [points]
-;      (if (empty? points)
-;        ""
-;        (str (ffirst points) " " (second (first points)) " "
-;             (format-points (rest points)))))))
-;
-
 (defmulti render :skin)
 
 (defmethod render nil [_] nil)
