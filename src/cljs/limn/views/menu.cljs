@@ -41,6 +41,7 @@
                      {:on-click
                       (fn [e]
                         (when-let [command(:command @item)]
+                          (om/set-state! owner :open nil)
                           (put! (om/get-shared owner :commands) command)))}
                      [:span.name (:name item)]
                      (when (:shortcut item)
