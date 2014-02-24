@@ -40,14 +40,18 @@
                       {:name "White" :fill "#F2F2F2" :stroke "#D9D9D9"}
                       {:name "Black" :fill "#202020" :stroke "#181818"}]}
    :menu-bar [{:name "File"
-               :items [{:name "Save" :command "save" :shortcut "^s"}]}
+               :items [{:name "Save" :command [:save] :shortcut "^s"}]}
               {:name "Edit"
-               :items [{:name "Clear" :command "clear" :shortcut "^x"}]}
+               :items [{:name "Clear" :command [:clear] :shortcut "^x"}]}
               {:name "Colors"
-               :items [{:name "Show Color Wheel" :command "foo"}]}
+               :items [{:name "Show Color Wheel" :shortcut "c" :command [:show-color-wheel]}]}
               {:name "Tools"
-               :items [{:name "Spaghetti" :command "Spaghetti"}]}
+               :items [{:name "Spaghetti" :command [:select-tool :spaghetti]}
+                       {:name "Linguini" :command [:select-tool :linguini]}
+                       {:name "Ziti" :command [:select-tool :ziti]}
+                       {:name "Ricotta" :command [:select-tool :ricotta]}
+                       {:name "basil" :command [:select-tool :basil]}]}
               {:name "Help"
-               :items [{:name "Help" :command "Help"}]}]
+               :items [{:name "Help"}]}]
    :tool :spaghetti
    :color {:name "Yellow" :fill "#FAE265" :stroke "#DDAB0B"}})

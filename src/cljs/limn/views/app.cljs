@@ -38,6 +38,7 @@
   (om/component
     (html
       [:div#site {:class (site-classes app)}
+       (om/build menu-bar (:menu-bar app))
        (om/build toolbar
                  (om/graft {:tool (:tool app)
                             :color (:color app)
@@ -45,7 +46,6 @@
                             :colors (:colors (:toolbar app))} app))
        [:div#page
         (om/build masthead app)
-        (om/build menu-bar (:menu-bar app))
         (om/build easel app)
         (om/build footer app)]
        [:div.palettes

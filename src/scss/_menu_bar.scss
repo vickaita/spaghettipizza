@@ -1,13 +1,25 @@
 $select-color: rgb(64, 128, 255);
 .menu-bar {
+  position: relative;
   font-family: monospace;
   font-size: 1rem;
-  background: rgb(128, 128, 128);
+  background: $tool-bg;
   clear: both;
+}
+
+.menu-close-overlay {
+  background: rgba(255,0,0,0.5);
+  position: fixed;
+  width: 100%;
+  top: 0;
+  left: 0;
+  z-index: 1;
 }
 
 .menu {
   display: inline-block;
+  z-index: 2;
+  position: relative;
   &:hover {
     cursor: pointer;
   }
@@ -19,6 +31,7 @@ $select-color: rgb(64, 128, 255);
 .menu-title {
   padding: 0.25rem 0.5rem;
   display: inline-block;
+  color: white;
 }
 
 .menu-list {
@@ -42,6 +55,7 @@ $select-color: rgb(64, 128, 255);
 }
 
 .menu-link {
+  white-space: nowrap;
   .shortcut {
     padding-left: 1rem;
     float: right;
