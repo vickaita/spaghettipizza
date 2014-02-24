@@ -26,23 +26,20 @@
                               (if (= @menu (om/get-state owner :open))
                                 (om/set-state! owner :open nil)
                                 (om/set-state! owner :open @menu)))
-                  :on-mouseover (fn [e]
-                                   (doto e .preventDefault .stopPropagation)
-                                   (prn "mouseover")
-                                   (prn (om/get-state owner))
-                                   (prn (om/get-state owner :open))
-                                   (when (om/get-state owner :open)
-                                     (om/set-state! owner :open @menu)))}
+                  :on-mouse-enter (fn [e]
+                                    (doto e .preventDefault .stopPropagation)
+                                    (when (om/get-state owner :open)
+                                      (om/set-state! owner :open @menu)))}
                  (:name menu)]
                 [:ul.menu-list
                  (for [item (:items menu)]
                    [:li.menu-item
+                    {:on-click
+                     (fn [e]
+                       (when-let [command(:command @item)]
+                         (om/set-state! owner :open nil)
+                         (put! (om/get-shared owner :commands) command)))}
                     [:a.menu-link
-                     {:on-click
-                      (fn [e]
-                        (when-let [command(:command @item)]
-                          (om/set-state! owner :open nil)
-                          (put! (om/get-shared owner :commands) command)))}
                      [:span.name (:name item)]
                      (when (:shortcut item)
                        [:span.shortcut (:shortcut item)])]])]])]))))
