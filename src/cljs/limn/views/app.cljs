@@ -4,6 +4,7 @@
             [sablono.core :refer-macros [html]]
             [limn.views.toolbar :refer [toolbar color-wheel]]
             [limn.views.menu :refer [menu-bar]]
+            [limn.views.gallery :refer [gallery]]
             [limn.views.easel :refer [easel]]))
 
 (defn- site-classes
@@ -46,6 +47,7 @@
                             :colors (:colors (:toolbar app))} app))
        [:div#page
         (om/build masthead app)
+        (om/build gallery app)
         (om/build easel (:easel app))
         (om/build footer app)]
        [:div.palettes
