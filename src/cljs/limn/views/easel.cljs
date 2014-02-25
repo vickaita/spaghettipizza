@@ -1,5 +1,5 @@
 (ns limn.views.easel
-  (:require [clojure.string :refer [join]]
+  (:require [clojure.string]
             [cljs.core.async :refer [put!]]
             [goog.events :as events]
             [om.core :as om :include-macros true]
@@ -45,31 +45,26 @@
 
 (defn easel
   [app owner]
-  (let [start-stroke
-        (fn [e]
-          (doto e .preventDefault .stopPropagation)
-          (om/set-state! owner :drawing? true)
-          (put! (om/get-shared owner :commands)
-                [:new-stroke (normalize-point (:scale-by @app) e)]))
-        extend-stroke
-        (fn [e]
-          (doto e .preventDefault .stopPropagation)
-          (when (om/get-state owner :drawing?)
-            (put! (om/get-shared owner :commands)
-                  [:extend-stroke (normalize-point (:scale-by @app) e)])))
-        end-stroke
-        (fn [e]
-          (doto e .preventDefault .stopPropagation)
-          (om/set-state! owner :drawing? false))]
+  (let [commands (om/get-shared owner :commands)
+        start-stroke (fn [e]
+                       (doto e .preventDefault .stopPropagation)
+                       (om/set-state! owner :drawing? true)
+                       (put! commands [:new-stroke (normalize-point (:scale-by @app) e)]))
+        extend-stroke (fn [e]
+                        (doto e .preventDefault .stopPropagation)
+                        (when (om/get-state owner :drawing?)
+                          (put! commands [:extend-stroke (normalize-point (:scale-by @app) e)])))
+        end-stroke (fn [e]
+                     (doto e .preventDefault .stopPropagation)
+                     (om/set-state! owner :drawing? false))]
     (reify
       om/IInitState
       (init-state [_] {:drawing? false})
       om/IWillMount
-      (will-mount [_]
-        (events/listen js/document "mouseup" end-stroke))
+      (will-mount [_] (events/listen js/document "mouseup" end-stroke))
       om/IRender
       (render [_]
-        (let [side (min (:easel-width app) (:easel-height app))]
+        (let [side (min (:width app) (:height app))]
           (html [:section.easel {:id "align-svg"
                                  :width side
                                  :height side
@@ -78,24 +73,13 @@
                                  :on-mouse-move extend-stroke
                                  :on-touch-move extend-stroke
                                  :on-touch-end end-stroke}
-                 (cond
-                   (:image-url app)
-                   [:div#image-wrapper
-                    [:img {:src (:image-url app)}]]
-
-                   (:image-loading? app)
-                   [:div#image-wrapper
-                    [:p "Loading ..."]]
-
-                   :else
-                   [:svg {:id "main-svg"
-                          :width side
-                          :height side
-                          :viewBox (str "0 0 " (:viewport-width app) " "
-                                        (:viewport-height app))
-                          :version "1.1"
-                          :preserveAspectRatio "xMidYMid"
-                          :xmlns "http://www.w3.org/2000/svg"}
-                    [:g.vector.layer
-                     (om/build pizza (:pizza app))
-                     (om/build-all s/render (:strokes app))]])]))))))
+                 [:svg {:id "main-svg"
+                        :width side
+                        :height side
+                        :viewBox (clojure.string/join " " (:view-box app))
+                        :version "1.1"
+                        :preserveAspectRatio "xMidYMid"
+                        :xmlns "http://www.w3.org/2000/svg"}
+                  [:g.vector.layer
+                   (om/build pizza (:pizza app))
+                   (om/build-all s/render (:strokes app))]]]))))))

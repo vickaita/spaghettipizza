@@ -7,6 +7,7 @@
    :image-loading? false
    :easel-width 0
    :easel-height 0
+   :view-box [0 0 512 512]
    :viewport-width 512
    :viewport-height 512
    :scale-by 1
@@ -15,12 +16,12 @@
    :strokes []
    :show-toolbar? false
    :show-color-wheel? false
-   :easel {:scale-factor 1
+   :easel {:scale-by 1
+           :pizza (fresh-pizza)
            :strokes []
            :width 0
            :height 0
-           :viewport-width 512
-           :viewport-height 512}
+           :view-box [0 0 512 512]}
    :toolbar {:groups [#_{:name "Test"
                          :tools [{:id :edit :name "Edit"}]}
                       {:name "Pasta"

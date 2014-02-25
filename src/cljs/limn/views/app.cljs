@@ -46,7 +46,7 @@
                             :colors (:colors (:toolbar app))} app))
        [:div#page
         (om/build masthead app)
-        (om/build easel app)
+        (om/build easel (:easel app))
         (om/build footer app)]
        [:div.palettes
         (om/build color-wheel
