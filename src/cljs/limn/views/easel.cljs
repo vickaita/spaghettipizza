@@ -20,7 +20,7 @@
                          :stroke "#F04F4F"
                          :stroke-width 3}]])))
 
-(defn- normalize-point
+(defn- normalize-points
   "Convert an event into a point."
   [scale-by e]
   (when-let [elem (.getElementById js/document "align-svg")]
@@ -35,13 +35,13 @@
           top (.-top rect)]
       (case (.-type e)
         ("touchstart" "touchmove")
-        (let [t (-> e .-touches (aget 0))]
+        (for [t (.-touches e)]
           [(-> t (.-pageX) (- left) (* scale-by) Math/floor)
            (-> t (.-pageY) (- top) (* scale-by) Math/floor)])
         "touchend"
         nil
-        [(-> e (.-pageX) (- left) (* scale-by) Math/floor)
-         (-> e (.-pageY) (- top) (* scale-by) Math/floor)]))))
+        [[(-> e (.-pageX) (- left) (* scale-by) Math/floor)
+         (-> e (.-pageY) (- top) (* scale-by) Math/floor)]]))))
 
 (defn easel
   [app owner]
@@ -49,11 +49,11 @@
         start-stroke (fn [e]
                        (doto e .preventDefault .stopPropagation)
                        (om/set-state! owner :drawing? true)
-                       (put! commands [:new-stroke (normalize-point (:scale-by @app) e)]))
+                       (put! commands [:new-stroke (first (normalize-points (:scale-by @app) e))]))
         extend-stroke (fn [e]
                         (doto e .preventDefault .stopPropagation)
                         (when (om/get-state owner :drawing?)
-                          (put! commands [:extend-stroke (normalize-point (:scale-by @app) e)])))
+                          (put! commands [:extend-stroke (first (normalize-points (:scale-by @app) e))])))
         end-stroke (fn [e]
                      (doto e .preventDefault .stopPropagation)
                      (om/set-state! owner :drawing? false))]
