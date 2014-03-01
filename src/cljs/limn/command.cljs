@@ -81,7 +81,7 @@
 
 (defmethod exec :set-color
   [app [_ color]]
-  (assoc app :color color))
+  (conj app {:color color :show-toolbar? false}))
 
 (defmethod exec :show-color-wheel
   [app _]
