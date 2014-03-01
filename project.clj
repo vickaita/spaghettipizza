@@ -1,4 +1,4 @@
-(defproject pizza "0.2.9"
+(defproject pizza "0.2.10"
   :description "Spaghetti Pizza -- the original pasta on pizza simulator!"
   :url "http://spaghettipizza.us"
   :dependencies [[org.clojure/clojure "1.5.1"]
@@ -48,5 +48,5 @@
                     :aot [limn.handler]}
              :prod {:env {:environment :prod}
                     :aot [limn.handler]}}
-  :aliases {"push-ui" ["run" "-m" "pizza.tasks/push-ui"]
-            "push-api" ["run" "-m" "pizza.tasks/push-api"]})
+  :aliases {"push-ui" ["run" "-m" "limn.tasks/push-ui"]
+            "push-api" ["run" "-m" "limn.tasks/push-api"]})
