@@ -3,7 +3,8 @@
             [om.core :as om :include-macros true]
             [sablono.core :refer-macros [html]]
             [limn.views.toolbar :refer [toolbar color-wheel]]
-            [limn.views.menu :refer [menu-bar]]
+            [limn.views.menu :refer [menu-bar quick-links]]
+            [limn.views.gallery :refer [gallery]]
             [limn.views.easel :refer [easel]]))
 
 (defn- site-classes
@@ -21,7 +22,8 @@
         {:on-click (fn [e]
                      (doto e .preventDefault .stopPropagation)
                      (om/transact! app [:show-toolbar?] not))}]
-       [:h1 "Spaghetti Pizza"]])))
+       [:h1.logo "Spaghetti Pizza"]
+       #_(om/build quick-links app)])))
 
 (defn- footer
   [app owner]
@@ -38,6 +40,7 @@
   (om/component
     (html
       [:div#site {:class (site-classes app)}
+       #_(om/build menu-bar (:menu-bar app))
        (om/build toolbar
                  (om/graft {:tool (:tool app)
                             :color (:color app)
@@ -45,8 +48,8 @@
                             :colors (:colors (:toolbar app))} app))
        [:div#page
         (om/build masthead app)
-        (om/build menu-bar (:menu-bar app))
-        (om/build easel app)
+        (om/build gallery app)
+        (om/build easel (:easel app))
         (om/build footer app)]
        [:div.palettes
         (om/build color-wheel

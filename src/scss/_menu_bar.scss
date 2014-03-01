@@ -1,25 +1,63 @@
+$select-color: rgb(64, 128, 255);
 .menu-bar {
-  background: black;
+  position: relative;
+  font-family: "Helvetica";
+  font-size: 0.8rem;
+  background: $tool-bg;
   clear: both;
+}
+
+.menu-close-overlay {
+  //background: rgba(255,0,0,0.5);
+  position: fixed;
+  width: 100%;
+  top: 0;
+  left: 0;
+  z-index: 1;
 }
 
 .menu {
   display: inline-block;
-  background: red;
+  z-index: 2;
+  position: relative;
+  &:hover {
+    cursor: pointer;
+  }
+  &:hover, &.open {
+    background: $select-color;
+  }
 }
 
 .menu-title {
-
+  padding: 0.25rem 0.5rem;
+  display: inline-block;
+  color: white;
 }
 
 .menu-list {
   position: absolute;
-  background: yellow;
+  background: white;
+  border: 1px solid rgb(196, 196, 196);
+  border-top: 0;
+  box-shadow: 0 5px 10px rgba(0, 0, 0, 0.25);
 
   display: none;
   .menu.open & { display: block; }
 }
 
 .menu-item {
+  padding: 0.3rem 1rem;
+  margin: 0.25rem 0;
   display: block;
+  &:hover {
+    background: $select-color;
+  }
+}
+
+.menu-link {
+  white-space: nowrap;
+  .shortcut {
+    padding-left: 1rem;
+    float: right;
+  }
 }

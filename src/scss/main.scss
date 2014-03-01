@@ -1,5 +1,4 @@
 @import "compass/reset";
-@import "compass/css3/images";
 @import "compass/css3/transform";
 @import "compass/css3/transition";
 
@@ -30,7 +29,6 @@ body {
 
 #page {
   background: url('../img/pattern-ruf8.png');
-  border-radius: 0.5rem;
   box-shadow: 0 0 1rem rgba(0, 0, 0, 0.25);
   overflow: hidden;
   position: absolute;
@@ -43,35 +41,6 @@ body {
   }
 }
 
-#masthead {
-  $bg: rgb(120, 138, 26);
-  @include background-image(linear-gradient(top, tint($bg, 10%), $bg, shade($bg, 10%)));
-  color: #FFF;
-  padding: 0.5rem;
-  border-top-color: rgb(17, 172, 11);
-  border-width-top: 5px;
-  border-top-width: 5px;
-  position: relative;
-  h1 {
-    margin: 0;
-    font-size: 1.2rem;
-    line-height: 1.4;
-    text-shadow: 1px 1px #F86969;
-    text-align: center;
-  }
-}
-
-#menu-control {
-  background: url('../img/icons/menu.svg') no-repeat center;
-  background-size: 80% 80%;
-  display: block;
-  height: 100%;
-  left: 0;
-  margin-left: 0.5rem;
-  position: absolute;
-  top: 0;
-  width: 2rem;
-}
 
 button {
   padding: 0.5rem;
@@ -86,6 +55,7 @@ button:focus {
   outline: none;
 }
 
+@import 'masthead';
 @import 'toolbar';
 @import 'color_wheel';
 @import 'menu_bar';

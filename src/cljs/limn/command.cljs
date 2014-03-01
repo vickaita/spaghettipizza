@@ -11,11 +11,10 @@
 (defmethod exec :resize
   [app [_ w h]]
    (-> app
-       (assoc :easel-width w)
-       (assoc :easel-height h)
-       (assoc :scale-by (/ (:viewport-width app) (min w h)))
-       (assoc :scale-x (/ (:viewport-width app) w))
-       (assoc :scale-y (/ (:viewport-height app) h))))
+       (assoc-in [:easel :width] w)
+       (assoc-in [:easel :height] h)
+       (assoc-in [:easel :scale-by] (/ (-> app :easel :view-box (nth 2))
+                                       (min w h)))))
 
 (defmethod exec :clear
   [app [_ tool]]
@@ -24,7 +23,7 @@
       (assoc :image-loading? false)
       (assoc :image-url nil)
       (assoc :show-toolbar? false)
-      (assoc :strokes [])))
+      (assoc-in [:easel :strokes] [])))
 
 (defmethod exec :save
   [app [_]]
@@ -72,13 +71,13 @@
                        (stroke/append e)
                        (assoc :skin (:tool app))
                        (assoc :color (:color app)))]
-  (update-in app [:strokes] #(conj % new-stroke))))
+  (update-in app [:easel :strokes] #(conj % new-stroke))))
 
 (defmethod exec :extend-stroke
   [app [_ pt]]
   (assoc-in app
-            [:strokes (-> app :strokes count dec)]
-            (stroke/append (-> app :strokes peek) pt)))
+            [:easel :strokes (-> app :easel :strokes count dec)]
+            (stroke/append (-> app :easel :strokes peek) pt)))
 
 (defmethod exec :set-color
   [app [_ color]]

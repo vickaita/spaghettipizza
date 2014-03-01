@@ -1,20 +1,29 @@
 (ns limn.models.app
-  (:require [limn.pizza :refer [fresh-pizza]]))
+  (:require [spaghetti-pizza.pizza :refer [fresh-pizza]]))
 
 (def default-app-state
   {:debug true
    :image-url nil
    :image-loading? false
+
    :easel-width 0
    :easel-height 0
+   :view-box [0 0 512 512]
    :viewport-width 512
    :viewport-height 512
    :scale-by 1
+
    :granularity 5
    :pizza (fresh-pizza)
    :strokes []
    :show-toolbar? false
    :show-color-wheel? false
+   :easel {:scale-by 1
+           :pizza (fresh-pizza)
+           :strokes []
+           :width 0
+           :height 0
+           :view-box [0 0 512 512]}
    :toolbar {:groups [#_{:name "Test"
                          :tools [{:id :edit :name "Edit"}]}
                       {:name "Pasta"
@@ -33,8 +42,19 @@
                       {:name "Purple" :fill "#D459A4" :stroke "#AE4173"}
                       {:name "White" :fill "#F2F2F2" :stroke "#D9D9D9"}
                       {:name "Black" :fill "#202020" :stroke "#181818"}]}
-   :menu-bar [{:name "Tools"
-               :items [{:name "Foo" :command "foo"}
-                       {:name "Bar" :command "bar"}]}]
+   :menu-bar [{:name "File"
+               :items [{:name "Save" :command [:save] :shortcut "^s"}]}
+              {:name "Edit"
+               :items [{:name "Clear" :command [:clear] :shortcut "^x"}]}
+              {:name "Colors"
+               :items [{:name "Show Color Wheel" :shortcut "c" :command [:show-color-wheel]}]}
+              {:name "Tools"
+               :items [{:name "Spaghetti" :command [:select-tool :spaghetti]}
+                       {:name "Linguini" :command [:select-tool :linguini]}
+                       {:name "Ziti" :command [:select-tool :ziti]}
+                       {:name "Ricotta" :command [:select-tool :ricotta]}
+                       {:name "basil" :command [:select-tool :basil]}]}
+              {:name "Help"
+               :items [{:name "Help"}]}]
    :tool :spaghetti
    :color {:name "Yellow" :fill "#FAE265" :stroke "#DDAB0B"}})

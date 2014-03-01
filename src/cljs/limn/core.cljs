@@ -13,7 +13,8 @@
             [secretary.core :as secretary :include-macros true :refer [defroute]]
             [limn.models.app :refer [default-app-state]]
             [limn.views.app :refer [app-view]]
-            [limn.command :refer [exec]]))
+            [limn.command :refer [exec]]
+            [spaghetti-pizza.spaghetti]))
 
 (enable-console-print!)
 (.initializeTouchEvents js/React true)
@@ -30,7 +31,7 @@
                                                      (count path-prefix))))
       transformer)))
 
-(def ^:private sizeMonitor (goog.dom.ViewportSizeMonitor.))
+(def ^:private size-monitor (goog.dom.ViewportSizeMonitor.))
 
 (def ^:private app-state
   (atom (merge default-app-state {:commands commands :history history})))
@@ -51,12 +52,12 @@
 
 (defn- monitor-viewport-size
   "Monitor the size of the window and update accordingly."
-  [sizeMonitor commands]
+  [size-monitor commands]
   (events/listen
-    sizeMonitor
+    size-monitor
     "resize"
     (fn [e]
-      (when-let [size (.getSize sizeMonitor)]
+      (when-let [size (.getSize size-monitor)]
         (let [w (.-width size)
               h (.-height size)]
           (put! commands [:resize w h]))))))
@@ -76,10 +77,10 @@
 (go (while true
       (let [command (<! commands)]
         (swap! app-state exec command))))
-(monitor-viewport-size sizeMonitor commands)
+(monitor-viewport-size size-monitor commands)
 (monitor-keypress js/document commands)
 (om/root
   app-view app-state
   {:target (.-body js/document) :shared {:commands commands}})
-(.dispatchEvent sizeMonitor "resize")
+(.dispatchEvent size-monitor "resize")
 ;(repl/connect "http://ui:9000/repl")
