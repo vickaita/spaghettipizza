@@ -9,6 +9,17 @@
     (swap! counter inc)
     (str "stroke_" @counter)))
 
+(defn- internal-format-points
+  "A non-memoized version of format points."
+  [point points]
+  ;(apply str (interleave (flatten points) (repeat " ")))
+  (str (first point) " " (second point) " " points)
+  )
+
+(defn format-points
+  [stroke]
+  (::formatted-points stroke))
+
 (defn rand-seq
   [stroke]
   (let [rng (goog.testing.PseudoRandom. (:seed stroke))]
@@ -18,7 +29,8 @@
   [& points]
   {:id (gen-id)
    :seed (rand)
-   :points (seq points)
+   :points (apply list points)
+   ::formatted-points " "
    :skin nil
    :granularity 3})
 
@@ -27,7 +39,9 @@
   (let [points (:points stroke)]
     (if (or (empty? points)
             (> (geometry/distance pt (first points)) (:granularity stroke)))
-      (assoc stroke :points (cons pt points))
+      (conj stroke {:points (cons pt points)
+                    ::formatted-points (internal-format-points
+                                         pt (::formatted-points stroke))})
       stroke)))
 
 (defn length
@@ -77,11 +91,6 @@
         (if (> (geometry/distance prev current) spacing)
           (recur (conj acc current) current remaining)
           (recur acc prev remaining))))))
-
-(defn- format-points
-  "A non-memoized version of format points."
-  [stroke]
-  (apply str (interleave (flatten (:points stroke)) (repeat " "))))
 
 (defmulti render :skin)
 
