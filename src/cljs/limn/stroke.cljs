@@ -9,12 +9,10 @@
     (swap! counter inc)
     (str "stroke_" @counter)))
 
-(defn- internal-format-points
+(defn- fmtpts
   "A non-memoized version of format points."
-  [point points]
-  ;(apply str (interleave (flatten points) (repeat " ")))
-  (str (first point) " " (second point) " " points)
-  )
+  [points point]
+  (str (first point) " " (second point) " " points))
 
 (defn format-points
   [stroke]
@@ -40,8 +38,7 @@
     (if (or (empty? points)
             (> (geometry/distance pt (first points)) (:granularity stroke)))
       (conj stroke {:points (cons pt points)
-                    ::formatted-points (internal-format-points
-                                         pt (::formatted-points stroke))})
+                    ::formatted-points (fmtpts (::formatted-points stroke) pt)})
       stroke)))
 
 (defn length
@@ -76,7 +73,9 @@
         p2 (destin stroke)]
     (if (< cnt 2)
       stroke
-      (assoc stroke :points (list (clamp-point max-len p1 p2) p1)))))
+      (let [pts (list (clamp-point max-len p1 p2) p1)]
+        (conj stroke {:points pts
+                      ::formatted-points (reduce fmtpts " " pts)})))))
 
 (defn- thin
   "Takes a seq points and thins them out so that you have a more sparse
