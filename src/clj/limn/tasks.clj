@@ -45,13 +45,20 @@
           :key (str "css/" (.getName css))
           :file css
           :access-control-list acl)
-        (println "Building ClojureScript ...")
-        (cljsc/build "src/cljs/limn/core.cljs"
-                     {:output-to "resources/public/js/pizza.js"
-                      :output-dir "resources/public/js"
-                      :preamble ["react/react.min.js"]
-                      :externs ["react/externs/react.js"]
-                      :optimizations :advanced})
+        ;; NOTE: Commenting out this cljs build part. Just make sure that you
+        ;; build manually with `lein cljsbuild clean && lein cljsbuild once
+        ;; prod` before calling push-ui.
+        ;;
+        ;; TODO: Need to figure out a way to read this configuration from
+        ;; project.clj.
+        ;;
+        ;; (println "Building ClojureScript ...")
+        ;; (cljsc/build "src/cljs/limn/core.cljs"
+        ;;              {:output-to "resources/public/js/pizza.js"
+        ;;               :output-dir "resources/public/js"
+        ;;               :preamble ["react/react.min.js"]
+        ;;               :externs ["react/externs/react.js"]
+        ;;               :optimizations :advanced})
         (println "Uploading" (.getName js) "...")
         (s3/put-object
           :bucket-name bucket-name
