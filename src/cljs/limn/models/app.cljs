@@ -5,12 +5,14 @@
   {:debug true
    :image-url nil
    :image-loading? false
+
    :easel-width 0
    :easel-height 0
    :view-box [0 0 512 512]
    :viewport-width 512
    :viewport-height 512
    :scale-by 1
+
    :granularity 5
    :pizza (fresh-pizza)
    :strokes []
