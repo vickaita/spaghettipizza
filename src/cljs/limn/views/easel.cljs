@@ -35,13 +35,14 @@
           top (.-top rect)]
       (case (.-type e)
         ("touchstart" "touchmove")
-        (for [t (.-touches e)]
-          [(-> t (.-pageX) (- left) (* scale-by) Math/floor)
-           (-> t (.-pageY) (- top) (* scale-by) Math/floor)])
+        (for [i (range (alength (.-touches e)))]
+          (let [t (aget (.-touches e) i)]
+            [(-> t (.-pageX) (- left) (* scale-by) Math/floor)
+             (-> t (.-pageY) (- top) (* scale-by) Math/floor)]))
         "touchend"
         nil
         [[(-> e (.-pageX) (- left) (* scale-by) Math/floor)
-         (-> e (.-pageY) (- top) (* scale-by) Math/floor)]]))))
+          (-> e (.-pageY) (- top) (* scale-by) Math/floor)]]))))
 
 (defn easel
   [app owner]
@@ -49,9 +50,11 @@
         start-stroke (fn [e]
                        (doto e .preventDefault .stopPropagation)
                        (om/set-state! owner :drawing? true)
+                       (prn (normalize-points (:scale-by @app) e))
                        (put! commands [:new-stroke (first (normalize-points (:scale-by @app) e))]))
         extend-stroke (fn [e]
                         (doto e .preventDefault .stopPropagation)
+                        (prn (normalize-points (:scale-by @app) e))
                         (when (om/get-state owner :drawing?)
                           (put! commands [:extend-stroke (first (normalize-points (:scale-by @app) e))])))
         end-stroke (fn [e]
