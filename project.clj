@@ -1,4 +1,4 @@
-(defproject pizza "0.2.13"
+(defproject pizza "0.3.0"
   :description "Spaghetti Pizza -- the original pasta on pizza simulator!"
   :url "http://spaghettipizza.us"
   :dependencies [[org.clojure/clojure "1.5.1"]
