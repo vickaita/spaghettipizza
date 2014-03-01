@@ -1,0 +1,47 @@
+@import "compass/css3/images";
+
+$menu-control-width: 2rem;
+$menu-control-margin-left: 0.5rem;
+$masthead-padding: 0.5rem;
+
+#masthead {
+  $bg: rgb(120, 138, 26);
+  @include background-image(linear-gradient(top, tint($bg, 10%), $bg, shade($bg, 10%)));
+  color: #FFF;
+  padding: $masthead-padding;
+  border-top-color: rgb(17, 172, 11);
+  border-width-top: 5px;
+  border-top-width: 5px;
+  position: relative;
+
+  h1 {
+    margin: 0;
+    font-size: 1.2rem;
+    line-height: 1.4;
+    text-shadow: 1px 1px #F86969;
+    margin-left: $menu-control-margin-left + $masthead-padding + $menu-control-width;
+  }
+}
+
+#menu-control {
+  background: url('../img/icons/menu.svg') no-repeat center;
+  background-size: 80% 80%;
+  display: block;
+  height: 100%;
+  left: 0;
+  margin-left: $menu-control-margin-left;
+  position: absolute;
+  top: 0;
+  width: $menu-control-width;
+}
+
+.quick-links {
+  float:right;
+  ul {
+    border: 1px solid blue;
+    li {
+      display: block;
+      border: 1px solid red;
+    }
+  }
+}
