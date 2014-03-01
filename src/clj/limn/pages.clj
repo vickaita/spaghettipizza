@@ -10,7 +10,8 @@
    [:title title]
    [:meta {:http-equiv "X-UA-Compatible" :content "IE=edge,chrome=1"}]
    [:meta {:name "viewport" :content "width=device-width, user-scalable=no"}]
-   (include-css "//fonts.googleapis.com/css?family=Ribeye"
+   (include-css ;"//fonts.googleapis.com/css?family=Ribeye"
+                "//fonts.googleapis.com/css?family=Oregano"
                 "css/main.css")
    [:script ;; Google Analytics
     "(function (i,s,o,g,r,a,m) {i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
