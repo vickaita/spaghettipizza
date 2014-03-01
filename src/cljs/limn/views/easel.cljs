@@ -50,11 +50,9 @@
         start-stroke (fn [e]
                        (doto e .preventDefault .stopPropagation)
                        (om/set-state! owner :drawing? true)
-                       (prn (normalize-points (:scale-by @app) e))
                        (put! commands [:new-stroke (first (normalize-points (:scale-by @app) e))]))
         extend-stroke (fn [e]
                         (doto e .preventDefault .stopPropagation)
-                        (prn (normalize-points (:scale-by @app) e))
                         (when (om/get-state owner :drawing?)
                           (put! commands [:extend-stroke (first (normalize-points (:scale-by @app) e))])))
         end-stroke (fn [e]

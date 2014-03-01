@@ -9,6 +9,15 @@
     (swap! counter inc)
     (str "stroke_" @counter)))
 
+(defn- fmtpts
+  "A non-memoized version of format points."
+  [points point]
+  (str (first point) " " (second point) " " points))
+
+(defn format-points
+  [stroke]
+  (::formatted-points stroke))
+
 (defn rand-seq
   [stroke]
   (let [rng (goog.testing.PseudoRandom. (:seed stroke))]
@@ -18,7 +27,8 @@
   [& points]
   {:id (gen-id)
    :seed (rand)
-   :points (seq points)
+   :points (apply list points)
+   ::formatted-points " "
    :skin nil
    :granularity 3})
 
@@ -27,7 +37,8 @@
   (let [points (:points stroke)]
     (if (or (empty? points)
             (> (geometry/distance pt (first points)) (:granularity stroke)))
-      (assoc stroke :points (cons pt points))
+      (conj stroke {:points (cons pt points)
+                    ::formatted-points (fmtpts (::formatted-points stroke) pt)})
       stroke)))
 
 (defn length
@@ -62,7 +73,9 @@
         p2 (destin stroke)]
     (if (< cnt 2)
       stroke
-      (assoc stroke :points (list (clamp-point max-len p1 p2) p1)))))
+      (let [pts (list (clamp-point max-len p1 p2) p1)]
+        (conj stroke {:points pts
+                      ::formatted-points (reduce fmtpts " " pts)})))))
 
 (defn- thin
   "Takes a seq points and thins them out so that you have a more sparse
@@ -77,11 +90,6 @@
         (if (> (geometry/distance prev current) spacing)
           (recur (conj acc current) current remaining)
           (recur acc prev remaining))))))
-
-(defn- format-points
-  "A non-memoized version of format points."
-  [stroke]
-  (apply str (interleave (flatten (:points stroke)) (repeat " "))))
 
 (defmulti render :skin)
 

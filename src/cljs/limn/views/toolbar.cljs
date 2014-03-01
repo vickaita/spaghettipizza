@@ -50,7 +50,8 @@
                   color-circle
                   (merge
                     color
-                    {:cx (+ 250 (Math/floor (* wheel-radius (Math/cos angle))))
+                    {:key (:str "foo" (:name color))
+                     :cx (+ 250 (Math/floor (* wheel-radius (Math/cos angle))))
                      :cy (+ 250 (Math/floor (* wheel-radius (Math/sin angle))))
                      :r 25
                      :active? (= color (:color app))}))))
@@ -68,7 +69,8 @@
         [:h1 "Colors"]
         [:ul
          (for [color (:colors menu)]
-           [:li.color {:class (when (= color (:color menu)) "active")
+           [:li.color {:key (str "color:" (:name color))
+                       :class (when (= color (:color menu)) "active")
                        :style {:border-color (:stroke color)
                                :background-color (:fill color)}
                        :on-click (handler owner [:set-color color])}
@@ -77,7 +79,8 @@
         [:h1 "Toppings!"]
         [:section.tools
          (for [group (:groups menu)]
-           [:section.group {:key (:name group)} (:name group)
+           [:section.group {:key (:name group)}
+            [:h1 (:name group)]
             [:ul.tool-list
              (for [tool (:tools group)]
                [:li.tool-item {:key (str (:id tool))}
