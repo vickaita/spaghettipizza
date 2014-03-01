@@ -46,7 +46,7 @@
           :file css
           :access-control-list acl)
         (println "Building ClojureScript ...")
-        (cljsc/build "src/cljs/pizza/core.cljs"
+        (cljsc/build "src/cljs/limn/core.cljs"
                      {:output-to "resources/public/js/pizza.js"
                       :output-dir "resources/public/js"
                       :preamble ["react/react.min.js"]
