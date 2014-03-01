@@ -54,6 +54,38 @@
                                :stroke-linecap "square"
                                :stroke-width 10}]]))))
 
+(defmethod render :fettuccine
+  [stroke owner]
+  (om/component
+    (let [points (stroke/format-points stroke)]
+      (html [:g.topping.noodle.fettuccine {:key (:id stroke)}
+             [:polyline.border {:points points
+                                :fill "transparent"
+                                :stroke (:stroke (:color stroke))
+                                :stroke-linecap "square"
+                                :stroke-width 32}]
+             [:polyline.inner {:points points
+                               :fill "transparent"
+                               :stroke (:fill (:color stroke))
+                               :stroke-linecap "square"
+                               :stroke-width 30}]]))))
+
+(defmethod render :lasagne
+  [stroke owner]
+  (om/component
+    (let [points (stroke/format-points stroke)]
+      (html [:g.topping.noodle.lasagne {:key (:id stroke)}
+             [:polyline.border {:points points
+                                :fill "transparent"
+                                :stroke (:stroke (:color stroke))
+                                :stroke-linecap "square"
+                                :stroke-width 122}]
+             [:polyline.inner {:points points
+                               :fill "transparent"
+                               :stroke (:fill (:color stroke))
+                               :stroke-linecap "square"
+                               :stroke-width 120}]]))))
+
 (defmethod render :ziti
   [stroke owner]
   (om/component
