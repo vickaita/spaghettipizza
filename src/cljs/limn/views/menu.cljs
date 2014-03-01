@@ -4,6 +4,15 @@
             [om.core :as om :include-macros true]
             [sablono.core :refer-macros [html]]))
 
+(defn quick-links
+  [app owner]
+  (om/component
+    (html [:nav.quick-links
+           [:ul
+            [:li "one"]
+            [:li "two"]
+            [:li "three"]]])))
+
 (defn menu-bar
   [app owner]
   (let [handle-close (fn [e] (om/set-state! owner :open nil))
