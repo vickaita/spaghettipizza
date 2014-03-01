@@ -4,7 +4,7 @@
   :dependencies [[org.clojure/clojure "1.5.1"]
                  [org.clojure/clojurescript "0.0-2156"]
                  [org.clojure/core.async "0.1.267.0-0d7780-alpha"]
-                 [org.clojure/core.typed "0.2.26"]
+                 [org.clojure/core.typed "0.2.34"]
                  [org.clojure/tools.logging "0.2.6"]
                  [commons-codec/commons-codec "1.4"]
                  [ring "1.2.1"]
