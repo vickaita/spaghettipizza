@@ -2,7 +2,7 @@
   (:require [clojure.string :refer [join]]
             [om.core :as om :include-macros true]
             [sablono.core :refer-macros [html]]
-            [limn.views.toolbar :refer [toolbar color-wheel]]
+            [limn.views.toolbar :as toolbar]
             [limn.views.menu :refer [menu-bar quick-links]]
             [limn.views.gallery :refer [gallery]]
             [limn.views.easel :refer [easel]]))
@@ -40,18 +40,13 @@
   (om/component
     (html
       [:div#site {:class (site-classes app)}
-       #_(om/build menu-bar (:menu-bar app))
-       (om/build toolbar
-                 (om/graft {:tool (:tool app)
-                            :color (:color app)
-                            :groups (:groups (:toolbar app))
-                            :colors (:colors (:toolbar app))} app))
+       [:section.toolbar
+        (om/build toolbar/actions (:actions app))
+        (om/build toolbar/colors (:colors app) {:state {:color (:color app)}})
+        (om/build toolbar/tools (:tools app) {:state {:tool (:tool app)}})]
        [:div#page
         (om/build masthead app)
         (om/build gallery app)
-        (om/build easel (:easel app))
-        (om/build footer app)]
-       [:div.palettes
-        (om/build color-wheel
-                  (om/graft {:color (:color app)
-                             :colors (:colors (:toolbar app))} app))]])))
+        (om/build easel (:easel app) {:state {:skin (:id (:tool app))
+                                              :color (:color app)}})
+        (om/build footer app)]])))

@@ -47,20 +47,28 @@
 (defn easel
   [app owner]
   (let [commands (om/get-shared owner :commands)
-        start-stroke (fn [e]
-                       (doto e .preventDefault .stopPropagation)
-                       (om/set-state! owner :drawing? true)
-                       (put! commands [:new-stroke (first (normalize-points (:scale-by @app) e))]))
-        extend-stroke (fn [e]
-                        (doto e .preventDefault .stopPropagation)
-                        (when (om/get-state owner :drawing?)
-                          (put! commands [:extend-stroke (first (normalize-points (:scale-by @app) e))])))
+        start-stroke
+        (fn [e]
+          (doto e .preventDefault .stopPropagation)
+          (om/set-state! owner :drawing? true)
+          (let [pt (first (normalize-points (:scale-by @app) e))
+                skin (om/get-state owner :skin)
+                color (om/get-state owner :color)]
+            (om/transact! app [:strokes]
+                          #(conj % (s/stroke {:skin skin
+                                              :color color
+                                              :points [pt]})))))
+        extend-stroke
+        (fn [e]
+          (doto e .preventDefault .stopPropagation)
+          (when (om/get-state owner :drawing?)
+            (let [idx (-> @app :strokes count dec)
+                  pt (first (normalize-points (:scale-by @app) e))]
+              (om/transact! app [:strokes idx] #(s/append % pt)))))
         end-stroke (fn [e]
                      (doto e .preventDefault .stopPropagation)
                      (om/set-state! owner :drawing? false))]
     (reify
-      om/IInitState
-      (init-state [_] {:drawing? false})
       om/IWillMount
       (will-mount [_] (events/listen js/document "mouseup" end-stroke))
       om/IRender
