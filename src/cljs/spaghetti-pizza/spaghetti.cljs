@@ -8,31 +8,30 @@
   [stroke owner]
   (om/component
     (let [sparse (stroke/thin stroke 30)]
-      (html [:g.topping.edit {:key (:id stroke)}
-           [:polyline.path {:points (stroke/format-points sparse)
-                            :fill "transparent"
-                            :stroke "black"
-                            :stroke-width 2}]
-           (for [point (:points sparse)]
-             [:circle.point {:cx (first point)
-                             :cy (second point)
-                             :r 3
-                             :fill "red"
-                             :stroke "blue"
-                             :stroke-width 1}])]))))
+      (html [:g.topping.edit
+             [:polyline.path {:points (stroke/format-points sparse)
+                              :fill "transparent"
+                              :stroke "black"
+                              :stroke-width 2}]
+             (for [point (:points sparse)]
+               [:circle.point {:cx (first point)
+                               :cy (second point)
+                               :r 3
+                               :fill "red"
+                               :stroke "blue"
+                               :stroke-width 1}])]))))
 
 (defmethod render :spaghetti
   [stroke owner]
   (om/component
     (let [points (stroke/format-points stroke)]
-      (html [:g.topping.noodle.spaghetti {:key (:id stroke)}
+      (html [:g.topping.noodle.spaghetti
              [:polyline.border {:points points
                                 :fill "transparent"
                                 :stroke (:stroke (:color stroke))
                                 :stroke-linecap "round"
                                 :stroke-width 6}]
-             [:polyline.inner {:key (str (:id stroke) "-inner")
-                               :points points
+             [:polyline.inner {:points points
                                :fill "transparent"
                                :stroke (:fill (:color stroke))
                                :stroke-linecap "round"
@@ -42,7 +41,7 @@
   [stroke owner]
   (om/component
     (let [points (stroke/format-points stroke)]
-      (html [:g.topping.noodle.linguini {:key (:id stroke)}
+      (html [:g.topping.noodle.linguini
              [:polyline.border {:points points
                                 :fill "transparent"
                                 :stroke (:stroke (:color stroke))
@@ -58,7 +57,7 @@
   [stroke owner]
   (om/component
     (let [points (stroke/format-points stroke)]
-      (html [:g.topping.noodle.fettuccine {:key (:id stroke)}
+      (html [:g.topping.noodle.fettuccine
              [:polyline.border {:points points
                                 :fill "transparent"
                                 :stroke (:stroke (:color stroke))
@@ -74,7 +73,7 @@
   [stroke owner]
   (om/component
     (let [points (stroke/format-points stroke)]
-      (html [:g.topping.noodle.lasagne {:key (:id stroke)}
+      (html [:g.topping.noodle.lasagne
              [:polyline.border {:points points
                                 :fill "transparent"
                                 :stroke (:stroke (:color stroke))
@@ -91,7 +90,7 @@
   (om/component
     (let [clamped (stroke/clamp stroke 60)
           points (stroke/format-points clamped)]
-      (html [:g.topping.noodle.ziti {:key (:id stroke)}
+      (html [:g.topping.noodle.ziti
              [:polyline.border {:points points
                                 :fill "transparent"
                                 :stroke "#9E9E22"
@@ -113,7 +112,7 @@
     (let [circles (map vector
                        (reverse (:points stroke))
                        (map #(+ 3 (* 20 %)) (stroke/rand-seq stroke)))]
-      (html [:g.topping.cheese.ricotta {:key (:id stroke)}
+      (html [:g.topping.cheese.ricotta
              ; By using two circles on different layers we can give the illusion
              ; that it is one irregular shape instead of a bunch of circles.
              [:g.border
@@ -133,14 +132,13 @@
   [stroke owner]
   (om/component
     (let [points (stroke/format-points stroke)]
-      (html [:g.topping.herb.basil {:key (:id stroke)}
+      (html [:g.topping.herb.basil
              [:polyline.border {:points points
                                 :fill "transparent"
                                 :stroke "#F5F5AA"
                                 :stroke-linecap "round"
                                 :stroke-width 6}]
-             [:polyline.inner {:key (str (:id stroke) "-inner")
-                               :points points
+             [:polyline.inner {:points points
                                :fill "transparent"
                                :stroke "#9E9E22"
                                :stroke-linecap "round"
@@ -152,6 +150,6 @@
                 (let [outline (apply str (interleave [x y,
                                                       (+ x (* 20 (Math/cos 90))) (+ y (* 20 (Math/sin 90))),
                                                       x y]
-                                          (repeat " ")))]
+                                                     (repeat " ")))]
                   [:g.leaf
-                 [:polyline {:points outline}]]))]]))))
+                   [:polyline {:points outline}]]))]]))))

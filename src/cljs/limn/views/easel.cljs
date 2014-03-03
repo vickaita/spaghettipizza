@@ -50,14 +50,14 @@
         start-stroke
         (fn [e]
           (doto e .preventDefault .stopPropagation)
-          (om/set-state! owner :drawing? true)
           (let [pt (first (normalize-points (:scale-by @app) e))
                 skin (om/get-state owner :skin)
                 color (om/get-state owner :color)]
+            (om/set-state! owner :drawing? true)
             (om/transact! app [:strokes]
                           #(conj % (s/stroke {:skin skin
                                               :color color
-                                              :points [pt]})))))
+                                              :points (list pt)})))))
         extend-stroke
         (fn [e]
           (doto e .preventDefault .stopPropagation)
@@ -91,4 +91,4 @@
                         :xmlns "http://www.w3.org/2000/svg"}
                   [:g.vector.layer
                    (om/build pizza (:pizza app))
-                   (om/build-all s/render (:strokes app))]]]))))))
+                   (om/build-all s/render (:strokes app) {:key :id})]]]))))))

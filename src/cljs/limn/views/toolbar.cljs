@@ -15,7 +15,8 @@
     (html
       [:section.actions
            (for [action app]
-             [:a.action {:id (:id action)
+             [:a.action {:key (:id action)
+                         :id (:id action)
                          :on-click (handler owner (:command action))}
               (:text action)])])))
 
@@ -27,7 +28,7 @@
        [:h1 "Colors"]
        (let [selected (om/get-state owner :color)]
          (for [palette (:palettes app)]
-           [:ul.palette
+           [:ul.palette {:key (:name palette)}
             (for [color (:colors palette)]
               [:li.color {:key (str "color:" (:name color))
                           :class (when (= color selected) "active")
@@ -36,19 +37,28 @@
                           :on-click (handler owner [:select-color color])}
                (:name color)])]))])))
 
+(defn- tool
+  [tool owner]
+  (om/component
+    (html
+      [:li.tool-item
+       [:a.tool {:class (when (= tool (om/get-state owner :tool)) "active")
+                 :on-click (handler owner [:select-tool tool])}
+        (:name tool)]])))
+
+(defn- tool-group
+  [app owner]
+  (om/component
+    (html
+      [:section.group
+       [:h1 (:name app)]
+       [:ul.tool-list
+        (om/build-all tool (:tools app) {:key :id})]])))
+
 (defn tools
   [app owner]
   (om/component
     (html
       [:section.toppings
        [:h1 "Toppings!"]
-       (for [group (:groups app)]
-         [:section.group {:key (:name group)}
-          [:h1 (:name group)]
-          [:ul.tool-list
-           (let [selected (om/get-state owner :tool)]
-             (for [tool (:tools group)]
-               [:li.tool-item {:key (:id tool)}
-                [:a.tool {:class (when (= tool selected) "active")
-                          :on-click (handler owner [:select-tool tool])}
-                 (:name tool)]]))]])])))
+       (om/build-all tool-group (:groups app) {:key :name})])))
