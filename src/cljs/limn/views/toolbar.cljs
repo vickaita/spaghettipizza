@@ -7,7 +7,7 @@
   [owner message]
   (fn [e]
     (doto e .preventDefault .stopPropagation)
-    (put! (:commands (om/get-shared owner)) message)))
+    (put! (om/get-shared owner :commands) message)))
 
 (defn actions
   [app owner]
@@ -17,7 +17,7 @@
            (for [action app]
              [:a.action {:key (:id action)
                          :id (:id action)
-                         :on-click (handler owner (:command action))}
+                         :on-click (handler owner (om/value (:command action)))}
               (:text action)])])))
 
 (defn colors
@@ -42,6 +42,7 @@
   (om/component
     (html
       [:li.tool-item
+       [:pre (om/get-state owner)]
        [:a.tool {:class (when (= tool (om/get-state owner :tool)) "active")
                  :on-click (handler owner [:select-tool tool])}
         (:name tool)]])))
@@ -51,6 +52,7 @@
   (om/component
     (html
       [:section.group
+       [:pre (om/get-state owner)]
        [:h1 (:name app)]
        [:ul.tool-list
         (om/build-all tool (:tools app) {:key :id})]])))
@@ -60,5 +62,6 @@
   (om/component
     (html
       [:section.toppings
+       [:pre (om/get-state owner)]
        [:h1 "Toppings!"]
        (om/build-all tool-group (:groups app) {:key :name})])))
