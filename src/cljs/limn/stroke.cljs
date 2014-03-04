@@ -10,7 +10,6 @@
     (str "stroke_" @counter)))
 
 (defn- fmtpts
-  "A non-memoized version of format points."
   [points point]
   (str (first point) " " (second point) " " points))
 
@@ -24,13 +23,16 @@
     (repeatedly #(.random rng))))
 
 (defn stroke
-  [& points]
-  {:id (gen-id)
-   :seed (rand)
-   :points (apply list points)
-   ::formatted-points " "
-   :skin nil
-   :granularity 3})
+  [opts]
+  (let [points (apply list (:points opts))]
+    (conj {:id (gen-id)
+           :seed (rand)
+           :points points
+           ::formatted-points (reduce fmtpts " " points)
+           :skin nil
+           :color nil
+           :granularity 3}
+          opts)))
 
 (defn append
   [stroke pt]

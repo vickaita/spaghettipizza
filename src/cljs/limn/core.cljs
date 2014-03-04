@@ -81,6 +81,7 @@
 (monitor-keypress js/document commands)
 (om/root
   app-view app-state
-  {:target (.-body js/document) :shared {:commands commands}})
+  {:target (.-body js/document)
+   :shared {:commands commands}})
 (.dispatchEvent size-monitor "resize")
 ;(repl/connect "http://ui:9000/repl")

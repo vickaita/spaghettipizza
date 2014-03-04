@@ -60,26 +60,9 @@
 
 (defmethod exec :select-tool
   [app [_ tool]]
-  (-> app
-      (assoc :tool tool)
-      (assoc-in [:toolbar :tool] tool)
-      (assoc :show-toolbar? false)))
+  (conj app {:tool tool :show-toolbar? false}))
 
-(defmethod exec :new-stroke
-  [app [_ e]]
-  (let [new-stroke (-> (stroke/stroke)
-                       (stroke/append e)
-                       (assoc :skin (:tool app))
-                       (assoc :color (:color app)))]
-  (update-in app [:easel :strokes] #(conj % new-stroke))))
-
-(defmethod exec :extend-stroke
-  [app [_ pt]]
-  (assoc-in app
-            [:easel :strokes (-> app :easel :strokes count dec)]
-            (stroke/append (-> app :easel :strokes peek) pt)))
-
-(defmethod exec :set-color
+(defmethod exec :select-color
   [app [_ color]]
   (conj app {:color color :show-toolbar? false}))
 
