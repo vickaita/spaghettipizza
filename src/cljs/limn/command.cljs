@@ -11,6 +11,8 @@
 (defmethod exec :resize
   [app [_ w h]]
    (-> app
+       (assoc-in [:gallery :width] w)
+       (assoc-in [:gallery :height] h)
        (assoc-in [:easel :width] w)
        (assoc-in [:easel :height] h)
        (assoc-in [:easel :scale-by] (/ (-> app :easel :view-box (nth 2))
@@ -20,10 +22,10 @@
   [app [_ tool]]
   (.setToken (:history app) "/")
   (-> app
-      (assoc :image-loading? false)
-      (assoc :image-url nil)
-      (assoc :show-toolbar? false)
-      (assoc-in [:easel :strokes] [])))
+      (assoc-in [:gallery :image-loading?] false)
+      (assoc-in [:gallery :image-url] nil)
+      (assoc-in [:easel :strokes] [])
+      (assoc :show-toolbar? false)))
 
 (defmethod exec :save
   [app [_]]
@@ -49,14 +51,13 @@
       (.setToken (:history app) page-url)))
   (-> app
       (assoc :show-toolbar? false)
-      (assoc :image-loading? true)))
+      (assoc-in [:gallery :image-loading?] true)))
 
 (defmethod exec :display-image
   [app [_ url]]
   (-> app
-      (assoc-in [:image :status] :ready)
-      (assoc :image-loading? false)
-      (assoc :image-url url)))
+      (assoc-in [:gallery :image-loading?] false)
+      (assoc-in [:gallery :image-url] url)))
 
 (defmethod exec :select-tool
   [app [_ tool]]
@@ -65,15 +66,3 @@
 (defmethod exec :select-color
   [app [_ color]]
   (conj app {:color color :show-toolbar? false}))
-
-(defmethod exec :show-color-wheel
-  [app _]
-  (assoc app :show-color-wheel? true))
-
-(defmethod exec :hide-color-wheel
-  [app _]
-  (assoc app :show-color-wheel? false))
-
-(defmethod exec :toggle-color-wheel
-  [app _]
-  (assoc app :show-color-wheel? (not (:show-color-wheel? app))))

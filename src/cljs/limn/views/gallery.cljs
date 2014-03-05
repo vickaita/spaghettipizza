@@ -10,6 +10,13 @@
     (html
       [:div#image-wrapper
        (cond
-         (:image-loading? app) [:p "Loading ..."]
-         (:image-url app) [:img {:src (:image-url app)}]
+         (:image-loading? app)
+         [:p "Loading ..."]
+         (:image-url app)
+         (let [w (:width app)
+               h (:height app)
+               side (min w h)]
+           [:img {:src (:image-url app)
+                  :width side
+                  :height side}])
          :else nil)])))

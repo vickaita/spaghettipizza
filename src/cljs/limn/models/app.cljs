@@ -6,11 +6,13 @@
 
 (def default-app-state
   {:debug true
-   :image-url nil
-   :image-loading? false
    :granularity 5
    :show-toolbar? false
    :show-color-wheel? false
+   :gallery {:width 0
+             :height 0
+             :image-url nil
+             :loading? false}
    :easel {:scale-by 1
            :pizza (fresh-pizza)
            :strokes []

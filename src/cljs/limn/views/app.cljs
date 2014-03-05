@@ -46,7 +46,7 @@
         (om/build toolbar/tools (:tools app) {:state {:tool (:tool app)}})]
        [:div#page
         (om/build masthead app)
-        (om/build gallery app)
+        (om/build gallery (:gallery app))
         (om/build easel (:easel app) {:state {:skin (:id (:tool app))
                                               :color (:color app)}})
         (om/build footer app)]])))
