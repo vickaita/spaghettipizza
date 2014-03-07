@@ -58,11 +58,22 @@
     {:status 422
      :body "Missing File."}))
 
+(defn pizza-list
+  []
+  (let [client (sdb/create-client (:access-key creds) (:secret-key creds))
+        config (assoc enc/keyword-strings :client client)
+        pizzas (sdb/query-all config (str "select * from `" bucket-name "`"))]
+    (map #(str "<img src=\"http://spaghettipizza.us/pizza/"
+                             (get % ::sdb/id)
+                             ".png\">") pizzas)))
+
 (defroutes all-routes
   (GET "/" {{debug :debug} :params}
        (pages/home (and debug (= :dev (:environment env)))))
   (mp/wrap-multipart-params
     (POST "/pizza/" {{{file :tempfile} :data} :params} (handle-file file)))
+  (GET "/pizza/" [] (pizza-list))
+  (GET "/users/new" [] "Create a new user.")
   (route/files "/" {:root "resources/public"})
   (route/not-found (pages/error-404)))
 
