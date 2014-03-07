@@ -2,17 +2,15 @@
   (:require [spaghetti-pizza.pizza :refer [fresh-pizza]]
             [limn.models.actions]
             [limn.models.tools]
-            [limn.models.colors]))
+            [limn.models.colors]
+            [limn.models.gallery]))
 
 (def default-app-state
   {:debug true
    :granularity 5
    :show-toolbar? false
    :show-color-wheel? false
-   :gallery {:width 0
-             :height 0
-             :image-url nil
-             :loading? false}
+   :gallery limn.models.gallery/empty-gallery
    :easel {:scale-by 1
            :pizza (fresh-pizza)
            :strokes []
