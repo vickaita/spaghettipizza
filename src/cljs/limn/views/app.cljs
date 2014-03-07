@@ -2,6 +2,7 @@
   (:require [clojure.string :refer [join]]
             [om.core :as om :include-macros true]
             [sablono.core :refer-macros [html]]
+            [limn.models.gallery :as gm]
             [limn.views.toolbar :as toolbar]
             [limn.views.menu :refer [menu-bar quick-links]]
             [limn.views.gallery :refer [gallery]]
@@ -46,7 +47,8 @@
         (om/build toolbar/tools (:tools app) {:state {:tool (:tool app)}})]
        [:div#page
         (om/build masthead app)
-        (om/build gallery (:gallery app))
-        (om/build easel (:easel app) {:state {:skin (:id (:tool app))
-                                              :color (:color app)}})
+        (if (gm/visible? (:gallery app))
+          (om/build gallery (:gallery app))
+          (om/build easel (:easel app) {:state {:skin (:id (:tool app))
+                                                :color (:color app)}}))
         (om/build footer app)]])))
