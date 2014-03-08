@@ -1,5 +1,7 @@
 (ns limn.stroke
   (:require [goog.testing.PseudoRandom]
+            [om.core :as om :include-macros true]
+            [sablono.core :refer-macros [html]]
             [limn.geometry :as geometry]))
 
 (let [counter (atom 0)]
@@ -94,5 +96,3 @@
           (recur acc prev remaining))))))
 
 (defmulti render :skin)
-
-(defmethod render nil [_] nil)

@@ -4,6 +4,7 @@
             [goog.events :as events]
             [om.core :as om :include-macros true]
             [sablono.core :refer-macros [html]]
+            [limn.models.easel :as me]
             [limn.stroke :as s]))
 
 (defn pizza
@@ -54,20 +55,17 @@
                 skin (om/get-state owner :skin)
                 color (om/get-state owner :color)]
             (om/set-state! owner :drawing? true)
-            (om/transact! app [:strokes]
-                          #(conj % (s/stroke {:skin skin
-                                              :color color
-                                              :points (list pt)})))))
+            (om/transact! app #(me/start-stroke % pt skin color))))
         extend-stroke
         (fn [e]
           (doto e .preventDefault .stopPropagation)
           (when (om/get-state owner :drawing?)
-            (let [idx (-> @app :strokes count dec)
-                  pt (first (normalize-points (:scale-by @app) e))]
-              (om/transact! app [:strokes idx] #(s/append % pt)))))
+            (let [pt (first (normalize-points (:scale-by @app) e))]
+              (om/transact! app #(me/extend-stroke % pt)))))
         end-stroke (fn [e]
                      (doto e .preventDefault .stopPropagation)
-                     (om/set-state! owner :drawing? false))]
+                     (om/set-state! owner :drawing? false)
+                     (om/transact! app #(me/end-stroke %)))]
     (reify
       om/IWillMount
       (will-mount [_] (events/listen js/document "mouseup" end-stroke))
@@ -91,4 +89,5 @@
                         :xmlns "http://www.w3.org/2000/svg"}
                   [:g.vector.layer
                    (om/build pizza (:pizza app))
-                   (om/build-all s/render (:strokes app) {:key :id})]]]))))))
+                   (om/build-all s/render (:strokes app) {:key :id})
+                   (om/build s/render (:current-stroke app))]]]))))))

@@ -3,7 +3,8 @@
             [limn.models.actions]
             [limn.models.tools]
             [limn.models.colors]
-            [limn.models.gallery]))
+            [limn.models.gallery]
+            [limn.models.easel]))
 
 (def default-app-state
   {:debug true
@@ -11,12 +12,7 @@
    :show-toolbar? false
    :show-color-wheel? false
    :gallery limn.models.gallery/empty-gallery
-   :easel {:scale-by 1
-           :pizza (fresh-pizza)
-           :strokes []
-           :width 0
-           :height 0
-           :view-box [0 0 512 512]}
+   :easel (merge limn.models.easel/default-easel {:pizza (fresh-pizza)})
    :actions limn.models.actions/groups
    :tools limn.models.tools/toolbar
    :colors limn.models.colors/color-state

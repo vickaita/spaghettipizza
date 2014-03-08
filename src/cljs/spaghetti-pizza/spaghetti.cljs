@@ -4,6 +4,11 @@
             [limn.stroke :as stroke :refer [render]]
             [limn.geometry :as g]))
 
+(defmethod render :none
+  [stroke owner]
+  (om/component
+    (html [:g.none])))
+
 (defmethod render :edit
   [stroke owner]
   (om/component
