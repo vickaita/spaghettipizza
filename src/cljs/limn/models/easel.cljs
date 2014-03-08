@@ -3,7 +3,7 @@
 
 (def default-easel
   {:scale-by 1
-   :current-stroke {:skin :none}
+   :current-stroke nil
    :strokes []
    :width 0
    :height 0
@@ -21,6 +21,8 @@
 
 (defn end-stroke
   [easel]
-  (-> easel
-      (assoc :current-stroke {:skin :none})
-      (assoc :strokes (conj (:strokes easel) (:current-stroke easel)))))
+    (if (:current-stroke easel)
+      (-> easel
+          (assoc :current-stroke nil)
+          (assoc :strokes (conj (:strokes easel) (:current-stroke easel))))
+      easel))

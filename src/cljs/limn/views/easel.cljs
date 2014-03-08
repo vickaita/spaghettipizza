@@ -88,6 +88,7 @@
                         :preserveAspectRatio "xMidYMid"
                         :xmlns "http://www.w3.org/2000/svg"}
                   [:g.vector.layer
-                   (om/build pizza (:pizza app))
+                   (om/build pizza (:pizza app) {:react-key "base-pizza"})
                    (om/build-all s/render (:strokes app) {:key :id})
-                   (om/build s/render (:current-stroke app))]]]))))))
+                   (when-let [current (:current-stroke app)]
+                     (om/build s/render current {:react-key "current-stroke"}))]]]))))))
