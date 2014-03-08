@@ -89,6 +89,7 @@
                         :xmlns "http://www.w3.org/2000/svg"}
                   [:g.vector.layer
                    (om/build pizza (:pizza app) {:react-key "base-pizza"})
-                   (om/build-all s/render (:strokes app) {:key :id})
+                   (om/build-all s/render (:strokes app) {:key :id})]
+                  [:g.vector.layer.current
                    (when-let [current (:current-stroke app)]
                      (om/build s/render current {:react-key "current-stroke"}))]]]))))))
