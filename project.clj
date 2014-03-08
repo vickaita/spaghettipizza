@@ -16,17 +16,23 @@
                  [com.cemerick/rummage "1.0.1"]
                  [digest "1.4.3"]
                  [prismatic/dommy "0.1.1"]
-                 [om "0.5.0"]
+                 [om "0.5.1"]
                  [secretary "1.0.0"]
                  [sablono "0.2.6"]
-                 [environ "0.4.0"]
-                 [com.cemerick/piggieback "0.1.2"]]
+                 [environ "0.4.0"]]
   :source-paths ["src/clj" "src/cljs"]
   :main limn.handler
   :plugins [[lein-cljsbuild "1.0.2"]
+            [com.cemerick/austin "0.1.4"]
             [lein-environ "0.4.0"]
             [lein-typed "0.3.1"]]
-  :repl-options {:nrepl-middleware [cemerick.piggieback/wrap-cljs-repl]}
+  :injections [(require 'cemerick.austin.repls)
+               (defn browser-repl-env []
+                 (reset! cemerick.austin.repls/browser-repl-env
+                         (cemerick.austin/repl-env)))
+               (defn browser-repl []
+                 (cemerick.austin.repls/cljs-repl
+                   (browser-repl-env)))]
   :cljsbuild {:builds
               [{:id "dev"
                 :source-paths ["src/cljs"]
