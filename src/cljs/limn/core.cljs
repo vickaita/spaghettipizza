@@ -70,7 +70,7 @@
     (fn [e]
       (doto e .preventDefault .stopPropagation)
       (when-let [command (condp = (js/String.fromCharCode (.-keyCode e))
-                           "c" [:toggle-color-wheel]
+                           ;"c" [:toggle-color-wheel]
                            nil)]
         (put! commands command)))))
 
