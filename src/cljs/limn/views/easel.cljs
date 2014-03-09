@@ -21,9 +21,15 @@
                          :stroke "#F04F4F"
                          :stroke-width 3}]])))
 
+(defn- translate
+  "Maps a point from user-space (the document coordinate system) to view-space
+  (the svg-coordiate system)."
+  [x user-offset view-offset scale]
+  (-> x (- user-offset) (* scale) (+ view-offset) Math/floor))
+
 (defn- normalize-points
   "Convert an event into a point."
-  [scale-by e]
+  [app e]
   (when-let [elem (.getElementById js/document "align-svg")]
     (let [; XXX: There is a bug in React.js that incorrectly reports #document as
           ; the current target. When this is fixed upstream then getElement call
@@ -31,6 +37,10 @@
           ; https://github.com/facebook/react/pull/747, but not in current
           ; release yet.
           ;elem (.getElementById js/document "align-svg") ;elem (.-currentTarget e)
+          scale-x (:scale-by app)
+          scale-y (:scale-by app)
+          view-offset-x (:view-offset-x app)
+          view-offset-y (:view-offset-y app)
           rect (.getBoundingClientRect elem)
           left (.-left rect)
           top (.-top rect)]
@@ -38,12 +48,12 @@
         ("touchstart" "touchmove")
         (for [i (range (alength (.-touches e)))]
           (let [t (aget (.-touches e) i)]
-            [(-> t (.-pageX) (- left) (* scale-by) Math/floor)
-             (-> t (.-pageY) (- top) (* scale-by) Math/floor)]))
+            [(translate (.-pageX t) left view-offset-x scale-x)
+             (translate (.-pageY t) top view-offset-y scale-y)]))
         "touchend"
         nil
-        [[(-> e (.-pageX) (- left) (* scale-by) Math/floor)
-          (-> e (.-pageY) (- top) (* scale-by) Math/floor)]]))))
+        [[(translate (.-pageX e) left view-offset-x scale-x)
+          (translate (.-pageY e) top view-offset-y scale-y)]]))))
 
 (defn easel
   [app owner]
@@ -51,7 +61,7 @@
         start-stroke
         (fn [e]
           (doto e .preventDefault .stopPropagation)
-          (let [pt (first (normalize-points (:scale-by @app) e))
+          (let [pt (first (normalize-points @app e))
                 skin (om/get-state owner :skin)
                 color (om/get-state owner :color)]
             (om/set-state! owner :drawing? true)
@@ -60,7 +70,7 @@
         (fn [e]
           (doto e .preventDefault .stopPropagation)
           (when (om/get-state owner :drawing?)
-            (let [pt (first (normalize-points (:scale-by @app) e))]
+            (let [pt (first (normalize-points @app e))]
               (om/transact! app #(me/extend-stroke % pt)))))
         end-stroke (fn [e]
                      (doto e .preventDefault .stopPropagation)

@@ -7,6 +7,8 @@
    :strokes []
    :width 0
    :height 0
+   :view-offset-x 0
+   :view-offset-y 0
    :view-box [0 0 512 512]})
 
 (defn start-stroke
