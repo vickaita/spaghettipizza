@@ -64,4 +64,5 @@
       [:section.toppings
        [:pre (om/get-state owner)]
        [:h1 "Toppings!"]
-       (om/build-all tool-group (:groups app) {:key :name})])))
+       (om/build-all tool-group (:groups app) {:key :name})
+       [:pre "v0.4.4"]])))
