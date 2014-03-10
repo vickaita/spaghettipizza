@@ -58,24 +58,42 @@
 (defn easel
   [app owner]
   (let [commands (om/get-shared owner :commands)
+
         start-stroke
         (fn [e]
           (doto e .preventDefault .stopPropagation)
-          (let [pt (first (normalize-points @app e))
-                skin (om/get-state owner :skin)
-                color (om/get-state owner :color)]
-            (om/set-state! owner :drawing? true)
-            (om/transact! app #(me/start-stroke % pt skin color))))
+          (let [points (normalize-points @app e)]
+            (case (count points)
+              1 (let [state (om/get-state owner)
+                      skin (:skin state)
+                      color (:color state)]
+                  (om/set-state! owner :drawing? true)
+                  (om/transact! app #(me/start-stroke % (first points) skin color)))
+              2 (om/set-state! owner :zoom points)
+              :else (prn "not supported"))))
+
         extend-stroke
         (fn [e]
           (doto e .preventDefault .stopPropagation)
-          (when (om/get-state owner :drawing?)
-            (let [pt (first (normalize-points @app e))]
-              (om/transact! app #(me/extend-stroke % pt)))))
-        end-stroke (fn [e]
-                     (doto e .preventDefault .stopPropagation)
-                     (om/set-state! owner :drawing? false)
-                     (om/transact! app #(me/end-stroke %)))]
+          (let [points (normalize-points @app e)
+                state (om/get-state owner)]
+            (case (count points)
+              1 (when (:drawing? state)
+                  (om/transact! app #(me/extend-stroke % (first points))))
+              2 (when-let [zoom (:zoom state)]
+                  (om/transact! app #(me/zoom % zoom points))))))
+
+        end-stroke
+        (fn [e]
+          (doto e .preventDefault .stopPropagation)
+          (let [state (om/get-state owner)]
+            (when (:drawing? state)
+              (om/set-state! owner :drawing? false)
+              (om/transact! app #(me/end-stroke %)))
+            (when (:zoom state)
+              (om/set-state! owner :zoom nil))))
+
+        ]
     (reify
       om/IWillMount
       (will-mount [_] (events/listen js/document "mouseup" end-stroke))

@@ -1,15 +1,18 @@
 (ns limn.models.easel
-  (:require [limn.stroke :as s]))
+  (:require [limn.stroke :as s]
+            [limn.geometry :refer [distance]]))
+
+(def ^:private VBX 512)
 
 (def default-easel
-  {:scale-by 1
-   :current-stroke nil
+  {:current-stroke nil
    :strokes []
    :width 0
    :height 0
+   :scale-by 1
    :view-offset-x 0
    :view-offset-y 0
-   :view-box [0 0 512 512]})
+   :view-box [0 0 VBX VBX]})
 
 (defn start-stroke
   [easel pt skin color]
@@ -28,3 +31,19 @@
           (assoc :current-stroke nil)
           (assoc :strokes (conj (:strokes easel) (:current-stroke easel))))
       easel))
+
+(defn zoom
+  "Zooms the easel by adjusting the view-box and scale-by so that the segment
+  `from` maps to `to`."
+  [easel from to]
+  (let [scale (/ (apply distance to) (apply distance from))
+        offset-x (first (first from))
+        offset-y (second (first from))
+        view-box [offset-x
+                  offset-y
+                  (+ offset-x ((* scale VBX)))
+                  (+ offset-y (* scale VBX))]]
+    (conj easel {:scale-by scale
+                 :view-offset-x offset-x
+                 :view-offset-y offset-y
+                 :view-box view-box})))
