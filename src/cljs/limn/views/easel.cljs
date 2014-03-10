@@ -69,8 +69,7 @@
                       color (:color state)]
                   (om/set-state! owner :drawing? true)
                   (om/transact! app #(me/start-stroke % (first points) skin color)))
-              2 (om/set-state! owner :zoom points)
-              :else (prn "not supported"))))
+              2 (om/set-state! owner :zoom points))))
 
         extend-stroke
         (fn [e]
