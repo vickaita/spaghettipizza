@@ -2,7 +2,9 @@
   (:require [goog.dom :as dom]
             [clojure.string :refer [join]]
             [limn.geometry :refer [rotate-point median-point]]
-            [limn.svg :as svg :refer [M C S]]))
+            [limn.svg :as svg :refer [M C S]]
+            [om.core :as om :include-macros true]
+            [sablono.core :refer-macros [html]]))
 
 (defn create-irregular-circle
   [origin radius]
@@ -39,3 +41,18 @@
   (let [origin [256 256]]
     {:crust (create-irregular-circle origin 227)
      :sauce (create-irregular-circle origin 210)}))
+
+(defn draw-pizza
+  "Draw a pizza."
+  [{:keys [crust sauce]} owner]
+  (om/component
+    (html [:g.pizza {:key "pizza"}
+           [:path.crust {:d crust
+                         :fill "#FAE265"
+                         :stroke "#DDAB0B"
+                         :stroke-width 3}]
+           [:path.sauce {:d sauce
+                         :fill "#F86969"
+                         :stroke "#F04F4F"
+                         :stroke-width 3}]])))
+
