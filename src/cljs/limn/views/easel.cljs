@@ -8,43 +8,22 @@
             [limn.stroke :as s]
             [spaghetti-pizza.pizza :as pizza]))
 
-;(defn- normalize-points*
-;  "Convert an event into a point."
-;  [app e]
-;  (when-let [elem (.getElementById js/document "align-svg")]
-;    (let [; XXX: There is a bug in React.js that incorrectly reports #document as
-;          ; the current target. When this is fixed upstream then getElement call
-;          ; can be avoided. Fixed with this pull request:
-;          ; https://github.com/facebook/react/pull/747, but not in current
-;          ; release yet.
-;          ;elem (.getElementById js/document "align-svg") ;elem (.-currentTarget e)
-;          scale-x (:scale-by app)
-;          scale-y (:scale-by app)
-;          view-offset-x (:view-offset-x app)
-;          view-offset-y (:view-offset-y app)
-;          rect (.getBoundingClientRect elem)
-;          left (.-left rect)
-;          top (.-top rect)]
-;      (case (.-type e)
-;        ("touchstart" "touchmove")
-;        (for [i (range (alength (.-touches e)))]
-;          (let [t (aget (.-touches e) i)]
-;            [(translate (.-pageX t) left view-offset-x scale-x)
-;             (translate (.-pageY t) top view-offset-y scale-y)]))
-;        "touchend"
-;        nil
-;        [[(translate (.-pageX e) left view-offset-x scale-x)
-;          (translate (.-pageY e) top view-offset-y scale-y)]]))))
-
 (defn- translate
   "Maps a point from user-space (the document coordinate system) to view-space
   (the svg-coordiate system)."
-  [x user-offset view-offset scale]
-  (-> x (- user-offset) (* scale) (+ view-offset) Math/floor))
+  [app [x y]]
+  (let [view-offset-x (:view-offset-x app)
+        view-offset-y (:view-offset-y app)
+        scale (:scale-by app)]
+    [(-> x (* scale) (+ view-offset-x) Math/floor)
+     (-> y (* scale) (+ view-offset-y) Math/floor)]))
 
 (defn- normalize-points
-  "Convert an event into a point."
-  [app e]
+  "Returns a vector of points from an event. Click events will always return a
+  vector with a single point in it; touch events will return a point for each
+  finger that is touching. Points will be offset so that they are relative to
+  the svg element, but they are still in the user-space."
+  [e]
   (when-let [elem (.getElementById js/document "align-svg")]
     (let [; XXX: There is a bug in React.js that incorrectly reports #document as
           ; the current target. When this is fixed upstream then getElement call
@@ -52,10 +31,6 @@
           ; https://github.com/facebook/react/pull/747, but not in current
           ; release yet.
           ;elem (.getElementById js/document "align-svg") ;elem (.-currentTarget e)
-          scale-x (:scale-by app)
-          scale-y (:scale-by app)
-          view-offset-x (:view-offset-x app)
-          view-offset-y (:view-offset-y app)
           rect (.getBoundingClientRect elem)
           left (.-left rect)
           top (.-top rect)]
@@ -63,12 +38,10 @@
         ("touchstart" "touchmove")
         (for [i (range (alength (.-touches e)))]
           (let [t (aget (.-touches e) i)]
-            [(translate (.-pageX t) left view-offset-x scale-x)
-             (translate (.-pageY t) top view-offset-y scale-y)]))
+            [(- (.-pageX t) left) (- (.-pageY t) top)]))
         "touchend"
         nil
-        [[(translate (.-pageX e) left view-offset-x scale-x)
-          (translate (.-pageY e) top view-offset-y scale-y)]]))))
+        [[(- (.-pageX e) left) (- (.-pageY e) top)]]))))
 
 (defn easel
   [app owner]
@@ -77,23 +50,23 @@
         start-stroke
         (fn [e]
           (doto e .preventDefault .stopPropagation)
-          (let [points (normalize-points @app e)]
+          (let [points (normalize-points e)]
             (case (count points)
               1 (let [state (om/get-state owner)
                       skin (:skin state)
                       color (:color state)]
                   (om/set-state! owner :drawing? true)
-                  (om/transact! app #(me/start-stroke % (first points) skin color)))
-              2 (om/set-state! owner :zoom points))))
+                  (om/transact! app #(me/start-stroke % (translate @app (first points)) skin color)))
+              2 (om/set-state! owner :zoom (map translate points)))))
 
         extend-stroke
         (fn [e]
           (doto e .preventDefault .stopPropagation)
-          (let [points (normalize-points @app e)
+          (let [points (normalize-points e)
                 state (om/get-state owner)]
             (case (count points)
               1 (when (:drawing? state)
-                  (om/transact! app #(me/extend-stroke % (first points))))
+                  (om/transact! app #(me/extend-stroke % (translate @app (first points)))))
               2 (when-let [zoom (:zoom state)]
                   (om/transact! app #(me/zoom % zoom points))))))
 
