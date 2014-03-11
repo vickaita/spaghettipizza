@@ -63,9 +63,9 @@
   (let [client (sdb/create-client (:access-key creds) (:secret-key creds))
         config (assoc enc/keyword-strings :client client)
         pizzas (sdb/query-all config (str "select * from `" bucket-name "`"))]
-    (map #(str "<img src=\"http://spaghettipizza.us/pizza/"
-                             (get % ::sdb/id)
-                             ".png\">") pizzas)))
+    (map #(str "<a href=\"http://spaghettipizza.us/?pizza=" (get % ::sdb/id)
+               ".png\"><img src=\"http://spaghettipizza.us/pizza/" (get % ::sdb/id)
+                             ".png\"></a>") pizzas)))
 
 (defroutes all-routes
   (GET "/" {{debug :debug} :params}
