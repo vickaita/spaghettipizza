@@ -19,6 +19,15 @@
   [stroke]
   (::formatted-points stroke))
 
+(defn d
+  [stroke]
+  (let [points (:points stroke)]
+  (str
+         "M " (ffirst points) " " (second (first points)) " "
+         (apply str (for [[x y] (rest points)] (str "L "x " " y " ")))
+         (apply str (for [[x y] (reverse points)] (str "L "x " " y " ")))
+         " z")))
+
 (defn rand-seq
   [stroke]
   (let [rng (goog.testing.PseudoRandom. (:seed stroke))]
