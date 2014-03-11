@@ -26,6 +26,17 @@
                                :stroke "blue"
                                :stroke-width 1}])]))))
 
+(defmethod render :path
+  [stroke owner]
+  (om/component
+    (let [d (stroke/d stroke)]
+      (html [:g.topping.noodle.poly
+             [:path {:d d
+                     :fill (:fill (:color stroke))
+                     :stroke (:stroke (:color stroke))
+                     :stroke-linecap "round"
+                     :stroke-width 6}]]))))
+
 (defmethod render :spaghetti
   [stroke owner]
   (om/component
