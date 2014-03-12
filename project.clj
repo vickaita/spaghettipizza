@@ -17,9 +17,10 @@
                  [digest "1.4.3"]
                  [prismatic/dommy "0.1.1"]
                  [om "0.5.2"]
-                 [secretary "1.0.0"]
-                 [sablono "0.2.6"]
-                 [environ "0.4.0"]]
+                 [secretary "1.0.2"]
+                 [sablono "0.2.10"]
+                 [environ "0.4.0"]
+                 [shodan "0.1.0"]]
   :source-paths ["src/clj" "src/cljs"]
   :main limn.handler
   :plugins [[lein-cljsbuild "1.0.2"]
