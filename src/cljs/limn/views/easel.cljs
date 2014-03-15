@@ -4,19 +4,19 @@
             [goog.events :as events]
             [om.core :as om :include-macros true]
             [sablono.core :refer-macros [html]]
+            [shodan.console :as console]
             [limn.models.easel :as me]
             [limn.stroke :as s]
             [spaghetti-pizza.pizza :as pizza]))
 
-(defn- translate
-  "Maps a point from user-space (the document coordinate system) to view-space
-  (the svg-coordiate system)."
-  [app [x y]]
-  (let [view-offset-x (:view-offset-x app)
-        view-offset-y (:view-offset-y app)
-        scale (:scale-by app)]
-    [(-> x (+ view-offset-x) (* scale) Math/floor)
-     (-> y (+ view-offset-y) (* scale) Math/floor)]))
+(defn- transform-point
+  "Returns an point mapped from the user space to the svg space."
+  [svg [x y]]
+  (let [p (.createSVGPoint svg)]
+    (set! (.-x p) x)
+    (set! (.-y p) y)
+    (let [p2 (.matrixTransform p (.inverse (.getCTM svg)))]
+      [(Math/floor (.-x p2)) (Math/floor (.-y p2))])))
 
 (defn- normalized-points
   "Returns a vector of points from an event. Click events will always return a
@@ -39,24 +39,28 @@
 (defn- handle-start
   [app owner e]
   (doto e .preventDefault .stopPropagation)
-  (let [points (normalized-points (om/get-node owner) e)]
+  (let [elem (om/get-node owner)
+        svg (.-firstChild elem)
+        points (normalized-points elem e)]
     (case (count points)
       1 (let [state (om/get-state owner)
               skin (:skin state)
               color (:color state)]
           (om/set-state! owner :drawing? true)
           (om/transact!
-            app #(me/start-stroke % (translate @app (first points)) skin color)))
-      2 (om/set-state! owner :zoom (map (partial translate @app) points)))))
+            app #(me/start-stroke % (transform-point svg (first points)) skin color)))
+      2 (om/set-state! owner :zoom (map (partial transform-point svg) points)))))
 
 (defn- handle-move
   [app owner e]
   (doto e .preventDefault .stopPropagation)
-  (let [points (normalized-points (om/get-node owner) e)
+  (let [elem (om/get-node owner)
+        svg (.-firstChild elem)
+        points (normalized-points elem e)
         state (om/get-state owner)]
     (case (count points)
       1 (when (:drawing? state)
-          (om/transact! app #(me/extend-stroke % (translate @app (first points)))))
+          (om/transact! app #(me/extend-stroke % (transform-point svg (first points)))))
       2 (when-let [zoom (:zoom state)]
           (om/transact! app #(me/zoom % zoom points))))))
 
