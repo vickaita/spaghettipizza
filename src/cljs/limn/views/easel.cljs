@@ -12,10 +12,15 @@
 (defn- transform-point
   "Returns an point mapped from the user space to the svg space."
   [svg [x y]]
-  (let [p (.createSVGPoint svg)]
+  ;; FIXME: `createSVGPoint`, `matrixTransform`, and `getCTM` are being munged
+  ;; by the closure compiler. This can probably be fixed by adding some
+  ;; externs rather than these inlined strings.
+  (let [p (js* "~{}['createSVGPoint']();" svg)
+        #_(.createSVGPoint svg)]
     (set! (.-x p) x)
     (set! (.-y p) y)
-    (let [p2 (.matrixTransform p (.inverse (.getCTM svg)))]
+    (let [p2 (js* "~{}['matrixTransform'](~{}['getCTM']().inverse())" p svg)
+          #_(.matrixTransform p (.inverse (.getCTM svg)))]
       [(Math/floor (.-x p2)) (Math/floor (.-y p2))])))
 
 (defn- normalized-points
