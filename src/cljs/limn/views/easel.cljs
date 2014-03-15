@@ -81,14 +81,13 @@
       om/IRender
       (render [_]
         (let [side (min (:width app) (:height app))]
-          (html [:section.easel.align-svg
-                 {:width side
-                  :height side
-                  :on-mouse-down start-stroke
-                  :on-touch-start start-stroke
-                  :on-mouse-move extend-stroke
-                  :on-touch-move extend-stroke
-                  :on-touch-end end-stroke}
+          (html [:section.easel.align-svg {:width side
+                                           :height side
+                                           :on-mouse-down start-stroke
+                                           :on-touch-start start-stroke
+                                           :on-mouse-move extend-stroke
+                                           :on-touch-move extend-stroke
+                                           :on-touch-end end-stroke}
                  [:svg {:id "main-svg"
                         :width side
                         :height side
@@ -101,4 +100,4 @@
                    (om/build-all s/render (:strokes app) {:key :id})]
                   [:g.vector.layer.current
                    (when-let [current (:current-stroke app)]
-                     (om/build s/render current {:react-key "current-stroke"}))]]]))))))
+                     (om/build s/render current))]]]))))))
