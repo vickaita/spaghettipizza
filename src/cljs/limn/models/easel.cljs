@@ -1,6 +1,12 @@
 (ns limn.models.easel
   (:require [limn.stroke :as s]
-            [limn.geometry :refer [distance]]))
+            [limn.geometry :refer [distance median-point]]
+            [shodan.console :as console]))
+
+(defn loggit
+  [msg]
+  (doto (.getElementById js/document "loggit")
+    (.appendChild (.createTextNode js/document msg))))
 
 (def ^:private VBX 512)
 
@@ -9,9 +15,7 @@
    :strokes []
    :width 0
    :height 0
-   :scale-by 1
-   :view-offset-x 0
-   :view-offset-y 0
+   :zoom 1
    :view-box [0 0 VBX VBX]})
 
 (defn start-stroke
@@ -26,24 +30,21 @@
 
 (defn end-stroke
   [easel]
-    (if (:current-stroke easel)
-      (-> easel
-          (assoc :current-stroke nil)
-          (assoc :strokes (conj (:strokes easel) (:current-stroke easel))))
-      easel))
+  (if (:current-stroke easel)
+    (-> easel
+        (assoc :current-stroke nil)
+        (assoc :strokes (conj (:strokes easel) (:current-stroke easel))))
+    easel))
+
+(defn- left-most
+  [points]
+  (first (first (sort-by first points))))
+
+(defn- top-most
+  [points]
+  (second (first (sort-by second points))))
 
 (defn zoom
-  "Zooms the easel by adjusting the view-box and scale-by so that the segment
-  `from` maps to `to`."
   [easel from to]
-  (let [scale (/ (apply distance to) (apply distance from))
-        offset-x (first (first from))
-        offset-y (second (first from))
-        view-box [offset-x
-                  offset-y
-                  (+ offset-x ((* scale VBX)))
-                  (+ offset-y (* scale VBX))]]
-    (conj easel {:scale-by scale
-                 :view-offset-x offset-x
-                 :view-offset-y offset-y
-                 :view-box view-box})))
+  (let [zoom (/ (apply distance from) (apply distance to))]
+    (conj easel {:view-box [0 0 (* zoom VBX) (* zoom VBX)]})))

@@ -11,7 +11,7 @@
 
 (defn- transform-point
   "Returns an point mapped from the user space to the svg space."
-  [svg [x y]]
+  [svg ctm [x y]]
   ;; FIXME: `createSVGPoint`, `matrixTransform`, and `getCTM` are being munged
   ;; by the closure compiler. This can probably be fixed by adding some
   ;; externs rather than these inlined strings.
@@ -19,7 +19,7 @@
         #_(.createSVGPoint svg)]
     (set! (.-x p) x)
     (set! (.-y p) y)
-    (let [p2 (js* "~{}['matrixTransform'](~{}['getCTM']().inverse())" p svg)
+    (let [p2 (js* "~{}['matrixTransform'](~{})" p ctm)
           #_(.matrixTransform p (.inverse (.getCTM svg)))]
       [(Math/floor (.-x p2)) (Math/floor (.-y p2))])))
 
@@ -44,30 +44,46 @@
 (defn- handle-start
   [app owner e]
   (doto e .preventDefault .stopPropagation)
-  (let [elem (om/get-node owner)
-        svg (.-firstChild elem)
-        points (normalized-points elem e)]
-    (case (count points)
-      1 (let [state (om/get-state owner)
-              skin (:skin state)
-              color (:color state)]
-          (om/set-state! owner :drawing? true)
-          (om/transact!
-            app #(me/start-stroke % (transform-point svg (first points)) skin color)))
-      2 (om/set-state! owner :zoom (map (partial transform-point svg) points)))))
+  (when-let [elem (om/get-node owner)]
+    (let [svg (.-firstChild elem)
+          ctm (js* "~{}['getCTM']().inverse()" svg)
+          _ (.log js/console ctm)
+          points (normalized-points elem e)]
+      (om/set-state! owner :ctm ctm)
+      (case (count points)
+        1 (let [state (om/get-state owner)
+                skin (:skin state)
+                color (:color state)]
+            (om/set-state! owner :drawing? true)
+            (om/transact! app #(me/start-stroke
+                                 %
+                                 (transform-point svg ctm (first points))
+                                 skin color)))
+        2 (om/set-state! owner :zoom (map (partial transform-point svg ctm)
+                                          points))))))
 
 (defn- handle-move
   [app owner e]
   (doto e .preventDefault .stopPropagation)
-  (let [elem (om/get-node owner)
-        svg (.-firstChild elem)
-        points (normalized-points elem e)
-        state (om/get-state owner)]
-    (case (count points)
-      1 (when (:drawing? state)
-          (om/transact! app #(me/extend-stroke % (transform-point svg (first points)))))
-      2 (when-let [zoom (:zoom state)]
-          (om/transact! app #(me/zoom % zoom points))))))
+  (when-let [elem (om/get-node owner)]
+    (let [svg (.-firstChild elem)
+          points (normalized-points elem e)
+          state (om/get-state owner)
+          ctm (:ctm state)
+          _ (.log js/console ctm)]
+      (when ctm
+        (case (count points)
+          1 (when (:drawing? state)
+              (om/transact! app #(me/extend-stroke
+                                   %
+                                   (transform-point svg ctm (first points)))))
+          2 (when-let [zoom (:zoom state)]
+              (om/transact! app #(me/zoom %
+                                          zoom
+                                          (map (partial transform-point
+                                                        svg
+                                                        ctm)
+                                               points)))))))))
 
 (defn- handle-end
   [app owner e]
@@ -77,7 +93,9 @@
       (om/set-state! owner :drawing? false)
       (om/transact! app #(me/end-stroke %)))
     (when (:zoom state)
-      (om/set-state! owner :zoom nil))))
+      (om/set-state! owner :zoom nil))
+    (when (:ctm state)
+      (om/set-state! owner :ctm nil))))
 
 (defn easel
   [app owner]
