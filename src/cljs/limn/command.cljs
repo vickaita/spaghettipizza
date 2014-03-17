@@ -36,7 +36,7 @@
           api-url (if (= "spaghettipizza.us" host)
                     "http://api.spaghettipizza.us/pizza/"
                     "/pizza/")
-          align-svg (.getElementById js/document "align-svg")
+          align-svg (aget (.getElementsByClassName js/document "easel") 0)
           svg-elem (doto (.-firstChild align-svg)
                      ;; XXX: There seems to be a bug in either React, om, or
                      ;; sablono that is preventing the xmlns attribute from
