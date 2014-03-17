@@ -47,7 +47,6 @@
   (when-let [elem (om/get-node owner)]
     (let [svg (.-firstChild elem)
           ctm (js* "~{}['getCTM']().inverse()" svg)
-          _ (.log js/console ctm)
           points (normalized-points elem e)]
       (om/set-state! owner :ctm ctm)
       (case (count points)
@@ -69,8 +68,7 @@
     (let [svg (.-firstChild elem)
           points (normalized-points elem e)
           state (om/get-state owner)
-          ctm (:ctm state)
-          _ (.log js/console ctm)]
+          ctm (:ctm state)]
       (when ctm
         (case (count points)
           1 (when (:drawing? state)
@@ -108,13 +106,13 @@
       om/IRender
       (render [_]
         (let [side (min (:width app) (:height app))]
-          (html [:section.easel.align-svg {:width side
-                                           :height side
-                                           :on-mouse-down start-stroke
-                                           :on-touch-start start-stroke
-                                           :on-mouse-move extend-stroke
-                                           :on-touch-move extend-stroke
-                                           :on-touch-end end-stroke}
+          (html [:section.easel {:width side
+                                 :height side
+                                 :on-mouse-down start-stroke
+                                 :on-touch-start start-stroke
+                                 :on-mouse-move extend-stroke
+                                 :on-touch-move extend-stroke
+                                 :on-touch-end end-stroke}
                  [:svg {:id "main-svg"
                         :width side
                         :height side
