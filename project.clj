@@ -3,6 +3,7 @@
   :url "http://spaghettipizza.us"
   :dependencies [[org.clojure/clojure "1.5.1"]
                  [org.clojure/clojurescript "0.0-2173"]
+                 ;[org.clojure/clojurescript "0.0-2156"]
                  [org.clojure/core.async "0.1.267.0-0d7780-alpha"]
                  [org.clojure/core.typed "0.2.34"]
                  [org.clojure/tools.logging "0.2.6"]
@@ -16,15 +17,16 @@
                  [com.cemerick/rummage "1.0.1"]
                  [digest "1.4.3"]
                  [prismatic/dommy "0.1.1"]
-                 [om "0.5.2"]
-                 [secretary "1.0.2"]
-                 [sablono "0.2.10"]
+                 [om "0.5.3"]
+                 [secretary "1.1.0"]
+                 [sablono "0.2.14"]
                  [environ "0.4.0"]
                  [shodan "0.1.0"]]
   :source-paths ["src/clj" "src/cljs"]
   :main limn.handler
   :plugins [[lein-cljsbuild "1.0.2"]
             [com.cemerick/austin "0.1.4"]
+            ;[com.cemerick/clojurescript.test "0.2.2"]
             [lein-environ "0.4.0"]
             [lein-typed "0.3.1"]]
   :injections [(require 'cemerick.austin.repls)
@@ -42,6 +44,13 @@
                            :optimizations :none
                            :pretty-print true
                            :source-map true}}
+               ;{:id "test"
+               ; :source-paths ["src/cljs" "test/cljs"]
+               ; :compiler {:output-to "resources/public/js/test/pizza.js"
+               ;            :output-dir "resources/public/js/test"
+               ;            :preamble ["react/react.min.js"]
+               ;            :externs ["react/externs/react.js"]
+               ;            :optimizations :whitespace}}
                {:id "prod"
                 :source-paths ["src/cljs"]
                 :compiler {:output-to "resources/public/js/pizza.js"
@@ -49,7 +58,12 @@
                            :preamble ["react/react.min.js"]
                            :externs ["react/externs/react.js"]
                            :source-map "resources/public/js/pizza.js.map"
-                           :optimizations :advanced}}]}
+                           :optimizations :advanced}}]
+              ;:test-commands
+              ;{"units" ["phantomjs" :runner
+              ;          "this.literal_js_was_evaluated=true"
+              ;          "resources/public/js/test/pizza.js"]}
+              }
   :profiles {:dev {:env {:environment :dev}}
              :test {:env {:environment :test}
                     :aot [limn.handler]}
