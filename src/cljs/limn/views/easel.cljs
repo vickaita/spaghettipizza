@@ -46,7 +46,7 @@
   (doto e .preventDefault .stopPropagation)
   (when-let [elem (om/get-node owner)]
     (let [svg (.-firstChild elem)
-          ctm (js* "~{}['getCTM']().inverse()" svg)
+          ctm (js* "~{}['getCTM']().inverse()" (.-firstChild svg))
           points (normalized-points elem e)]
       (om/set-state! owner :ctm ctm)
       (case (count points)
@@ -120,9 +120,13 @@
                         :version "1.1"
                         :preserveAspectRatio "xMidYMid"
                         :xmlns "http://www.w3.org/2000/svg"}
-                  [:g.vector.layer
-                   (om/build pizza/draw-pizza (:pizza app) {:react-key "base-pizza"})
-                   (om/build-all s/render (:strokes app) {:key :id})]
-                  [:g.vector.layer.current
-                   (when-let [current (:current-stroke app)]
-                     (om/build s/render current))]]]))))))
+                  [:g.transformer
+                   {:transform (str "scale(" (:scale app) "),translate("
+                                    (:offset-x app) "," (:offset-y app) ")")}
+                   [:g.vector.layer
+                    (om/build pizza/draw-pizza (:pizza app)
+                              {:react-key "base-pizza"})
+                    (om/build-all s/render (:strokes app) {:key :id})]
+                   [:g.vector.layer.current
+                    (when-let [current (:current-stroke app)]
+                      (om/build s/render current))]]]]))))))
