@@ -65,4 +65,4 @@
        [:pre (om/get-state owner)]
        [:h1 "Toppings!"]
        (om/build-all tool-group (:groups app) {:key :name})
-       [:pre "v0.4.6-SNAPSHOT"]])))
+       [:pre "v0.4.7"]])))
