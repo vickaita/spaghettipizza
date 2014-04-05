@@ -11,6 +11,7 @@
                  [ring-cors "0.1.0"]
                  [compojure "1.1.6"]
                  [hiccup "1.0.5"]
+                 [amazonica "0.1.32"]
                  [clj-aws-s3 "0.3.7"]
                  [com.cemerick/rummage "1.0.1"]
                  [digest "1.4.3"]
