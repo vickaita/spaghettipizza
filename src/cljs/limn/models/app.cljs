@@ -8,7 +8,7 @@
 
 (def default-app-state
   {:debug true
-   :granularity 5
+   :granularity 4
    :show-toolbar? false
    :show-color-wheel? false
    :gallery limn.models.gallery/empty-gallery
