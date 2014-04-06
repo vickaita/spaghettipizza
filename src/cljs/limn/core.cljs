@@ -14,7 +14,8 @@
             [limn.models.app :refer [default-app-state]]
             [limn.views.app :refer [app-view]]
             [limn.command :refer [exec]]
-            [spaghetti-pizza.spaghetti]))
+            [spaghetti-pizza.spaghetti]
+            [shodan.console :as console]))
 
 (enable-console-print!)
 (.initializeTouchEvents js/React true)
@@ -40,13 +41,13 @@
   (put! commands [:display-image (str "/pizza/" pizza)]))
 
 (defroute "/" [query-params]
-  (when-let [pizza-hash (get query-params "pizza")]
+  (when-let [pizza-hash (:pizza query-params)]
     (put! commands [:display-image (str "/pizza/" pizza-hash)])))
 
 (doto history
   (events/listen goog.history.EventType/NAVIGATE
                  #(secretary/dispatch! (str (.-pathname js/location)
-                                            (.-search js/location))))
+                                             (.-search js/location))))
   (.setUseFragment false)
   (.setEnabled true))
 
@@ -76,6 +77,7 @@
 
 (go (while true
       (let [command (<! commands)]
+        (console/log (pr-str command))
         (swap! app-state exec command))))
 (monitor-viewport-size size-monitor commands)
 (monitor-keypress js/document commands)
