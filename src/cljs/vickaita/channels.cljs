@@ -106,7 +106,6 @@
   (let [out (chan)]
     (xhr/send url
               #(put! out (.getResponse (.-currentTarget %)))
-              ;(fn [res] (put! out (.getResponse (.-target res))))
               method
               data)
     out))
