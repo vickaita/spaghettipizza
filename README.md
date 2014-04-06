@@ -1,17 +1,35 @@
 # Everybody loves Spaghetti Pizza!
 
-Start a server with
+High in carbohydrates and now you can draw your own! See this site running live
+at [http://spaghettipizza.us].
+
+## Running your own pizza shop!
+
+You need to have [leiningen](https://github.com/technomancy/leiningen) and
+[compass](https://github.com/chriseppstein/compass) installed to build and run
+the project.
+
+From within the root of the project directory, build the assets
+
+    compass build  # Generates the CSS
+    lein cljsbuild # Generates the JS
+
+then starting a server by executing
 
     lein run
 
-Compile ClojureScript with
+Make sure that you add your AWS credentials to `resources/credentials/aws.clj`
+if you want to be able to save images to S3 and not get annoying errors.
 
-    lein cljsbuild
+TODO: Currently the S3 bucket name is hard coded, so that will also need to be
+changed or, ideally, moved into a configuration file.
 
-or
+If you are working on changes to the CSS or ClojureScript you may find these
+commands useful:
+
+    compass watch
+
     lein cljsbuild auto
-
-for automatic compilation when changing files.
 
 # TODO
 
