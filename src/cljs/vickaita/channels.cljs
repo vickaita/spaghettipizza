@@ -11,7 +11,7 @@
             [cljs.core.async.impl.protocols :as impl]
             ))
 
-(def ^{:dynamic true :private true} *xhr-manager* (goog.net.XhrManager. 0))
+(def ^{:dynamic true} *xhr-manager* (goog.net.XhrManager. 0))
 (def ^:private id-counter (atom 0))
 
 (defn- id []
@@ -104,5 +104,9 @@
 (defn xhr
   [url method data]
   (let [out (chan)]
-    (xhr/send url (fn [res] (put! out (.getResponse (.-target res)))) method data)
+    (xhr/send url
+              #(put! out (.getResponse (.-currentTarget %)))
+              ;(fn [res] (put! out (.getResponse (.-target res))))
+              method
+              data)
     out))
