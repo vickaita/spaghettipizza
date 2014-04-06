@@ -1,7 +1,7 @@
 # Everybody loves Spaghetti Pizza!
 
 High in carbohydrates and now you can draw your own! See this site running live
-at [http://spaghettipizza.us].
+at http://spaghettipizza.us.
 
 ## Running your own pizza shop!
 
@@ -27,25 +27,20 @@ changed or, ideally, moved into a configuration file.
 If you are working on changes to the CSS or ClojureScript you may find these
 commands useful:
 
+    # Automatically recompile the CSS when scss files change
     compass watch
 
+    # Automatically recompile the JavaScript when cljs files change
     lein cljsbuild auto
 
 # TODO
 
-- SHARING!!!
-  - put uploaded image urls into simple db
-  - parse the edn response
-  - display the url
-  - better ui for sharing
-  - add share buttons
-    - facebook
-    - twitter
-    - google plus
-    - pinterest
-  - admin interface to see what has been uploaded
-  - view page: should just be the main page but with a query param
-      http://spaghettipizza.us/?pizza=md5-hash
+- add share buttons
+  - facebook
+  - twitter
+  - google plus
+  - pinterest
+- admin interface to see what has been uploaded
   - consider saving svg instead of png. it will probably be smaller in most
     cases
       - should test size to be sure
@@ -53,5 +48,7 @@ commands useful:
         - could limit number of noodles to counteract this ...
       - still have to rasterize it to share on social networks?
 - more toppings!!
-- smooth noodles
-- Migrate deployment to the Rakefile
+- smooth noodles using curves and less points
+- ? Migrate deployment to the Rakefile
+    - need to use a common format for sharing credentials and configuration
+      between clojure and ruby for this. Investigate Ruby edn readers
