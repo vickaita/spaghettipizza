@@ -1,4 +1,4 @@
-(defproject pizza "0.4.7"
+(defproject pizza "0.4.8"
   :description "Spaghetti Pizza -- the original pasta on pizza simulator!"
   :url "http://spaghettipizza.us"
   :dependencies [[org.clojure/clojure "1.6.0"]
@@ -10,6 +10,7 @@
                  [ring "1.2.2"]
                  [ring-cors "0.1.0"]
                  [compojure "1.1.6"]
+                 [liberator "0.11.0"]
                  [hiccup "1.0.5"]
                  [amazonica "0.1.32"]
                  [clj-aws-s3 "0.3.7"]
