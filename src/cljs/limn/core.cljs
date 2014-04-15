@@ -77,7 +77,6 @@
 
 (go (while true
       (let [command (<! commands)]
-        (console/log (pr-str command))
         (swap! app-state exec command))))
 (monitor-viewport-size size-monitor commands)
 (monitor-keypress js/document commands)
