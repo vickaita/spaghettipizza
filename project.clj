@@ -17,7 +17,7 @@
                  [com.cemerick/rummage "1.0.1"]
                  [digest "1.4.3"]
                  [prismatic/dommy "0.1.1"]
-                 [om "0.5.3"]
+                 [om "0.6.0"]
                  [secretary "1.1.0"]
                  [sablono "0.2.15"]
                  [environ "0.4.0"]
