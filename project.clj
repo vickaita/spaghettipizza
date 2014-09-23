@@ -2,8 +2,8 @@
   :description "Spaghetti Pizza -- the original pasta on pizza simulator!"
   :url "http://spaghettipizza.us"
   :dependencies [[org.clojure/clojure "1.6.0"]
-                 [org.clojure/clojurescript "0.0-2202"]
-                 [org.clojure/core.async "0.1.267.0-0d7780-alpha"]
+                 [org.clojure/clojurescript "0.0-2356"]
+                 [org.clojure/core.async "0.1.346.0-17112a-alpha"]
                  [org.clojure/core.typed "0.2.34"]
                  [org.clojure/tools.logging "0.2.6"]
                  [commons-codec/commons-codec "1.4"]
@@ -17,9 +17,9 @@
                  [com.cemerick/rummage "1.0.1"]
                  [digest "1.4.3"]
                  [prismatic/dommy "0.1.1"]
-                 [om "0.6.0"]
+                 [om "0.7.3"]
                  [secretary "1.1.0"]
-                 [sablono "0.2.15"]
+                 [sablono "0.2.22"]
                  [environ "0.4.0"]
                  [shodan "0.1.0"]]
   :source-paths ["src/clj" "src/cljs"]
