@@ -9,3 +9,4 @@ repl/
 target/
 resources/credentials/aws.clj
 .sass-cache/
+*.swp
