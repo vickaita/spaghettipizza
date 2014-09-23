@@ -21,49 +21,11 @@
     ga('create','UA-46522614-1','spaghettipizza.us');
     ga('send','pageview');"]])
 
-(defn toolbar
-  []
-  [:div#toolbar.toolbar
-   [:div.actions
-    [:a#clean.action "Reset"]
-    [:a#photo.action "Share"]]
-   [:h2 "Toppings!"]
-   [:dl#pasta.tools
-    [:dt.group "Pasta"]
-    [:dd [:a.tool.active {:data-tool "spaghetti"} "Spaghetti"]]
-    [:dd [:a.tool {:data-tool "ziti"} "Ziti"]]
-    [:dd [:a.tool {:data-tool "linguini"} "Linguini"]]]
-   [:dl#cheese.tools
-    [:dt.group "Cheese"]
-    [:dd [:a.tool {:data-tool "ricotta"} "Ricotta"]]]])
-
-(defn easel
-  "Create a drawing surface."
-  ([] (easel 512 512))
-  ([width height]
-   [:div#easel
-    [:div#img-wrapper]
-    [:div#svg-wrapper
-     [:svg#main-svg {:width width
-                     :height height
-                     :viewBox (str "0 0 " width " " height)
-                     :version "1.1"
-                     :preserveAspectRatio "xMidYMid"
-                     :xmlns "http://www.w3.org/2000/svg"}]]]))
-
 (defn home
   [dev?]
   (html5 {:lang "en-us"}
     (head "Spaghetti Pizza: The Adventure Begins!")
     [:body
-     [:div#site
-      (toolbar)
-      [:div#page
-       [:header#masthead
-        [:a#menu-control]
-        [:h1 "Spaghetti Pizza"]]
-       [:div#easel-frame]
-       #_(easel)]]
      (if dev?
        (include-js "http://fb.me/react-0.8.0.js"
                    "js/debug/goog/base.js"
