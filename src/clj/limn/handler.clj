@@ -72,7 +72,7 @@
 (defroutes all-routes
   (GET "/" {{debug :debug} :params}
        (pages/home (and debug (= :dev (:environment env)))))
-  (GET "/workspace" [] (pages/workspace))
+  ;(GET "/workspace" [] (pages/workspace))
   (mp/wrap-multipart-params
     (POST "/pizza/" {{{file :tempfile} :data} :params} (handle-file file)))
   (GET "/pizza/" [] (pizza-list))
@@ -81,7 +81,15 @@
   (route/not-found (pages/error-404)))
 
 (defn get-creds []
-  (let [c (edn/read-string (slurp (io/resource "credentials/aws.clj")))]
+  (let [c (try
+            (edn/read-string (slurp (io/resource "credentials/aws.clj")))
+            (catch Exception e
+              (prn "WARNING: Unable to find valid credentials. Please make sure
+                   that you have created a `credentials/aws.clj` file in the
+                   resources directory.")
+              {:aws-access-key "ACCESS_KEY"
+               :aws-secret-key "SECRET_KEY"
+               :bucket-name "BUCKET_NAME"}))]
     {:access-key (:aws-access-key c)
      :secret-key (:aws-secret-key c)
      :bucket-name (:bucket-name c)}))
