@@ -4,17 +4,12 @@ $menu-control-width: 2rem;
 $menu-control-margin-left: 0.5rem;
 $masthead-padding: 0.5rem;
 
-#masthead {
-  $bg: rgb(120, 138, 26);
-  @include background-image(linear-gradient(top, tint($bg, 10%), $bg, shade($bg, 10%)));
-  color: #FFF;
-  padding: $masthead-padding;
-  border-top-color: rgb(17, 172, 11);
-  border-width-top: 5px;
-  border-top-width: 5px;
+.menu-control-wrapper {
   position: relative;
+  padding: $masthead-padding;
+  border-top-width: 5px;
 
-  h1 {
+  .logo {
     margin: 0;
     font-family: 'Oregano', cursive;
     font-size: 1.2rem;
@@ -22,6 +17,14 @@ $masthead-padding: 0.5rem;
     text-shadow: 1px 1px #F86969;
     margin-left: $menu-control-margin-left + $masthead-padding + $menu-control-width;
   }
+}
+
+#masthead {
+  $bg: rgb(120, 138, 26);
+  @include background-image(linear-gradient(top, tint($bg, 10%), $bg, shade($bg, 10%)));
+  @extend .menu-control-wrapper;
+  color: #FFF;
+  border-top-color: rgb(17, 172, 11);
 }
 
 .menu-control {

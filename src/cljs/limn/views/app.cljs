@@ -42,10 +42,12 @@
     (html
       [:div#site {:class (site-classes app)}
        [:section.toolbar
-        #_[:a.menu-control
-         {:on-click (fn [e]
-                      (doto e .preventDefault .stopPropagation)
-                      (om/transact! app [:show-toolbar?] not))}]
+        [:div.menu-control-wrapper
+         [:a.menu-control
+          {:on-click (fn [e]
+                       (doto e .preventDefault .stopPropagation)
+                       (om/transact! app [:show-toolbar?] not))}]
+         [:span.logo "Spaghetti Pizza"]]
         (om/build toolbar/actions (:actions app))
         (om/build toolbar/colors (:colors app) {:state {:color (:color app)}})
         (om/build toolbar/tools (:tools app) {:state {:tool (:tool app)}})]
